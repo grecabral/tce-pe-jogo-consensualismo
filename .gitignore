@@ -1,0 +1,19 @@
+# Configurações locais do Claude Code (permissões por usuário)
+.claude/settings.local.json
+
+# Editor / SO
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# Node / build (V2)
+node_modules/
+dist/
+.cache/
+
+# Temporários / rascunhos
+_rascunho*.md
+*.tmp
