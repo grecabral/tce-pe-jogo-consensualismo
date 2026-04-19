@@ -1,0 +1,60 @@
+{
+  "_descricao": "Conteúdo do Jogo 1 (Ligar Pontos). UX Writer preenche. Estrutura: 3 pilares institucionais × 6 casos concretos (2 por pilar, o jogador arrasta cada caso para o pilar correto).",
+
+  "pilares": [
+    {
+      "id": "dialogo",
+      "nome": "Diálogo e Cooperação",
+      "descricaoCurta": "UX Writer: 1 frase curta sobre o pilar"
+    },
+    {
+      "id": "eficiencia",
+      "nome": "Eficiência e Resultado",
+      "descricaoCurta": "UX Writer: 1 frase curta"
+    },
+    {
+      "id": "seguranca",
+      "nome": "Segurança Jurídica e Acordos",
+      "descricaoCurta": "UX Writer: 1 frase curta"
+    }
+  ],
+
+  "casos": [
+    {
+      "id": "caso1",
+      "texto": "UX Writer: exemplo de prática/situação que se encaixa em DIÁLOGO",
+      "pilarCorreto": "dialogo",
+      "insightAcerto": "UX Writer: frase curta educativa (≤ 20 palavras) que aparece ao acertar"
+    },
+    {
+      "id": "caso2",
+      "texto": "UX Writer: outro exemplo que se encaixa em DIÁLOGO",
+      "pilarCorreto": "dialogo",
+      "insightAcerto": ""
+    },
+    {
+      "id": "caso3",
+      "texto": "UX Writer: exemplo de EFICIÊNCIA",
+      "pilarCorreto": "eficiencia",
+      "insightAcerto": ""
+    },
+    {
+      "id": "caso4",
+      "texto": "UX Writer: outro exemplo de EFICIÊNCIA",
+      "pilarCorreto": "eficiencia",
+      "insightAcerto": ""
+    },
+    {
+      "id": "caso5",
+      "texto": "UX Writer: exemplo de SEGURANÇA JURÍDICA",
+      "pilarCorreto": "seguranca",
+      "insightAcerto": ""
+    },
+    {
+      "id": "caso6",
+      "texto": "UX Writer: outro exemplo de SEGURANÇA JURÍDICA",
+      "pilarCorreto": "seguranca",
+      "insightAcerto": ""
+    }
+  ]
+}

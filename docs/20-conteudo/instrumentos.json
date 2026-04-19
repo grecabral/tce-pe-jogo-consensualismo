@@ -1,0 +1,48 @@
+{
+  "_descricao": "Lista canônica de instrumentos do consensualismo. Usada pelo Jogo 2 (Lanterna), onde cada história seleciona um subconjunto para esconder no cenário. Insights curtos para exibir quando o jogador encontra o item.",
+
+  "instrumentos": [
+    {
+      "id": "tag",
+      "nome": "TAG",
+      "nomeCompleto": "Termo de Ajustamento de Gestão",
+      "icone": "instrumentos/tag.svg",
+      "insight": "UX Writer: frase curta (≤ 25 palavras) que explica o que é e para que serve"
+    },
+    {
+      "id": "tac",
+      "nome": "TAC",
+      "nomeCompleto": "Termo de Ajustamento de Conduta",
+      "icone": "instrumentos/tac.svg",
+      "insight": ""
+    },
+    {
+      "id": "acordo-substitutivo",
+      "nome": "Acordo Substitutivo",
+      "nomeCompleto": "Acordo Substitutivo",
+      "icone": "instrumentos/acordo.svg",
+      "insight": ""
+    },
+    {
+      "id": "mediacao",
+      "nome": "Mediação",
+      "nomeCompleto": "Mediação",
+      "icone": "instrumentos/mediacao.svg",
+      "insight": ""
+    },
+    {
+      "id": "conciliacao",
+      "nome": "Conciliação",
+      "nomeCompleto": "Conciliação",
+      "icone": "instrumentos/conciliacao.svg",
+      "insight": ""
+    },
+    {
+      "id": "arbitragem",
+      "nome": "Arbitragem",
+      "nomeCompleto": "Arbitragem",
+      "icone": "instrumentos/arbitragem.svg",
+      "insight": ""
+    }
+  ]
+}

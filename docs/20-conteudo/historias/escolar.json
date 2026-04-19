@@ -1,0 +1,60 @@
+{
+  "_descricao": "História 2: Transporte escolar intermunicipal. Alunos de CIDADE-A estudam em escolas de CIDADE-B. Disputa sobre vagas, rotas, compensação. Consensualismo = acordo de cooperação educacional.",
+
+  "id": "escolar",
+  "titulo": "Transporte escolar compartilhado",
+
+  "cidades": {
+    "cidadeA": "TODO (cidade menor, sem rede escolar completa)",
+    "cidadeB": "TODO (cidade com escolas maiores)"
+  },
+
+  "abertura": {
+    "rotulo": "MISSÃO",
+    "titulo": "TODO: ≤ 8 palavras (ex: Duas cidades. Uma geração. Uma estrada.)",
+    "contexto": "TODO: ≤ 40 palavras explicando o conflito. Ex: Alunos de CIDADE-A precisam de vagas nas escolas de CIDADE-B. Há impasse sobre o rateio do transporte, vagas e compensação financeira. Está em risco o ano letivo.",
+    "imagemFundo": "cenarios/escolar_abertura.jpg"
+  },
+
+  "lanterna": {
+    "cenario": "cenarios/escolar_lanterna.jpg",
+    "dicaOnboarding": "TODO",
+    "instrumentosAEscolher": [
+      "mediacao",
+      "acordo-substitutivo",
+      "conciliacao",
+      "tag",
+      "tac"
+    ],
+    "armadilhas": [
+      {
+        "id": "acusacao-mutua",
+        "nome": "Acusação mútua",
+        "icone": "armadilhas/acusacao.svg",
+        "explicacao": "TODO"
+      },
+      {
+        "id": "prazo-perdido",
+        "nome": "Prazo perdido",
+        "icone": "armadilhas/prazo.svg",
+        "explicacao": "TODO"
+      },
+      {
+        "id": "falta-transparencia",
+        "nome": "Falta de transparência",
+        "icone": "armadilhas/opacidade.svg",
+        "explicacao": "TODO"
+      }
+    ]
+  },
+
+  "vitoria": {
+    "titulo": "TODO",
+    "texto": "TODO: ≤ 40 palavras sobre o acordo de cooperação educacional"
+  },
+
+  "derrota": {
+    "titulo": "TODO",
+    "texto": "TODO"
+  }
+}

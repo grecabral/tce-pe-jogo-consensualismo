@@ -1,0 +1,75 @@
+{
+  "_descricao": "Itens do Jogo 3 (Coletor). Caem do topo da tela. Jogador move cesta para pegar os ADEQUADOS e evitar os INADEQUADOS. Conteúdo compartilhado entre as 3 histórias (não muda por sessão).",
+
+  "adequados": [
+    {
+      "id": "escuta-ativa",
+      "nome": "Escuta Ativa",
+      "icone": "itens/escuta.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "transparencia",
+      "nome": "Transparência",
+      "icone": "itens/transparencia.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "cooperacao",
+      "nome": "Cooperação",
+      "icone": "itens/cooperacao.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "boa-fe",
+      "nome": "Boa-fé",
+      "icone": "itens/boa-fe.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "interesse-publico",
+      "nome": "Interesse Público",
+      "icone": "itens/interesse-publico.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "acordo",
+      "nome": "Acordo",
+      "icone": "itens/acordo.svg",
+      "cor": "#10b981"
+    }
+  ],
+
+  "inadequados": [
+    {
+      "id": "imposicao",
+      "nome": "Imposição Unilateral",
+      "icone": "itens/imposicao.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "hostilidade",
+      "nome": "Hostilidade",
+      "icone": "itens/hostilidade.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "ma-fe",
+      "nome": "Má-fé",
+      "icone": "itens/ma-fe.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "impasse",
+      "nome": "Impasse",
+      "icone": "itens/impasse.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "opacidade",
+      "nome": "Opacidade",
+      "icone": "itens/opacidade.svg",
+      "cor": "#ef4444"
+    }
+  ]
+}

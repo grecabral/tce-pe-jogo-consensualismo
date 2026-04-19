@@ -1,0 +1,58 @@
+{
+  "_descricao": "Textos curtos da interface. Qualquer string que aparece na tela e não é específica de uma história vem daqui. Estrutura agrupada por cena.",
+
+  "attract": {
+    "chamada": "TOQUE PARA COMEÇAR",
+    "subtitulo": "Conheça o Consensualismo"
+  },
+
+  "roletaGirando": {
+    "mensagemParou": "VAMOS JOGAR!"
+  },
+
+  "abertura": {
+    "rotuloMissao": "MISSÃO",
+    "botaoIniciar": "INICIAR MISSÃO"
+  },
+
+  "jogo1": {
+    "titulo": "Ligue cada prática ao seu pilar",
+    "instrucao": "Arraste cada cartão para o pilar que ele representa.",
+    "feedbackAcerto": "Certo!",
+    "feedbackErro": "Tente outro pilar",
+    "botaoAvancar": "AVANÇAR",
+    "aoCompletar": "Você conectou os pilares do consensualismo."
+  },
+
+  "jogo2": {
+    "titulo": "Encontre os instrumentos",
+    "instrucao": "Arraste o dedo para iluminar a cena. Toque nos instrumentos do consensualismo.",
+    "hudContador": "Encontrados",
+    "feedbackArmadilha": "Isso trava o acordo.",
+    "botaoAvancar": "CONTINUAR",
+    "derrota": "O tempo acabou. O diálogo exige agilidade."
+  },
+
+  "jogo3": {
+    "titulo": "Colete as práticas certas",
+    "instrucao": "Arraste a cesta na base da tela. Pegue as práticas adequadas ao consensualismo. Evite as inadequadas.",
+    "hudPontuacao": "Pontos",
+    "hudTempo": "Tempo",
+    "aoAtingirMeta": "Parabéns! Você dominou as práticas do consensualismo.",
+    "derrota": "Faltou pouco. Cada prática conta."
+  },
+
+  "final": {
+    "fraseSintese": "Consensualismo: uma alternativa quando o diálogo for possível.",
+    "subtexto": "Nem sempre o caminho é o processo. Às vezes, é a conversa — sem substituir os métodos tradicionais, apenas oferecendo uma possibilidade a mais.",
+    "inspiracao": "Inspirado em casos reais como o acordo de aquisição de trens urbanos entre Mato Grosso e Bahia, resolvido por métodos consensuais.",
+    "qrLegenda": "Saiba mais",
+    "botaoJogarNovo": "TOCAR NOVAMENTE"
+  },
+
+  "acessibilidade": {
+    "mensagemIdle": "Volta automaticamente em {segundos}s",
+    "botaoMute": "Silenciar som",
+    "botaoUnmute": "Ativar som"
+  }
+}

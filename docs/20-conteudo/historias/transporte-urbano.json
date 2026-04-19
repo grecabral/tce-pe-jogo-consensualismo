@@ -1,0 +1,60 @@
+{
+  "_descricao": "História 3 (neutra): Transporte urbano metropolitano entre dois municípios conurbados. Análoga ao caso real MG×BA de trens urbanos, mas entre MUNICÍPIOS FICTÍCIOS. Esta é a história mais próxima do caso real — e é a que a tela final vai citar como referência.",
+
+  "id": "transporte-urbano",
+  "titulo": "Transporte urbano compartilhado",
+
+  "cidades": {
+    "cidadeA": "TODO (município maior, sede da região metropolitana)",
+    "cidadeB": "TODO (município conurbado menor)"
+  },
+
+  "abertura": {
+    "rotulo": "MISSÃO",
+    "titulo": "TODO: ≤ 8 palavras",
+    "contexto": "TODO: ≤ 40 palavras. Ex: CIDADE-A e CIDADE-B estão conurbadas e precisam de um sistema compartilhado de BRT para transportar milhares de trabalhadores todo dia. O impasse sobre gestão, manutenção e tarifas paralisa o projeto. O tempo urge.",
+    "imagemFundo": "cenarios/transporte_abertura.jpg"
+  },
+
+  "lanterna": {
+    "cenario": "cenarios/transporte_lanterna.jpg",
+    "dicaOnboarding": "TODO",
+    "instrumentosAEscolher": [
+      "acordo-substitutivo",
+      "mediacao",
+      "tag",
+      "conciliacao",
+      "arbitragem"
+    ],
+    "armadilhas": [
+      {
+        "id": "disputa-politica",
+        "nome": "Disputa política",
+        "icone": "armadilhas/disputa.svg",
+        "explicacao": "TODO"
+      },
+      {
+        "id": "desconfianca",
+        "nome": "Desconfiança mútua",
+        "icone": "armadilhas/desconfianca.svg",
+        "explicacao": "TODO"
+      },
+      {
+        "id": "impasse",
+        "nome": "Impasse burocrático",
+        "icone": "armadilhas/impasse.svg",
+        "explicacao": "TODO"
+      }
+    ]
+  },
+
+  "vitoria": {
+    "titulo": "TODO",
+    "texto": "TODO: ≤ 40 palavras sobre o acordo de gestão compartilhada do BRT"
+  },
+
+  "derrota": {
+    "titulo": "TODO",
+    "texto": "TODO"
+  }
+}
