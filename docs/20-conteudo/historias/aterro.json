@@ -5,20 +5,20 @@
   "titulo": "Aterro compartilhado",
 
   "cidades": {
-    "cidadeA": "TODO (ex: Serra Verde)",
-    "cidadeB": "TODO (ex: Boa Vista do Rio)"
+    "cidadeA": "Serra Verde",
+    "cidadeB": "Boa Vista do Rio"
   },
 
   "abertura": {
     "rotulo": "MISSÃO",
-    "titulo": "TODO: título chamativo ≤ 8 palavras (ex: Duas cidades. Um aterro. Uma solução.)",
-    "contexto": "TODO: 1 parágrafo (≤ 40 palavras) explicando o conflito. Ex: O aterro de CIDADE-A encerrou suas atividades. CIDADE-B ainda tem capacidade, mas há desacordo sobre custos, prazos e responsabilidade ambiental. As duas cidades precisam encontrar um caminho.",
+    "titulo": "Duas cidades. Um aterro. Um impasse.",
+    "contexto": "O aterro de Serra Verde encerrou. Boa Vista do Rio tem capacidade, mas cobra compensação pelos custos e pelo passivo ambiental. Sem acordo, os resíduos se acumulam nas ruas. O tempo corre.",
     "imagemFundo": "cenarios/aterro_abertura.jpg"
   },
 
   "lanterna": {
     "cenario": "cenarios/aterro_lanterna.jpg",
-    "dicaOnboarding": "TODO: frase curta de onboarding para o jogador (ex: Arraste o dedo para iluminar. Toque nos instrumentos que ajudam a construir o acordo.)",
+    "dicaOnboarding": "Arraste o dedo para iluminar. Toque nos instrumentos que ajudam a construir o acordo.",
     "instrumentosAEscolher": [
       "mediacao",
       "tac",
@@ -31,30 +31,30 @@
         "id": "imposicao-unilateral",
         "nome": "Imposição unilateral",
         "icone": "armadilhas/imposicao.svg",
-        "explicacao": "TODO: 1 frase (≤ 20 palavras) explicando por que esse comportamento trava o acordo"
+        "explicacao": "Decidir sozinho e impor a conta ao outro município trava qualquer acordo futuro."
       },
       {
         "id": "atraso-resposta",
         "nome": "Atraso na resposta",
         "icone": "armadilhas/atraso.svg",
-        "explicacao": "TODO"
+        "explicacao": "Sem resposta em tempo, o problema vira crise e o acordo fica mais caro."
       },
       {
         "id": "hostilidade",
         "nome": "Hostilidade",
         "icone": "armadilhas/hostilidade.svg",
-        "explicacao": "TODO"
+        "explicacao": "Acusar antes de ouvir rompe a confiança e afasta a solução da mesa."
       }
     ]
   },
 
   "vitoria": {
-    "titulo": "TODO: título curto chamativo (ex: ACORDO FECHADO!)",
-    "texto": "TODO: 1-2 frases (≤ 40 palavras) sobre o resultado do acordo. Ex: CIDADE-A e CIDADE-B firmaram um Termo de Ajustamento de Gestão. A destinação dos resíduos está garantida, com contrapartida financeira e prazos respeitados."
+    "titulo": "ACORDO FECHADO",
+    "texto": "Serra Verde e Boa Vista do Rio assinaram um Termo de Ajustamento de Gestão. A destinação dos resíduos está garantida, com rateio de custos e prazos definidos."
   },
 
   "derrota": {
-    "titulo": "TODO: ex: NEGOCIAÇÃO TRAVADA",
-    "texto": "TODO: frase curta sobre não ter fechado acordo. Ex: Sem consenso, o impasse continua. A população sofre com o custo da indecisão."
+    "titulo": "IMPASSE CONTINUA",
+    "texto": "Sem consenso, os resíduos se acumulam. A conta do impasse sai cara para a população das duas cidades."
   }
 }

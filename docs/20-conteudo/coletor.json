@@ -1,6 +1,13 @@
 {
   "_descricao": "Itens do Jogo 3 (Coletor). Caem do topo da tela. Jogador move cesta para pegar os ADEQUADOS e evitar os INADEQUADOS. Conteúdo compartilhado entre as 3 histórias (não muda por sessão).",
 
+  "_recomendacoes": {
+    "adequadosManterTodos": "Lista atual (6 itens) é coerente. 'Acordo' é resultado mais que prática; se o Arquiteto quiser trocar por algo mais comportamental, sugerir 'Celeridade' ou 'Previsibilidade'.",
+    "adequadosAConsiderarAdicionar": "Respeito ao contraditório; Flexibilidade.",
+    "inadequadosAConsiderarAdicionar": "Intransigência; Retórica de guerra.",
+    "inadequadosRevisar": "'Impasse' é mais estado que comportamento. Funciona visualmente, mas se soar abstrato demais em teste, substituir por 'Rigidez'."
+  },
+
   "adequados": [
     {
       "id": "escuta-ativa",

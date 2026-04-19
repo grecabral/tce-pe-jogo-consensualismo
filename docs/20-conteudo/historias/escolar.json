@@ -5,20 +5,20 @@
   "titulo": "Transporte escolar compartilhado",
 
   "cidades": {
-    "cidadeA": "TODO (cidade menor, sem rede escolar completa)",
-    "cidadeB": "TODO (cidade com escolas maiores)"
+    "cidadeA": "Alto Cedro",
+    "cidadeB": "Campo Florido"
   },
 
   "abertura": {
     "rotulo": "MISSÃO",
-    "titulo": "TODO: ≤ 8 palavras (ex: Duas cidades. Uma geração. Uma estrada.)",
-    "contexto": "TODO: ≤ 40 palavras explicando o conflito. Ex: Alunos de CIDADE-A precisam de vagas nas escolas de CIDADE-B. Há impasse sobre o rateio do transporte, vagas e compensação financeira. Está em risco o ano letivo.",
+    "titulo": "Duas cidades. Uma geração. Um impasse.",
+    "contexto": "Alunos de Alto Cedro precisam de vagas nas escolas de Campo Florido. Há desacordo sobre rateio do transporte, quantidade de vagas e compensação financeira. O ano letivo está em risco.",
     "imagemFundo": "cenarios/escolar_abertura.jpg"
   },
 
   "lanterna": {
     "cenario": "cenarios/escolar_lanterna.jpg",
-    "dicaOnboarding": "TODO",
+    "dicaOnboarding": "Arraste o dedo para iluminar. Toque nos instrumentos que ajudam a cooperação educacional.",
     "instrumentosAEscolher": [
       "mediacao",
       "acordo-substitutivo",
@@ -31,30 +31,30 @@
         "id": "acusacao-mutua",
         "nome": "Acusação mútua",
         "icone": "armadilhas/acusacao.svg",
-        "explicacao": "TODO"
+        "explicacao": "Trocar acusações substitui a busca de solução e aprofunda a desconfiança."
       },
       {
         "id": "prazo-perdido",
         "nome": "Prazo perdido",
         "icone": "armadilhas/prazo.svg",
-        "explicacao": "TODO"
+        "explicacao": "Perder o calendário escolar deixa alunos sem aula. Perde o cidadão."
       },
       {
         "id": "falta-transparencia",
         "nome": "Falta de transparência",
         "icone": "armadilhas/opacidade.svg",
-        "explicacao": "TODO"
+        "explicacao": "Esconder custos e dados inviabiliza qualquer cálculo justo de compensação."
       }
     ]
   },
 
   "vitoria": {
-    "titulo": "TODO",
-    "texto": "TODO: ≤ 40 palavras sobre o acordo de cooperação educacional"
+    "titulo": "COOPERAÇÃO EDUCACIONAL",
+    "texto": "Alto Cedro e Campo Florido firmaram acordo de cooperação. As vagas e o transporte estão garantidos, com rateio transparente de custos e revisão anual."
   },
 
   "derrota": {
-    "titulo": "TODO",
-    "texto": "TODO"
+    "titulo": "ANO LETIVO EM RISCO",
+    "texto": "Sem acordo, alunos ficam sem aula. O custo do impasse recai sobre a geração que depende da escola pública."
   }
 }

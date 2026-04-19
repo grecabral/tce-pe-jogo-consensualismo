@@ -1,48 +1,53 @@
 {
   "_descricao": "Lista canônica de instrumentos do consensualismo. Usada pelo Jogo 2 (Lanterna), onde cada história seleciona um subconjunto para esconder no cenário. Insights curtos para exibir quando o jogador encontra o item.",
 
+  "_recomendacoes": {
+    "manterTodos": "Os 6 instrumentos foram mantidos. Todos têm base legal e aparecem com frequência em casos reais de gestão pública.",
+    "observacao": "TAG e TAC se confundem para o leigo; os insights diferenciam explicitamente um do outro. Arbitragem é o menos usual para conflitos federativos, mas vale manter como repertório."
+  },
+
   "instrumentos": [
     {
       "id": "tag",
       "nome": "TAG",
       "nomeCompleto": "Termo de Ajustamento de Gestão",
       "icone": "instrumentos/tag.svg",
-      "insight": "UX Writer: frase curta (≤ 25 palavras) que explica o que é e para que serve"
+      "insight": "Compromisso entre gestor e órgão de controle para corrigir falhas de gestão, com prazos e metas pactuados, sem abrir processo punitivo."
     },
     {
       "id": "tac",
       "nome": "TAC",
       "nomeCompleto": "Termo de Ajustamento de Conduta",
       "icone": "instrumentos/tac.svg",
-      "insight": ""
+      "insight": "Acordo firmado com o Ministério Público para adequar uma conduta à lei, evitando ação judicial se os compromissos forem cumpridos."
     },
     {
       "id": "acordo-substitutivo",
       "nome": "Acordo Substitutivo",
       "nomeCompleto": "Acordo Substitutivo",
       "icone": "instrumentos/acordo.svg",
-      "insight": ""
+      "insight": "Substitui a sanção administrativa por compromissos assumidos pelo ente, desde que atendam ao interesse público e sejam efetivamente cumpridos."
     },
     {
       "id": "mediacao",
       "nome": "Mediação",
       "nomeCompleto": "Mediação",
       "icone": "instrumentos/mediacao.svg",
-      "insight": ""
+      "insight": "Um terceiro neutro conduz a conversa e ajuda as partes a construírem juntas a própria solução, sem decidir por elas."
     },
     {
       "id": "conciliacao",
       "nome": "Conciliação",
       "nomeCompleto": "Conciliação",
       "icone": "instrumentos/conciliacao.svg",
-      "insight": ""
+      "insight": "Um terceiro propõe caminhos possíveis para o acordo. As partes avaliam e decidem se aceitam."
     },
     {
       "id": "arbitragem",
       "nome": "Arbitragem",
       "nomeCompleto": "Arbitragem",
       "icone": "instrumentos/arbitragem.svg",
-      "insight": ""
+      "insight": "As partes escolhem um especialista para decidir o conflito. A decisão tem força vinculante, como alternativa ao Judiciário."
     }
   ]
 }

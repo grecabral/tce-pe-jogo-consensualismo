@@ -5,56 +5,56 @@
     {
       "id": "dialogo",
       "nome": "Diálogo e Cooperação",
-      "descricaoCurta": "UX Writer: 1 frase curta sobre o pilar"
+      "descricaoCurta": "Ouvir antes de decidir. Buscar interesses comuns."
     },
     {
       "id": "eficiencia",
       "nome": "Eficiência e Resultado",
-      "descricaoCurta": "UX Writer: 1 frase curta"
+      "descricaoCurta": "Resolver o problema real no menor tempo possível."
     },
     {
       "id": "seguranca",
       "nome": "Segurança Jurídica e Acordos",
-      "descricaoCurta": "UX Writer: 1 frase curta"
+      "descricaoCurta": "Compromissos claros, formais e com validade legal."
     }
   ],
 
   "casos": [
     {
       "id": "caso1",
-      "texto": "UX Writer: exemplo de prática/situação que se encaixa em DIÁLOGO",
+      "texto": "Reunião entre as duas prefeituras para entender os interesses de cada lado.",
       "pilarCorreto": "dialogo",
-      "insightAcerto": "UX Writer: frase curta educativa (≤ 20 palavras) que aparece ao acertar"
+      "insightAcerto": "Ouvir o outro lado revela caminhos que a disputa esconde."
     },
     {
       "id": "caso2",
-      "texto": "UX Writer: outro exemplo que se encaixa em DIÁLOGO",
+      "texto": "Convidar um terceiro neutro para mediar a conversa sobre a compensação.",
       "pilarCorreto": "dialogo",
-      "insightAcerto": ""
+      "insightAcerto": "Um terceiro imparcial ajuda a destravar o diálogo sem tomar partido."
     },
     {
       "id": "caso3",
-      "texto": "UX Writer: exemplo de EFICIÊNCIA",
+      "texto": "Resolver o impasse em 90 dias em vez de cinco anos na Justiça.",
       "pilarCorreto": "eficiencia",
-      "insightAcerto": ""
+      "insightAcerto": "Quando o problema é atual, a solução também precisa ser."
     },
     {
       "id": "caso4",
-      "texto": "UX Writer: outro exemplo de EFICIÊNCIA",
+      "texto": "Manter o serviço público funcionando durante toda a negociação.",
       "pilarCorreto": "eficiencia",
-      "insightAcerto": ""
+      "insightAcerto": "Bom acordo é o que não deixa o cidadão sem atendimento."
     },
     {
       "id": "caso5",
-      "texto": "UX Writer: exemplo de SEGURANÇA JURÍDICA",
+      "texto": "Termo assinado pelas partes com força de título executivo.",
       "pilarCorreto": "seguranca",
-      "insightAcerto": ""
+      "insightAcerto": "O acordo escrito vale como sentença: quebrou, cobra-se direto."
     },
     {
       "id": "caso6",
-      "texto": "UX Writer: outro exemplo de SEGURANÇA JURÍDICA",
+      "texto": "Cláusula que define prazos, contrapartidas e penalidades por descumprimento.",
       "pilarCorreto": "seguranca",
-      "insightAcerto": ""
+      "insightAcerto": "Regras claras hoje evitam disputa amanhã."
     }
   ]
 }

@@ -5,20 +5,20 @@
   "titulo": "Transporte urbano compartilhado",
 
   "cidades": {
-    "cidadeA": "TODO (município maior, sede da região metropolitana)",
-    "cidadeB": "TODO (município conurbado menor)"
+    "cidadeA": "São Pedro das Pedras",
+    "cidadeB": "Riachão do Norte"
   },
 
   "abertura": {
     "rotulo": "MISSÃO",
-    "titulo": "TODO: ≤ 8 palavras",
-    "contexto": "TODO: ≤ 40 palavras. Ex: CIDADE-A e CIDADE-B estão conurbadas e precisam de um sistema compartilhado de BRT para transportar milhares de trabalhadores todo dia. O impasse sobre gestão, manutenção e tarifas paralisa o projeto. O tempo urge.",
+    "titulo": "Duas cidades. Um trajeto. Um sistema.",
+    "contexto": "São Pedro das Pedras e Riachão do Norte estão conurbadas e precisam de um BRT compartilhado para milhares de trabalhadores. O impasse sobre gestão, manutenção e tarifas paralisa o projeto.",
     "imagemFundo": "cenarios/transporte_abertura.jpg"
   },
 
   "lanterna": {
     "cenario": "cenarios/transporte_lanterna.jpg",
-    "dicaOnboarding": "TODO",
+    "dicaOnboarding": "Arraste o dedo para iluminar. Toque nos instrumentos que destravam o projeto compartilhado.",
     "instrumentosAEscolher": [
       "acordo-substitutivo",
       "mediacao",
@@ -31,30 +31,30 @@
         "id": "disputa-politica",
         "nome": "Disputa política",
         "icone": "armadilhas/disputa.svg",
-        "explicacao": "TODO"
+        "explicacao": "Transformar o serviço em palanque paralisa a obra e encarece o projeto."
       },
       {
         "id": "desconfianca",
         "nome": "Desconfiança mútua",
         "icone": "armadilhas/desconfianca.svg",
-        "explicacao": "TODO"
+        "explicacao": "Duvidar da intenção do outro trava qualquer desenho compartilhado de gestão."
       },
       {
         "id": "impasse",
         "nome": "Impasse burocrático",
         "icone": "armadilhas/impasse.svg",
-        "explicacao": "TODO"
+        "explicacao": "Cada parte esperando a outra ceder significa meses a mais sem solução."
       }
     ]
   },
 
   "vitoria": {
-    "titulo": "TODO",
-    "texto": "TODO: ≤ 40 palavras sobre o acordo de gestão compartilhada do BRT"
+    "titulo": "GESTÃO COMPARTILHADA",
+    "texto": "São Pedro das Pedras e Riachão do Norte assinaram acordo de gestão compartilhada do BRT. Tarifas, manutenção e responsabilidades estão definidas. O transporte avança."
   },
 
   "derrota": {
-    "titulo": "TODO",
-    "texto": "TODO"
+    "titulo": "PROJETO PARALISADO",
+    "texto": "Sem acordo, o BRT continua parado. Milhares de trabalhadores seguem perdendo horas nas estradas todos os dias."
   }
 }
