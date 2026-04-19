@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipoca Jurídica - O Desafio Final</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Lobster&display=swap');
+
+        :root {
+            --stripe-red: #e74c3c;
+            --stripe-green: #2ecc71;
+            --stripe-white: #ffffff;
+            --gold: #f1c40f;
+            --ink: #2c3e50;
+            --paper: #fdf5e6;
+        }
+
+        body { 
+            margin: 0; overflow: hidden; background-color: var(--ink); 
+            font-family: 'Bungee', cursive; display: flex; justify-content: center; align-items: center; height: 100vh;
+        }
+
+        #booth {
+            position: relative; width: 600px; height: 750px; background: var(--paper); 
+            border: 10px solid #5d4037; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+        }
+
+        #awning {
+            position: absolute; top: 0; width: 100%; height: 110px;
+            background: repeating-linear-gradient(90deg, var(--stripe-red), var(--stripe-red) 40px, var(--stripe-white) 40px, var(--stripe-white) 80px);
+            z-index: 100; border-bottom: 8px solid var(--gold);
+        }
+
+        #ui {
+            position: absolute; top: 130px; width: 100%; text-align: center; z-index: 90;
+        }
+
+        /* INSTRUÇÕES INICIAIS */
+        #start-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 500; display: flex;
+            justify-content: center; align-items: center; text-align: center;
+        }
+
+        #start-card {
+            background: var(--paper); padding: 30px; border: 6px solid var(--gold);
+            border-radius: 15px; width: 80%; color: var(--ink);
+        }
+
+        /* JOGADOR - BALDE DUPLO */
+        #player-container {
+            position: absolute; bottom: 30px; left: 0; width: 220px; height: 120px;
+            z-index: 150; cursor: none; display: flex; justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .bucket {
+            width: 100px; height: 120px; position: relative;
+            background-size: contain; background-repeat: no-repeat;
+        }
+
+        #bucket-punicao { background-image: url('https://cdn-icons-png.flaticon.com/512/3504/3504443.png'); filter: hue-rotate(320deg); }
+        #bucket-consenso { background-image: url('https://cdn-icons-png.flaticon.com/512/3504/3504443.png'); filter: hue-rotate(100deg); }
+
+        .bucket-label {
+            position: absolute; bottom: -10px; width: 100%; text-align: center;
+            font-size: 12px; color: white; background: rgba(0,0,0,0.7); padding: 2px 0;
+            border-radius: 5px;
+        }
+
+        /* Pipocas / Itens */
+        .popcorn-container {
+            position: absolute; width: 80px; height: 80px; z-index: 50;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .popcorn-img { width: 50px; height: 50px; }
+
+        .label {
+            font-family: sans-serif; font-weight: bold; font-size: 11px;
+            padding: 2px 6px; border-radius: 4px; color: white;
+            text-shadow: 1px 1px 2px black; white-space: nowrap;
+        }
+
+        .type-consenso { background: var(--stripe-green); }
+        .type-punicao { background: var(--stripe-red); }
+
+        .point-feedback {
+            position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+            font-size: 70px; font-weight: bold; z-index: 200; pointer-events: none;
+            animation: popUp 0.6s ease-out forwards;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 0; scale: 0.5; }
+            50% { opacity: 1; scale: 1.2; }
+            100% { opacity: 0; transform: translate(-50%, -100%); }
+        }
+
+        #end-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 600; color: white;
+        }
+
+        .btn { 
+            background: var(--gold); border: 4px solid var(--ink); padding: 12px 30px; 
+            font-family: 'Bungee'; cursor: pointer; border-radius: 50px; margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="booth">
+    <div id="start-overlay">
+        <div id="start-card">
+            <h2 style="font-family: 'Lobster'; color: var(--stripe-red); font-size: 32px;">A Roda Gigante Parou!</h2>
+            <p>Para resolver o problema da gestão, colete os <b>Instrumentos Corretos</b> que caem do céu.</p>
+            <p>Use o mouse para mover os baldes. Combine as cores para ganhar 20 pontos. Erros tiram 10 pontos.</p>
+            <p>Sua pontuação determinará se conseguiremos destravar o parque!</p>
+            <button class="btn" onclick="startGame()">COMEÇAR MISSÃO</button>
+        </div>
+    </div>
+
+    <div id="awning"></div>
+    <div id="ui">
+        <h1 id="title" style="margin:0">Pipoca Jurídica</h1>
+        <div id="score-container">PONTOS: <span id="score">0</span> | TEMPO: <span id="timer">45</span>s</div>
+    </div>
+
+    <div id="player-container">
+        <div id="bucket-punicao" class="bucket"><div class="bucket-label">PUNIÇÃO</div></div>
+        <div id="bucket-consenso" class="bucket"><div class="bucket-label">CONSENSO</div></div>
+    </div>
+
+    <div id="end-screen">
+        <div id="end-card" style="background: white; color: black; padding: 40px; border-radius: 20px; text-align: center;">
+            <h1 id="end-title">Auditoria Finalizada!</h1>
+            <p id="final-result"></p>
+            <button class="btn" onclick="location.reload()">TENTAR NOVAMENTE</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const booth = document.getElementById('booth');
+    const playerContainer = document.getElementById('player-container');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    
+    let score = 0;
+    let timeLeft = 45;
+    let gameActive = false;
+    let audioCtx;
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playSound(isWin) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (isWin) {
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        } else {
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        }
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function startGame() {
+        initAudio();
+        document.getElementById('start-overlay').style.display = 'none';
+        gameActive = true;
+        startTimer();
+        spawnLoop();
+    }
+
+    booth.addEventListener('mousemove', (e) => {
+        if (!gameActive) return;
+        const rect = booth.getBoundingClientRect();
+        const containerWidth = 220;
+        let x = e.clientX - rect.left - (containerWidth / 2);
+        const minX = -60; 
+        const maxX = booth.offsetWidth - containerWidth + 60;
+        x = Math.max(minX, Math.min(x, maxX));
+        playerContainer.style.left = x + 'px';
+    });
+
+    function showFeedback(points) {
+        const div = document.createElement('div');
+        div.className = `point-feedback ${points > 0 ? 'points-positive' : 'points-negative'}`;
+        div.innerText = points > 0 ? `+${points}` : points;
+        div.style.color = points > 0 ? '#2ecc71' : '#e74c3c';
+        booth.appendChild(div);
+        setTimeout(() => div.remove(), 600);
+        playSound(points > 0);
+    }
+
+    function spawn() {
+        if (!gameActive) return;
+        const isConsenso = Math.random() > 0.5; 
+        const terms = isConsenso ? ["Mediação", "Acordo", "Diálogo", "TAG"] : ["Multa", "Glosa", "Sanção", "Dano"];
+        const text = terms[Math.floor(Math.random() * terms.length)];
+
+        const div = document.createElement('div');
+        div.className = 'popcorn-container';
+        div.setAttribute('data-type', isConsenso ? 'consenso' : 'punicao');
+        div.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/2965/2965319.png" class="popcorn-img"><div class="label ${isConsenso ? 'type-consenso' : 'type-punicao'}">${text}</div>`;
+        
+        div.style.left = Math.random() * (booth.offsetWidth - 80) + 'px';
+        div.style.top = '110px';
+        booth.appendChild(div);
+
+        let y = 110;
+        let speed = 4 + Math.random() * 3;
+
+        const fall = setInterval(() => {
+            if (!gameActive) { div.remove(); clearInterval(fall); return; }
+            y += speed;
+            div.style.top = y + 'px';
+
+            const dRect = div.getBoundingClientRect();
+            const bPunicao = document.getElementById('bucket-punicao').getBoundingClientRect();
+            const bConsenso = document.getElementById('bucket-consenso').getBoundingClientRect();
+
+            let caught = false;
+            const itemType = div.getAttribute('data-type');
+
+            if (checkCollision(dRect, bPunicao)) {
+                if (itemType === 'punicao') { score += 20; showFeedback(20); }
+                else { score = Math.max(0, score - 10); showFeedback(-10); }
+                caught = true;
+            } 
+            else if (checkCollision(dRect, bConsenso)) {
+                if (itemType === 'consenso') { score += 20; showFeedback(20); }
+                else { score = Math.max(0, score - 10); showFeedback(-10); }
+                caught = true;
+            }
+
+            if (caught) {
+                clearInterval(fall);
+                div.remove();
+                scoreDisplay.innerText = score;
+            }
+            if (y > 750) { div.remove(); clearInterval(fall); }
+        }, 20);
+    }
+
+    function checkCollision(obj, target) {
+        return (obj.bottom >= target.top && obj.bottom <= target.top + 50 &&
+                obj.right >= target.left && obj.left <= target.right);
+    }
+
+    function startTimer() {
+        const timer = setInterval(() => {
+            if (!gameActive) { clearInterval(timer); return; }
+            timeLeft--;
+            timerDisplay.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                gameActive = false;
+                clearInterval(timer);
+                showEndScreen();
+            }
+        }, 1000);
+    }
+
+    function spawnLoop() {
+        if (!gameActive) return;
+        spawn();
+        setTimeout(spawnLoop, 900 + Math.random() * 500);
+    }
+
+    function showEndScreen() {
+        document.getElementById('end-screen').style.display = 'flex';
+        let msg = score >= 300 ? "Incrível! Com o Consensualismo, a Roda Gigante voltou a girar!" : "O parque ainda precisa de mais diálogo para funcionar plenamente.";
+        document.getElementById('final-result').innerHTML = `Pontuação: <b>${score}</b><br><br>${msg}`;
+    }
+</script>
+
+</body>
+</html>

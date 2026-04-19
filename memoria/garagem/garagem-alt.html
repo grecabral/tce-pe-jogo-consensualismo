@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Investigação Forense: Garagem Central</title>
+    <style>
+        :root {
+            --ui-accent: #fbc02d;
+            --ui-bg: #1a1c1e;
+            --ui-text: #e1e2e1;
+            --ui-border: #444746;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--ui-text);
+        }
+
+        #main-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Barra Lateral */
+        #sidebar {
+            width: 20%;
+            background: var(--ui-bg);
+            border-right: 1px solid var(--ui-border);
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--ui-accent);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        #timer {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        #counter {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        #inventory {
+            font-size: 0.8rem;
+            color: #9aa0a6;
+            height: 60px;
+            overflow-y: auto;
+            border-bottom: 1px solid var(--ui-border);
+            margin-bottom: 30px;
+        }
+
+        .objective-item {
+            background: #2a2c2e;
+            border-left: 3px solid var(--ui-border);
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Campo de Jogo */
+        #game-area {
+            position: relative;
+            width: 80%;
+            height: 100%;
+            background: #000 url('bg.png') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        #svg-mask-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .item {
+            position: absolute;
+            width: 65px; height: 65px;
+            cursor: pointer;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        /* Pop-up */
+        #desc-popup {
+            position: fixed;
+            top: 50%; left: 55%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            background: #fff;
+            color: #1a1c1e;
+            padding: 30px;
+            z-index: 2000;
+            display: none;
+            border-top: 5px solid var(--ui-accent);
+        }
+
+        /* Animação do Ônibus */
+        #bus-animation {
+            position: absolute;
+            bottom: 20px;
+            left: -250px; /* Começa fora da tela */
+            width: 200px;
+            z-index: 70;
+            display: none;
+        }
+
+        @keyframes driveAcross {
+            from { left: -250px; }
+            to { left: 110%; }
+        }
+
+        .animate-bus {
+            display: block !important;
+            animation: driveAcross 4s linear forwards;
+        }
+
+        /* Overlays Finais */
+        #screen-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--ui-accent);
+            border: none;
+            color: #000;
+            padding: 12px 30px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-close { background: #eee; margin-top: 10px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div id="main-wrapper">
+    <div id="sidebar">
+        <div class="label">Tempo Restante</div>
+        <div id="timer">30s</div>
+        
+        <div class="label">Evidências Coletadas</div>
+        <div id="counter"><span id="score">0</span> de 5 itens</div>
+        <div id="inventory">Aguardando logs...</div>
+
+        <div class="label">Objetivos</div>
+        <div id="objectives-list">
+            <div class="objective-item" onclick="showPopup('Protocolo C1', 'Acordo oficial entre as equipes. O consenso inicial.')">Dossiê C1</div>
+            <div class="objective-item" onclick="showPopup('Chave C2', 'Validação mecânica do grupo.')">Dossiê C2</div>
+            <div class="objective-item" onclick="showPopup('Manual C3', 'Diretrizes de operação compartilhada.')">Dossiê C3</div>
+            <div class="objective-item" onclick="showPopup('Peça C4', 'Sincronizador dos sistemas de freio.')">Dossiê C4</div>
+            <div class="objective-item" onclick="showPopup('Selo C5', 'Autorização final para circulação.')">Dossiê C5</div>
+        </div>
+    </div>
+
+    <div id="game-area">
+        <div id="items-layer"></div>
+        <img src="1onibus.png" id="bus-animation" alt="Ônibus em movimento">
+        
+        <svg id="svg-mask-layer">
+            <defs>
+                <mask id="gameMask">
+                    <rect width="100%" height="100%" fill="white" id="fog-base" />
+                    <circle id="mask-flashlight" cx="-500" cy="-500" r="160" fill="black" />
+                    <circle cx="50%" cy="50%" r="8%" fill="#999999" />
+                </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="black" mask="url(#gameMask)" id="master-shadow" />
+        </svg>
+    </div>
+</div>
+
+<div id="desc-popup">
+    <h3 id="pop-title"></h3>
+    <p id="pop-text"></p>
+    <button class="btn btn-close" onclick="document.getElementById('desc-popup').style.display='none'">FECHAR</button>
+</div>
+
+<div id="screen-overlay">
+    <h1 id="ov-title" style="font-size: 3rem;"></h1>
+    <p id="ov-msg" style="max-width: 500px;"></p>
+    <div id="button-container">
+        </div>
+</div>
+
+<script>
+    const gameArea = document.getElementById('game-area');
+    const flashlight = document.getElementById('mask-flashlight');
+    const fogBase = document.getElementById('fog-base');
+    const scoreEl = document.getElementById('score');
+    const timerEl = document.getElementById('timer');
+    const inventoryEl = document.getElementById('inventory');
+    const itemsLayer = document.getElementById('items-layer');
+    const btnContainer = document.getElementById('button-container');
+    const bus = document.getElementById('bus-animation');
+
+    let timeLeft = 30;
+    let score = 0;
+    let fogLevel = 255; 
+    let collectedItems = [];
+    let gameActive = true;
+
+    const clock = setInterval(() => {
+        if(!gameActive) return;
+        timeLeft--;
+        timerEl.innerText = timeLeft + "s";
+        if(timeLeft <= 0) endGame(false);
+    }, 1000);
+
+    gameArea.addEventListener('mousemove', e => {
+        const rect = gameArea.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        flashlight.setAttribute('cx', x);
+        flashlight.setAttribute('cy', y);
+
+        document.querySelectorAll('.item').forEach(item => {
+            const ix = parseFloat(item.style.left) + 32;
+            const iy = parseFloat(item.style.top) + 32;
+            const dist = Math.hypot(x - ix, y - iy);
+            const visibility = (255 - fogLevel) / 255;
+
+            if (dist < 160) {
+                item.style.opacity = "1";
+                item.style.pointerEvents = "all";
+            } else {
+                item.style.opacity = visibility;
+                item.style.pointerEvents = visibility > 0.4 ? "all" : "none";
+            }
+        });
+    });
+
+    function showPopup(title, text) {
+        document.getElementById('pop-title').innerText = title;
+        document.getElementById('pop-text').innerText = text;
+        document.getElementById('desc-popup').style.display = 'block';
+    }
+
+    function spawn() {
+        for(let i=1; i<=5; i++){
+            create('c' + i + '.png', 'C');
+            create('t' + i + '.png', 'T');
+        }
+    }
+
+    function create(src, type) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'item';
+        img.style.left = Math.random() * (gameArea.clientWidth - 80) + 'px';
+        img.style.top = Math.random() * (gameArea.clientHeight - 80) + 'px';
+        img.onclick = () => {
+            if(!gameActive) return;
+            if(type === 'C') {
+                score++;
+                fogLevel = Math.max(120, fogLevel - 27);
+                collectedItems.push(src);
+                img.remove();
+            } else {
+                score = Math.max(0, score - 1);
+                fogLevel = Math.min(255, fogLevel + 25);
+            }
+            update();
+        };
+        itemsLayer.appendChild(img);
+    }
+
+    function update() {
+        scoreEl.innerText = score;
+        inventoryEl.innerText = collectedItems.join(', ');
+        const hex = Math.round(fogLevel).toString(16).padStart(2, '0');
+        fogBase.setAttribute('fill', `#${hex}${hex}${hex}`);
+        if(score >= 5) endGame(true);
+    }
+
+    function endGame(win) {
+        gameActive = false;
+        clearInterval(clock);
+        const ov = document.getElementById('screen-overlay');
+        
+        if(win) {
+            document.getElementById('master-shadow').style.display = 'none';
+            document.getElementById('ov-title').innerText = "CASO ENCERRADO";
+            document.getElementById('ov-msg').innerText = "Consenso atingido! Os ônibus estão prontos para rodar.";
+            
+            // Ativa animação do ônibus
+            bus.classList.add('animate-bus');
+            
+            // Botão para o link externo
+            btnContainer.innerHTML = '<a href="file:///C:/Temp/teste-jogo-amupe/fds/Onibus/onibus.html" class="btn">PEGUE SEU ÔNIBUS</a>';
+        } else {
+            document.getElementById('ov-title').innerText = "TEMPO ESGOTADO";
+            document.getElementById('ov-msg').innerText = "A demora impediu o funcionamento da frota.";
+            btnContainer.innerHTML = '<button class="btn" onclick="location.reload()">REINICIAR</button>';
+        }
+        ov.style.display = 'flex';
+    }
+
+    spawn();
+</script>
+</body>
+</html>

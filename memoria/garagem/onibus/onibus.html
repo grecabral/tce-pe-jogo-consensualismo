@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Rota do Diálogo - Final</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        canvas { display: block; margin: 0 auto; background: #1a1a1a; cursor: none; }
+        
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+            display: flex; justify-content: space-between; pointer-events: none; z-index: 10;
+            box-sizing: border-box;
+        }
+        
+        .hud-lateral { 
+            background: rgba(255,255,255,0.95); padding: 15px; border-radius: 8px; 
+            border: 3px solid #000; color: #111; min-width: 220px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .tempo-box { font-size: 30px; font-weight: bold; color: #d32f2f; display: block; }
+        .stats-val { font-size: 22px; font-weight: bold; display: block; color: #1b5e20; }
+
+        #container-embarque {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; display: none; background: rgba(255,255,255,0.98);
+            padding: 30px; border-radius: 15px; border: 5px solid #ffeb3b;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6); z-index: 50; width: 80%;
+        }
+
+        #tela-final {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('tfd.jpeg') center/cover no-repeat;
+            display: none; flex-direction: column; justify-content: center; 
+            align-items: center; z-index: 100; text-align: center; padding: 40px; 
+            box-sizing: border-box; opacity: 0; transition: opacity 1.5s ease;
+        }
+
+        #tela-final::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); z-index: -1;
+        }
+
+        .reveal-text {
+            opacity: 0; transform: translateY(30px);
+            animation: revealEffect 1.2s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes revealEffect {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-tce { width: 220px; margin-bottom: 20px; }
+        .texto-narrativo { max-width: 750px; line-height: 1.8; font-size: 1.25rem; color: white; }
+        
+        .btn-inicio {
+            background: #ffeb3b; color: #000; padding: 20px 50px;
+            font-size: 1.3rem; font-weight: 800; border: none; border-radius: 50px;
+            cursor: pointer; text-transform: uppercase; margin-top: 30px;
+        }
+    </style>
+</head>
+<body onclick="iniciarAudio()">
+
+<div id="hud">
+    <div class="hud-lateral">
+        <small>VELOCIDADE</small><br>
+        <span class="stats-val" style="color: #000"><span id="vel-val">0</span> km/h</span>
+    </div>
+    
+    <div class="hud-lateral">
+        <span class="tempo-box">⏱ <span id="timer">60</span>s</span>
+        <hr style="border:0; border-top:1px solid #ccc; margin: 8px 0;">
+        <small>PASSAGEIROS</small><br>
+        <span class="stats-val"><span id="total-hud">0</span> / 40</span>
+    </div>
+</div>
+
+<div id="container-embarque">
+    <div id="texto-dinamico-embarque" style="font-size: 32px; font-weight: bold; color: #000; line-height: 1.4;">
+        Embarcando <span id="p-count" style="color: #d4a017;">0</span> na parada <span id="nome-parada-embarque" style="color: #0369a1; text-transform: uppercase;"></span>
+    </div>
+</div>
+
+<div id="tela-final">
+    <img src="../assets/logo_tce.png" alt="TCE" class="logo-tce">
+    <h1 id="res-titulo" class="reveal-text" style="font-size: 3.5rem; color: #ffeb3b; margin-bottom: 20px; animation-delay: 0.3s;"></h1>
+    <div id="res-desc" class="texto-narrativo reveal-text" style="animation-delay: 0.8s;"></div>
+    <p class="reveal-text" style="font-style: italic; color: #cbd5e1; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 25px; margin-top: 25px; max-width: 650px; animation-delay: 1.3s;">
+        Esta história é baseada em uma situação real envolvendo os estados de Mato Grosso e Bahia na compra de trens urbanos, resolvida através de métodos consensuais.
+    </p>
+    <button class="btn-inicio reveal-text" style="animation-delay: 1.8s;" onclick="window.location.href='../index.html'">Voltar ao Início</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 600;
+canvas.height = window.innerHeight;
+
+const assets = {
+    pista: new Image(),
+    onibus: new Image(),
+    cavalete: new Image()
+};
+assets.pista.src = 'pista.jpg';
+assets.onibus.src = 'onibus.png';
+assets.cavalete.src = 'cavalete.png';
+
+let imagensCarregadas = 0;
+function checar() { imagensCarregadas++; if(imagensCarregadas === 3) requestAnimationFrame(draw); }
+assets.pista.onload = checar;
+assets.onibus.onload = checar;
+assets.cavalete.onload = checar;
+
+let audioCtx, motorOsc, motorGain;
+function iniciarAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    motorOsc = audioCtx.createOscillator(); motorGain = audioCtx.createGain();
+    motorOsc.type = 'sawtooth'; motorOsc.connect(motorGain); motorGain.connect(audioCtx.destination);
+    motorGain.gain.setValueAtTime(0, audioCtx.currentTime); motorOsc.start();
+}
+
+function playSound(freq, type, duration, vol) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
+    osc.type = type; osc.connect(g); g.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+
+let gameActive = true, timeLeft = 60, passageirosTotais = 0;
+let velocidadeCruzeiro = 10.0, velocidadeAtual = 10.0, pistaY = 0;
+let mouseX = 300, estado = "DIRIGINDO", lastParadaTime = Date.now();
+const bus = { x: 270, y: canvas.height - 180, w: 65, h: 130 };
+const obstáculos = [];
+const parada = { x: 340, y: -500, w: 100, h: 320, ativa: false, palavra: "" };
+
+const palavrasBuraco = ["Atrasos", "Demora", "Má fé", "Impasse", "Imposição", "Hostilidade", "Intimidação", "Coação"];
+const palavrasParada = ["HORIZONTALIDADE", "ESCUTA ATIVA", "MEDIAÇÃO", "DIÁLOGO", "CONSENSO"];
+let paradaIndex = 0;
+
+window.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+});
+
+const timerInterval = setInterval(() => {
+    if (gameActive && estado !== "EMBARCANDO") {
+        timeLeft--;
+        document.getElementById('timer').innerText = Math.max(0, timeLeft);
+        if (timeLeft <= 0) finalizar();
+    }
+}, 1000);
+
+function finalizar() {
+    gameActive = false;
+    clearInterval(timerInterval);
+    if(motorGain) motorGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+    
+    const telaFinal = document.getElementById('tela-final');
+    telaFinal.style.display = 'flex';
+    setTimeout(() => { telaFinal.style.opacity = '1'; }, 50);
+
+    const venceu = passageirosTotais >= 40;
+    document.getElementById('res-titulo').innerText = venceu ? "MISSÃO CUMPRIDA!" : "FALTOU DIÁLOGO";
+    document.getElementById('res-desc').innerHTML = venceu ? 
+        "O transporte chegou a tempo! Graças à sua gestão baseada no <strong>Consensualismo</strong>, os conflitos foram superados e a população chegou ao atendimento médico com segurança." : 
+        "Muitos impasses impediram o embarque de todos os passageiros. Sem consenso e cooperação ágil, a gestão pública trava e a população sofre.";
+}
+
+function update() {
+    if (!gameActive) return;
+    if (passageirosTotais >= 40) { finalizar(); return; }
+
+    if (motorGain) {
+        motorGain.gain.setTargetAtTime(0.04, audioCtx.currentTime, 0.1);
+        motorOsc.frequency.setTargetAtTime(40 + (velocidadeAtual * 6), audioCtx.currentTime, 0.1);
+    }
+
+    let limiteEsq = 120, limiteDir = canvas.width - 120 - bus.w;
+    bus.x += (mouseX - bus.x - bus.w/2) * 0.2;
+    if (bus.x < limiteEsq) bus.x = limiteEsq;
+    if (bus.x > limiteDir) bus.x = limiteDir;
+
+    if (estado === "DIRIGINDO" && Date.now() - lastParadaTime > 7000) {
+        estado = "PARANDO"; parada.y = -400; parada.ativa = true;
+        parada.palavra = palavrasParada[paradaIndex];
+        paradaIndex = (paradaIndex + 1) % palavrasParada.length;
+    }
+
+    if (estado === "PARANDO") {
+        parada.y += velocidadeAtual;
+        const naZona = bus.x > parada.x - 40 && bus.x < parada.x + 40 && Math.abs((bus.y + 65) - (parada.y + 160)) < 110;
+        if (naZona) {
+            velocidadeAtual = Math.max(0, velocidadeAtual - 0.8);
+            if (velocidadeAtual === 0) {
+                estado = "EMBARCANDO";
+                // Atualiza o nome da parada no modal
+                document.getElementById('nome-parada-embarque').innerText = parada.palavra;
+                document.getElementById('container-embarque').style.display = 'block';
+                embarcar(0);
+            }
+        } else if (parada.y > canvas.height) {
+            estado = "DIRIGINDO"; velocidadeAtual = velocidadeCruzeiro;
+            parada.ativa = false; lastParadaTime = Date.now();
+        }
+    }
+
+    pistaY += velocidadeAtual;
+    if (pistaY >= canvas.height) pistaY = 0;
+
+    obstáculos.forEach((b, i) => {
+        b.y += velocidadeAtual;
+        if (b.y + b.h > bus.y && b.y < bus.y + bus.h && b.x + b.w > bus.x && b.x < bus.x + bus.w) {
+            playSound(100, 'square', 0.2, 0.1);
+            obstáculos.splice(i, 1); velocidadeAtual = 4;
+        }
+        if (b.y > canvas.height) obstáculos.splice(i, 1);
+    });
+
+    if (estado === "DIRIGINDO") {
+        if (velocidadeAtual < velocidadeCruzeiro) velocidadeAtual += 0.1;
+        if (Math.random() < 0.02) {
+            obstáculos.push({ x: 180 + Math.random() * 180, y: -100, w: 60, h: 60, txt: palavrasBuraco[Math.floor(Math.random() * palavrasBuraco.length)] });
+        }
+    }
+    document.getElementById('vel-val').innerText = Math.floor(velocidadeAtual * 7);
+}
+
+function embarcar(count) {
+    if (count < 10) {
+        count++; passageirosTotais++;
+        playSound(400 + (count * 50), 'sine', 0.1, 0.1);
+        document.getElementById('total-hud').innerText = passageirosTotais;
+        // Atualiza o número de passageiros embarcando
+        document.getElementById('p-count').innerText = count;
+        setTimeout(() => embarcar(count), 200);
+    } else {
+        setTimeout(() => {
+            estado = "DIRIGINDO"; velocidadeAtual = velocidadeCruzeiro;
+            parada.ativa = false; lastParadaTime = Date.now();
+            document.getElementById('container-embarque').style.display = 'none';
+        }, 400);
+    }
+}
+
+function draw() {
+    update();
+    ctx.clearRect(0,0, canvas.width, canvas.height);
+    ctx.drawImage(assets.pista, 0, pistaY - canvas.height, canvas.width, canvas.height);
+    ctx.drawImage(assets.pista, 0, pistaY, canvas.width, canvas.height);
+
+    if (parada.ativa) {
+        ctx.fillStyle = "rgba(255, 235, 59, 0.4)";
+        ctx.fillRect(parada.x, parada.y, parada.w, parada.h);
+        ctx.save();
+        ctx.translate(parada.x + parada.w/2, parada.y + parada.h/2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = "900 28px 'Arial Black', sans-serif";
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "black"; ctx.lineWidth = 4;
+        ctx.strokeText(parada.palavra, 0, 10);
+        ctx.fillStyle = "#fff";
+        ctx.fillText(parada.palavra, 0, 10);
+        ctx.restore();
+    }
+
+    obstáculos.forEach(b => { 
+        if(assets.cavalete.complete) ctx.drawImage(assets.cavalete, b.x, b.y, b.w, b.h);
+        ctx.fillStyle = "white"; ctx.font = "bold 18px Arial"; ctx.textAlign = "center";
+        ctx.strokeStyle = "black"; ctx.lineWidth = 3;
+        ctx.strokeText(b.txt, b.x + 30, b.y - 10); ctx.fillText(b.txt, b.x + 30, b.y - 10);
+    });
+
+    ctx.drawImage(assets.onibus, bus.x, bus.y, bus.w, bus.h);
+    if (gameActive) requestAnimationFrame(draw);
+}
+</script>
+</body>
+</html>

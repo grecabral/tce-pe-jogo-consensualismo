@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Mesa de Negociação - Jogo da Memória</title>
+    <style>
+        body { 
+            margin: 0; 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('sala_reuniao.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: white; font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
+        }
+
+        #menu, #game-container, #insight-modal { text-align: center; }
+        #game-container, #insight-modal { display: none; }
+
+        .btn {
+            padding: 15px 40px; margin: 20px auto; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s;
+            background: #10b981; color: white; display: inline-block;
+        }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        /* BARRA DE STATUS */
+        #stats { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            gap: 60px; 
+            font-size: 1.3rem; 
+            margin: 0 auto 40px auto;
+            background: rgba(30, 41, 59, 0.9); 
+            padding: 15px 60px; 
+            border-radius: 100px; 
+            border: 2px solid #334155;
+            width: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #board-wrapper { display: flex; gap: 60px; justify-content: center; }
+        .column-label { margin-bottom: 20px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; }
+
+        .game-column { display: grid; grid-template-columns: repeat(2, 130px); grid-gap: 15px; }
+
+        .card { 
+            width: 130px; height: 130px; position: relative; cursor: pointer;
+            border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            user-select: none;
+        }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            padding: 12px; border-radius: 12px; text-align: center;
+            box-sizing: border-box; font-weight: bold; font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .card-back { 
+            background-image: url('logo.png');
+            background-size: 45%; background-repeat: no-repeat; background-position: center;
+            z-index: 2;
+        }
+        .card.tech .card-back { background-color: #f87171; border: 2px solid #ef4444; } 
+        .card.mean .card-back { background-color: #3b82f6; border: 2px solid #2563eb; } 
+
+        .card-front { display: none; z-index: 1; border: 2px solid white; }
+        .card.tech .card-front { background: #1e3a8a; } 
+        .card.mean .card-front { background: #0369a1; } 
+
+        .card.flipped .card-back { display: none; }
+        .card.flipped .card-front { display: flex; }
+        .card.matched .card-front { background: #059669 !important; border-color: #a7f3d0 !important; }
+
+        #insight-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 9999; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: #1e293b; padding: 40px; border-radius: 25px;
+            max-width: 500px; border: 2px solid #3b82f6; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menu">
+        <h1 style="font-size: 3rem; margin-bottom: 10px;">🤝 Mesa de Negociação 🤝</h1>
+        <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 30px;">Aprimore suas habilidades de mediação e resolução de conflitos.</p>
+        <button class="btn" onclick="startGame()">Iniciar Desafio</button>
+    </div>
+
+    <div id="game-container">
+        <div id="stats">
+            <span>Pares: <strong id="matches" style="color: #10b981;">0</strong> / 6</span>
+            <span id="timer">Tempo: <strong style="color: #fbbf24;">60s</strong></span>
+        </div>
+        
+        <div id="board-wrapper">
+            <div>
+                <div class="column-label">Técnicas</div>
+                <div id="col-tech" class="game-column"></div>
+            </div>
+            <div>
+                <div class="column-label">Significados</div>
+                <div id="col-mean" class="game-column"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="insight-modal">
+        <div class="modal-content">
+            <h2 id="insight-title" style="color:#3b82f6; margin-bottom: 20px;">💡 Insight</h2>
+            <p id="insight-text" style="line-height: 1.8; font-size: 1.15rem; margin-bottom: 30px;"></p>
+            <button class="btn" onclick="closeInsight()">Continuar Mediação</button>
+        </div>
+    </div>
+
+<script>
+    const pairsData = [
+        { tech: "Escuta Ativa", mean: "Ouvir sem julgar e com empatia", info: "Ouvir gera validação. Quando as partes se sentem ouvidas, a resistência ao acordo diminui drasticamente." },
+        { tech: "Linguagem Eu", mean: "Falar da própria percepção sem acusar", info: "Evita ataques e mantém o diálogo aberto ao focar em sentimentos e necessidades próprias, não em culpas alheias." },
+        { tech: "Conotação Positiva", mean: "Reconhecer o valor do outro", info: "O mediador extrai o interesse legítimo e a necessidade positiva mesmo de uma fala agressiva ou desestruturada." },
+        { tech: "Parafrasear", mean: "Repetir com suas palavras para validar", info: "Garante que o mediador entendeu bem a mensagem e demonstra à parte que ela foi realmente compreendida." },
+        { tech: "Perguntas Abertas", mean: "Estimular o outro a pensar em soluções", info: "Perguntas com 'Como' ou 'O que' tiram as pessoas do passado (foco no erro) e as levaram a construir o futuro (foco na solução)." },
+        { tech: "Resumo", mean: "Sintetizar pontos de acordo encontrados", info: "O resumo consolida os avanços realizados na conversa, impedindo que o diálogo ande em círculos e se perca no conflito." }
+    ];
+
+    let flippedCards = [];
+    let matchedCount = 0;
+    let timeLeft = 60;
+    let timerInterval;
+    let isPaused = false;
+
+    function startGame() {
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('game-container').style.display = 'block';
+        matchedCount = 0; timeLeft = 60; flippedCards = [];
+        document.getElementById('matches').innerText = "0";
+
+        const colTech = document.getElementById('col-tech');
+        const colMean = document.getElementById('col-mean');
+        colTech.innerHTML = ''; colMean.innerHTML = '';
+
+        let tCards = pairsData.map(p => ({ text: p.tech, id: p.tech, info: p.info, type: 'tech' }));
+        let mCards = pairsData.map(p => ({ text: p.mean, id: p.tech, info: p.info, type: 'mean' }));
+
+        tCards.sort(() => Math.random() - 0.5);
+        mCards.sort(() => Math.random() - 0.5);
+
+        tCards.forEach(d => colTech.appendChild(createCard(d)));
+        mCards.forEach(d => colMean.appendChild(createCard(d)));
+
+        startTimer();
+    }
+
+    function createCard(data) {
+        const card = document.createElement('div');
+        card.className = `card ${data.type}`; 
+        card.dataset.id = data.id;
+        card.innerHTML = `<div class="card-face card-back"></div><div class="card-face card-front">${data.text}</div>`;
+        
+        card.onclick = function() {
+            if (isPaused || this.classList.contains('flipped') || flippedCards.length >= 2) return;
+            this.classList.add('flipped');
+            flippedCards.push(this);
+
+            if (flippedCards.length === 2) {
+                isPaused = true;
+                const [c1, c2] = flippedCards;
+                if (c1.dataset.id === c2.dataset.id && c1 !== c2) {
+                    c1.classList.add('matched'); c2.classList.add('matched');
+                    matchedCount++;
+                    document.getElementById('matches').innerText = matchedCount;
+                    flippedCards = [];
+                    // Tempo aumentado para 1.5 segundos antes de abrir o modal de sucesso
+                    setTimeout(() => {
+                        const info = pairsData.find(p => p.tech === c1.dataset.id).info;
+                        showInsight(c1.dataset.id, info);
+                    }, 1500); 
+                } else {
+                  
+                    setTimeout(() => {
+                        c1.classList.remove('flipped'); c2.classList.remove('flipped');
+                        flippedCards = []; isPaused = false;
+                    }, 2000); 
+                }
+            }
+        };
+        return card;
+    }
+
+    function showInsight(title, text) {
+        document.getElementById('insight-title').innerText = "Técnica: " + title;
+        document.getElementById('insight-text').innerText = text;
+        document.getElementById('insight-modal').style.display = 'flex';
+    }
+
+    function closeInsight() {
+        document.getElementById('insight-modal').style.display = 'none';
+        isPaused = false;
+        if (matchedCount === 6) endGame(true);
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if(!isPaused) {
+                timeLeft--;
+                document.getElementById('timer').innerHTML = `Tempo: <strong style="color: #fbbf24;">${timeLeft}s</strong>`;
+                if (timeLeft <= 0) endGame(false);
+            }
+        }, 1000);
+    }
+
+    function endGame(win) {
+        clearInterval(timerInterval);
+        let msg = "";
+        if(win) {
+            msg = "🏆 VITÓRIA!\n\nO consensualismo transforma a gestão pública ao substituir o confronto pela cooperação. Você demonstrou que com as técnicas certas, o diálogo sempre vence o conflito!";
+        } else {
+            msg = "⌛ TEMPO ESGOTADO!\n\nNa mediação real, o tempo e a paciência são fundamentais. Quando o diálogo se perde, a solução se distancia. Tente novamente para dominar as ferramentas do consenso!";
+        }
+        alert(msg);
+        location.reload();
+    }
+</script>
+</body>
+</html>

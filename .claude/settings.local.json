@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/guilherme/Documentos/Amupe/Abertura/**)",
+      "Read(//home/guilherme/Documentos/Amupe/**)",
+      "Bash(git *)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(sudo -n true)"
+    ]
+  }
+}

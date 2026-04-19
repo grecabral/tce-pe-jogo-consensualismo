@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rodovia do Consenso - Cenário Expandido</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+        
+        body { margin: 0; padding: 0; overflow: hidden; background-color: #222; font-family: 'Bungee', cursive; display: flex; justify-content: center; align-items: center; height: 100vh; }
+
+        #game-wrapper { position: relative; width: 50vw; height: 90vh; background-color: #1b5e20; overflow: hidden; border: 4px solid #444; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+
+        /* Horizonte */
+        #horizon-city { position: absolute; top: 0; left: 0; width: 100%; height: 80px; background: linear-gradient(to bottom, #87CEEB 50%, #1b5e20); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+        .city-shape { width: 100%; height: 35px; background-color: #333; clip-path: polygon(0% 100%, 5% 40%, 10% 100%, 15% 20%, 20% 100%, 30% 50%, 40% 100%, 50% 10%, 60% 100%, 75% 40%, 85% 100%, 95% 60%, 100% 100%); }
+
+        /* Pista */
+        #road { position: absolute; left: 20%; width: 60%; top: 0; bottom: 0; background-color: #444; border-left: 10px solid #777; border-right: 10px solid #777; z-index: 5; }
+
+        /* Ônibus */
+        #bus { position: absolute; bottom: 40px; left: 50%; width: 60px; height: 100px; background-image: url('bus.png'); background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 50; transform: translateX(-50%); filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); }
+
+        /* --- CENÁRIO AMPLIADO (3X MAIOR) --- */
+        .scenery { position: absolute; z-index: 10; pointer-events: none; }
+        
+        /* Tamanhos triplicados */
+        .tree-img { width: 120px; height: 210px; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); }
+        .house-img { width: 180px; height: 150px; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); }
+
+        /* Itens de Jogo */
+        .item { position: absolute; z-index: 40; }
+        .star { width: 30px; height: 30px; background: #ffcc00; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+        .pit { width: 70px; height: 35px; background: rgba(0,0,0,0.8); border-radius: 50%; }
+
+        /* Sinalização */
+        .road-line { position: absolute; left: 50%; width: 6px; height: 60px; background: white; transform: translateX(-50%); z-index: 6; }
+        .warning-sign { position: absolute; width: 60%; left: 20%; height: 60px; background: #004400; color: white; text-align: center; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; z-index: 60; }
+        .tunnel-gate { position: absolute; width: 30%; height: 120px; color: white; text-align: center; font-size: 0.8rem; display: flex; flex-direction: column; justify-content: center; border-radius: 10px 10px 0 0; border: 6px solid #888; box-sizing: border-box; z-index: 30; }
+
+        #ui { position: absolute; top: 15px; width: 100%; text-align: center; color: white; z-index: 100; text-shadow: 2px 2px #000; font-size: 1rem; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 51, 102, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 200; text-align: center; color: white; padding: 20px; box-sizing: border-box; }
+        .btn { background: #ffcc00; border: none; padding: 15px 30px; font-family: 'Bungee'; cursor: pointer; border-radius: 50px; color: #003366; margin-top: 15px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+<div id="game-wrapper">
+    <div id="horizon-city"><div class="city-shape"></div></div>
+    <div id="road"></div>
+    <div id="bus"></div>
+    <div id="ui">PONTOS: <span id="score">0</span> | <span id="timer">30</span>s</div>
+
+    <div id="overlay">
+        <h1>RODOVIA MAX</h1>
+        <p>Cenário 3x maior e sem sobreposição.<br>Mantenha o foco na estrada!</p>
+        <button class="btn" onclick="startGame()">PARTIR</button>
+    </div>
+</div>
+
+<script>
+    const wrapper = document.getElementById('game-wrapper');
+    const road = document.getElementById('road');
+    const bus = document.getElementById('bus');
+    const scoreEl = document.getElementById('score');
+    const timerEl = document.getElementById('timer');
+    const overlay = document.getElementById('overlay');
+
+    let score = 0, timeLeft = 30, gameActive = false;
+    let baseSpeed = 6, currentSpeed = 6;
+    let items = [], lines = [], scenery = [];
+    let lineTimer = 0;
+    let lastSceneryY = 0; // Para controle de sobreposição
+
+    wrapper.addEventListener('mousemove', (e) => {
+        if(!gameActive) return;
+        let rect = wrapper.getBoundingClientRect();
+        let busWidth = bus.offsetWidth;
+        let minX = road.offsetLeft;
+        let maxX = road.offsetLeft + road.offsetWidth - busWidth;
+        let busX = e.clientX - rect.left - (busWidth / 2);
+        
+        if(busX < minX) busX = minX;
+        if(busX > maxX) busX = maxX;
+        
+        bus.style.left = busX + 'px';
+        bus.style.transform = 'none';
+    });
+
+    function startGame() {
+        score = 0; timeLeft = 30; items = []; lines = []; scenery = []; gameActive = true;
+        overlay.style.display = 'none';
+        scoreEl.innerText = score;
+        lineTimer = 0;
+        lastSceneryY = 0;
+        update();
+        startTimer();
+    }
+
+    function startTimer() {
+        let timerInt = setInterval(() => {
+            if(!gameActive) { clearInterval(timerInt); return; }
+            timeLeft--;
+            timerEl.innerText = timeLeft;
+
+            if (timeLeft % 10 > 7) currentSpeed = baseSpeed * 0.45;
+            else currentSpeed = baseSpeed;
+
+            if (timeLeft === 25 || timeLeft === 15) spawnWarning();
+            if (timeLeft === 20 || timeLeft === 10) spawnTunnels();
+            if (timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function spawnWarning() {
+        const sign = document.createElement('div');
+        sign.className = 'warning-sign';
+        sign.style.top = '-100px';
+        sign.innerText = 'TÚNEL CONSENSO OU PUNIÇÃO A 5KM';
+        wrapper.appendChild(sign);
+        items.push({ el: sign, type: 'sign', y: -100 });
+    }
+
+    function spawnTunnels() {
+        const t1 = document.createElement('div');
+        t1.className = 'tunnel-gate';
+        t1.style.left = '20%'; t1.style.top = '-150px';
+        t1.style.backgroundColor = 'rgba(46, 204, 113, 0.4)';
+        t1.innerHTML = '<b>CONSENSO</b>';
+        
+        const t2 = document.createElement('div');
+        t2.className = 'tunnel-gate';
+        t2.style.left = '50%'; t2.style.top = '-150px';
+        t2.style.backgroundColor = 'rgba(231, 76, 60, 0.4)';
+        t2.innerHTML = '<b>PUNIÇÃO</b>';
+
+        wrapper.appendChild(t1); wrapper.appendChild(t2);
+        items.push({ el: t1, type: 'tunnel', y: -150, name: 'C' }, { el: t2, type: 'tunnel', y: -150, name: 'P' });
+    }
+
+    // --- LÓGICA DE CENÁRIO ANTISOBREPOSIÇÃO ---
+    function spawnScenery() {
+        // Só tenta criar se o último objeto já tiver descido pelo menos 250px
+        if(lastSceneryY > 250 || scenery.length === 0) {
+            if(Math.random() < 0.2) { 
+                const isTree = Math.random() > 0.5;
+                const element = document.createElement('img');
+                element.className = 'scenery';
+                element.src = isTree ? 'tree.png' : 'house.png';
+                element.classList.add(isTree ? 'tree-img' : 'house-img');
+
+                const onLeft = Math.random() > 0.5;
+                // Ajuste de X para que as imagens grandes não entrem no asfalto
+                if(onLeft) {
+                    element.style.left = (Math.random() * -5) + '%'; // Margem esquerda externa
+                } else {
+                    element.style.left = (Math.random() * 5 + 85) + '%'; // Margem direita externa
+                }
+
+                element.style.top = '-300px'; 
+                wrapper.appendChild(element);
+                scenery.push({ el: element, y: -300 });
+                lastSceneryY = 0; // Reseta o contador de distância
+            }
+        }
+    }
+
+    function spawnObject() {
+        if(Math.random() < 0.05) {
+            const isStar = Math.random() > 0.5;
+            const item = document.createElement('div');
+            item.className = isStar ? 'item star' : 'item pit';
+            let roadStart = road.offsetLeft;
+            let roadEnd = road.offsetLeft + road.offsetWidth - 70;
+            item.style.left = (Math.random() * (roadEnd - roadStart) + roadStart) + 'px';
+            item.style.top = '-60px';
+            wrapper.appendChild(item);
+            items.push({ el: item, type: isStar ? 'star' : 'pit', y: -60 });
+        }
+    }
+
+    function update() {
+        if(!gameActive) return;
+
+        // Linhas Brancas
+        lineTimer += currentSpeed;
+        if(lineTimer >= 120) { 
+            const line = document.createElement('div');
+            line.className = 'road-line';
+            line.style.top = '-65px';
+            wrapper.appendChild(line);
+            lines.push({ el: line, y: -65 });
+            lineTimer = 0;
+        }
+
+        lines.forEach((l, i) => {
+            l.y += currentSpeed;
+            l.el.style.top = l.y + 'px';
+            if(l.y > wrapper.offsetHeight) { l.el.remove(); lines.splice(i, 1); }
+        });
+
+        // Atualiza distância para evitar sobreposição
+        lastSceneryY += currentSpeed;
+        spawnScenery();
+
+        scenery.forEach((s, i) => {
+            s.y += currentSpeed;
+            s.el.style.top = s.y + 'px';
+            if(s.y > wrapper.offsetHeight + 400) { s.el.remove(); scenery.splice(i, 1); }
+        });
+
+        spawnObject();
+        items.forEach((item, i) => {
+            item.y += currentSpeed;
+            item.el.style.top = item.y + 'px';
+            const bR = bus.getBoundingClientRect();
+            const iR = item.el.getBoundingClientRect();
+
+            if (!(bR.right < iR.left || bR.left > iR.right || bR.bottom < iR.top || bR.top > iR.bottom)) {
+                if(item.type === 'star') {
+                    score += 5; item.el.remove(); items.splice(i, 1);
+                } else if(item.type === 'pit') {
+                    score = Math.max(0, score - 10); item.el.remove(); items.splice(i, 1);
+                } else if(item.type === 'tunnel') {
+                    handleTunnel(item.name);
+                    item.el.remove(); items.splice(i, 1);
+                }
+                scoreEl.innerText = score;
+            }
+            if(item.y > wrapper.offsetHeight) { item.el.remove(); items.splice(i, 1); }
+        });
+
+        requestAnimationFrame(update);
+    }
+
+    function handleTunnel(type) {
+        if(type === 'C') {
+            score += 20;
+            road.style.backgroundColor = '#145a32';
+            setTimeout(() => road.style.backgroundColor = '#444', 1500);
+        } else {
+            score = Math.max(0, score - 10);
+            road.style.backgroundColor = '#1a0000';
+            setTimeout(() => road.style.backgroundColor = '#444', 1500);
+        }
+        scoreEl.innerText = score;
+    }
+
+    function endGame() {
+        gameActive = false;
+        overlay.style.display = 'flex';
+        overlay.innerHTML = `<h1>FIM</h1><p>Resultado Final: ${score}</p><button class="btn" onclick="location.reload()">RECOMEÇAR</button>`;
+    }
+</script>
+
+</body>
+</html>

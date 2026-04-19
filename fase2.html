@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dilema das Portas - Fase 2</title>
+    <style>
+        :root {
+            --cor-jogador: #3498db; 
+            --cor-oponente: #e67e22; 
+        }
+        body {
+            background: #1a1a1a;
+            color: #ecf0f1;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .cenario { display: flex; gap: 40px; }
+        .porta {
+            width: 150px;
+            height: 250px;
+            border: 4px solid #333;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .porta:hover { transform: scale(1.05); }
+        .sua-cor { background-color: var(--cor-jogador); }
+        .outra-cor { background-color: var(--cor-oponente); }
+        
+        #resultado {
+            display: none;
+            text-align: center;
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="jogo">
+        <h1>Fase 2: O Espelhamento</h1>
+        <p>O jogador fictício agora observa seus passos...</p>
+        <div class="cenario">
+            <div class="porta sua-cor" onclick="jogar('propria')">MINHA COR</div>
+            <div class="porta outra-cor" onclick="jogar('outra')">OUTRA COR</div>
+        </div>
+    </div>
+
+    <div id="resultado">
+        <h2 id="status-txt"></h2>
+        <p id="pontos-txt"></p>
+        <button onclick="proximaFase()">Ir para Fase 3</button>
+    </div>
+
+    <script>
+        // Recuperar pontuação da Fase 1 (usando localStorage)
+        let totalScore = parseInt(localStorage.getItem('score')) || 0;
+
+        function jogar(escolha) {
+            const jogoDiv = document.getElementById('jogo');
+            const resDiv = document.getElementById('resultado');
+            
+            // LÓGICA FASE 2: O NPC repete a decisão do jogador
+            let escolhaNPC = escolha; 
+            let pontosGanhos = 0;
+
+            if (escolha === 'propria') {
+                pontosGanhos = 1;
+                document.getElementById('status-txt').innerText = "Coordenação!";
+                document.getElementById('pontos-txt').innerText = "Ambos escolheram sua cor. +1 ponto.";
+            } else {
+                pontosGanhos = 0;
+                document.getElementById('status-txt').innerText = "Falha!";
+                document.getElementById('pontos-txt').innerText = "Você mudou, mas o NPC te imitou. 0 pontos.";
+            }
+
+            totalScore += pontosGanhos;
+            localStorage.setItem('score', totalScore); // Salva para a Fase 3
+
+            jogoDiv.style.display = 'none';
+            resDiv.style.display = 'block';
+        }
+
+        function proximaFase() {
+            // Aqui você criaria o arquivo fase3.html
+            window.location.href = "fase3.html";
+        }
+    </script>
+</body>
+</html>

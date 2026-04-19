@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consenso Metro Recife - DESAFIO 30s</title>
+    <style>
+        body { 
+            margin: 0; background: #050505; color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; min-height: 100vh; overflow-x: hidden;
+        }
+        
+        #ui-top {
+            display: flex; width: 100%; max-width: 1000px; 
+            justify-content: space-between; align-items: center; 
+            margin-bottom: 10px; padding: 0 10px; box-sizing: border-box;
+        }
+
+        #timer-display {
+            font-size: 24px; font-weight: bold; color: #ff4444; 
+            background: rgba(255,0,0,0.1); padding: 5px 15px; 
+            border: 1px solid #ff4444; border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        /* Container Principal Responsivo */
+        #game-container {
+            position: relative;
+            width: 95vw; max-width: 1000px;
+            height: 56.25vw; max-height: 563px; /* Mantém proporção 16:9 */
+            border: 3px solid #444;
+            background-image: url('metro.png'); 
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
+
+        #dust-canvas {
+            position: absolute; top: 0; left: 0; z-index: 2; 
+            pointer-events: none; width: 100%; height: 100%;
+        }
+
+        #interaction-layer {
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; z-index: 3;
+            cursor: crosshair;
+        }
+
+        .hotspot { 
+            position: absolute; cursor: pointer; border-radius: 50%;
+            z-index: 4; opacity: 0; border: 2px dashed rgba(255,255,255,0.5);
+            transition: opacity 0.3s, transform 0.2s;
+        }
+        .hotspot:hover { 
+            background: rgba(0, 255, 255, 0.2); 
+            box-shadow: 0 0 20px #00d2ff;
+            transform: scale(1.1);
+        }
+
+        /* Localização ajustada dos itens */
+        #pacto { top: 62%; left: 30%; width: 8%; height: 14%; }      
+        #tabela { top: 58%; left: 81%; width: 7%; height: 10%; }     
+        #ouvidoria { top: 73%; left: 91%; width: 5%; height: 12%; }  
+
+        #inventory { 
+            width: 100%; max-width: 1000px; background: #111; 
+            padding: 15px; display: flex; justify-content: center; 
+            gap: 10px; border-top: 3px solid #ffcc00; box-sizing: border-box;
+        }
+        .slot { 
+            flex: 1; padding: 10px; border: 1px solid #333; 
+            text-align: center; font-size: 13px; color: #666;
+            transition: all 0.5s;
+        }
+        .slot.found { 
+            border: 1px solid #00ff88; color: #00ff88; 
+            background: rgba(0,255,136,0.1); font-weight: bold;
+        }
+
+        #msg { 
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.95); padding: 15px; border-radius: 5px;
+            width: 80%; text-align: center; display: none; 
+            border: 1px solid #ffcc00; z-index: 10;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="ui-top">
+        <h2 style="color:#ffcc00; margin:0;">Operação Consenso Recife</h2>
+        <div id="timer-display">Tempo: 30s</div>
+    </div>
+
+    <div id="game-container">
+        <div id="pacto" class="hotspot" onclick="coletar('pacto', 'Interesse Público', 'Pacto do Estado encontrado!')"></div>
+        <div id="tabela" class="hotspot" onclick="coletar('tabela', 'Transparência', 'Viabilidade da Empresa revelada!')"></div>
+        <div id="ouvidoria" class="hotspot" onclick="coletar('ouvidoria', 'Voz do Usuário', 'Voz da Sociedade integrada!')"></div>
+
+        <div id="interaction-layer"></div>
+        <canvas id="dust-canvas"></canvas>
+        <div id="msg"></div>
+    </div>
+
+    <div id="inventory">
+        <div id="slot-pacto" class="slot">? ESTADO</div>
+        <div id="slot-tabela" class="slot">? EMPRESA</div>
+        <div id="slot-ouvidoria" class="slot">? USUÁRIOS</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('dust-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-container');
+        const interaction = document.getElementById('interaction-layer');
+        const timerDisplay = document.getElementById('timer-display');
+        
+        let timeLeft = 30;
+        let itemsFound = 0;
+        let gameOver = false;
+
+        // Ajusta o tamanho real do canvas ao carregar
+        function setupCanvas() {
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            ctx.fillStyle = '#3d3834'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('load', setupCanvas);
+        window.addEventListener('resize', setupCanvas);
+        
+        // Loop do Cronômetro
+        const countdown = setInterval(() => {
+            if (gameOver) return;
+            timeLeft--;
+            timerDisplay.innerText = `Tempo: ${timeLeft}s`;
+
+            if (timeLeft <= 10) timerDisplay.style.color = "#ffeb3b";
+            if (timeLeft <= 5) timerDisplay.style.animation = "blink 0.5s infinite";
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                gameOver = true;
+                alert("O TEMPO ACABOU! O conflito se agravou e o consenso não foi atingido.");
+                location.reload();
+            }
+        }, 1000);
+
+        function scrub(e) {
+            if (gameOver) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            // Suporte para Mouse e Touch
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 40, 0, Math.PI * 2);
+            ctx.fill();
+
+            checkReveal(x, y);
+        }
+
+        interaction.addEventListener('mousemove', scrub);
+        interaction.addEventListener('touchmove', (e) => { e.preventDefault(); scrub(e); }, {passive: false});
+
+        function checkReveal(x, y) {
+            document.querySelectorAll('.hotspot').forEach(hs => {
+                const hsRect = hs.getBoundingClientRect();
+                const contRect = container.getBoundingClientRect();
+                
+                // Centro do hotspot em relação ao canvas
+                const hsX = (hsRect.left - contRect.left) + (hsRect.width / 2);
+                const hsY = (hsRect.top - contRect.top) + (hsRect.height / 2);
+
+                const dist = Math.sqrt((x - hsX)**2 + (y - hsY)**2);
+                
+                // Se o "limpador" passar perto, revela o brilho do item
+                if (dist < 70) {
+                    hs.style.opacity = "0.8";
+                }
+            });
+        }
+
+        function coletar(id, nome, texto) {
+            if (gameOver) return;
+            const slot = document.getElementById('slot-' + id);
+            if(slot.classList.contains('found')) return;
+
+            slot.classList.add('found');
+            slot.innerText = '✔ ' + nome;
+
+            const msg = document.getElementById('msg');
+            msg.innerHTML = `<strong>${nome}</strong><br>${texto}`;
+            msg.style.display = 'block';
+            
+            // Esconde a dica visual após coletar
+            const item = document.getElementById(id);
+            item.style.display = 'none';
+
+            itemsFound++;
+            
+            if(itemsFound === 3) {
+                gameOver = true;
+                clearInterval(countdown);
+                setTimeout(() => {
+                    alert("VITÓRIA! Você atingiu o consensualismo em " + (30 - timeLeft) + " segundos!");
+                }, 500);
+            } else {
+                // Esconde a mensagem informativa após 3 segundos para não obstruir o jogo
+                setTimeout(() => { if(!gameOver) msg.style.display = 'none'; }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

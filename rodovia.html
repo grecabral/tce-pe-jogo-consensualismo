@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrada do Consenso Realista | TCE-PE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+        :root {
+            /* Cores de backup caso as imagens não carreguem */
+            --road-grey: #333; 
+            --tce-gold: #ffcc00;
+            --tce-blue: #003366;
+            --car-red: #b71c1c;
+        }
+
+        body {
+            margin: 0; padding: 0; overflow: hidden;
+            /* Grama de backup */
+            background-color: #1b5e20; 
+            /* Textura de Grama Realista para as laterais */
+            background-image: url('https://www.transparentpng.com/download/grass/texture-grass-png-2.png');
+            background-size: 300px;
+            font-family: 'Bungee', cursive;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+        }
+
+        #game-container {
+            position: relative; width: 400px; height: 600px;
+            
+            /* --- 1. TEXTURA DE ASFALTO REALISTA NA PISTA --- */
+            background-color: var(--road-grey);
+            background-image: url('asfalto_textura.jpg'); /* Adicione sua imagem de asfalto aqui */
+            background-size: cover;
+            
+            /* Guias laterais mais realistas */
+            border-left: 10px solid #999; 
+            border-right: 10px solid #999;
+            border-radius: 2px;
+            
+            overflow: hidden; 
+            box-shadow: 0 15px 60px rgba(0,0,0,0.8);
+            cursor: none;
+        }
+
+        /* --- 2. SINALIZAÇÃO CENTRAL DESGASTADA --- */
+        .road-line {
+            position: absolute; left: 50%; width: 8px; height: 60px;
+            /* Transparência e leve desfoque para parecer velha e pintada no asfalto */
+            background-color: rgba(255,255,255,0.5); 
+            transform: translateX(-50%);
+            z-index: 1;
+            filter: blur(1px);
+        }
+
+        /* --- 3. CARRINHO COM SOMBRA DE ELEVAÇÃO --- */
+        #car {
+            position: absolute; bottom: 40px; left: 175px;
+            width: 50px; height: 85px;
+            background-color: var(--car-red);
+            
+            /* Textura do Carro (Opcional) */
+            background-image: url('textura_carro.png');
+            background-size: cover;
+            
+            border-radius: 8px;
+            z-index: 10;
+            /* Sombra projetada para dar sensação de elevação sobre a pista */
+            box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+            pointer-events: none;
+        }
+
+        /* Detalhe do vidro com reflexo de luz */
+        #car::after {
+            content: ''; position: absolute; top: 15px; left: 5px;
+            width: 40px; height: 20px; 
+            background: linear-gradient(135deg, #b3e5fc 0%, #fff 50%, #b3e5fc 100%);
+            border-radius: 3px;
+            opacity: 0.9;
+        }
+
+        /* --- 4. BURACOS FOTORREALISTAS DINÂMICOS --- */
+        .obstacle {
+            position: absolute; 
+            
+            /* --- TEXTURA DE BURACO REALISTA (PNG TRANSPARENTE) --- */
+            background-image: url('buraco_realista.png'); /* Adicione sua imagem aqui */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            /* Backup visual caso a imagem falhe (Forma irregular de asfalto quebrado) */
+            background-color: rgba(17, 17, 17, 0.8);
+            clip-path: polygon(15% 15%, 85% 5%, 100% 40%, 85% 95%, 15% 100%, 0% 50%);
+
+            /* --- EFEITO DE PROFUNDIDADE E SOMBRA --- */
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.9)) saturate(1.2);
+            z-index: 2;
+        }
+
+        .star {
+            position: absolute; width: 35px; height: 35px;
+            background-color: var(--tce-gold);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            z-index: 5; 
+            filter: drop-shadow(0 0 15px var(--tce-gold)) brightness(1.2);
+        }
+
+        .shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        #ui {
+            position: absolute; top: 20px; width: 100%; text-align: center;
+            color: white; z-index: 100; font-size: 1.2rem; text-shadow: 2px 2px 4px #000;
+        }
+
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 200; text-align: center;
+        }
+
+        .btn {
+            background: var(--tce-gold); border: none; padding: 15px 40px;
+            font-family: 'Bungee'; cursor: pointer; border-radius: 50px;
+            color: var(--tce-blue); margin-top: 20px; font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="ui">PONTOS: <span id="score">0</span> / 100</div>
+    <div id="car"></div>
+    <div id="overlay">
+        <h1 id="title" style="color: var(--tce-gold); text-shadow: 0 0 10px var(--tce-gold);">ESTRADA EM RUÍNAS</h1>
+        <p style="color: white; padding: 0 20px; font-family: sans-serif; line-height: 1.4;">Use o MOUSE ou TOUCH para mover.<br>Recupere a estrada coletando estrelas!</p>
+        <button class="btn" onclick="startGame()">JOGAR</button>
+    </div>
+</div>
+
+<script>
+    const container = document.getElementById('game-container');
+    const car = document.getElementById('car');
+    const scoreEl = document.getElementById('score');
+    const overlay = document.getElementById('overlay');
+
+    let score = 0;
+    let gameActive = false;
+    let carX = 175;
+    let roadSpeed = 8;
+    let items = [];
+    let audioCtx;
+    let motorGain;
+    let lastLineSpawn = 0;
+
+    // --- CONTROLE POR MOUSE E TOUCH ---
+    function moveCar(e) {
+        if (!gameActive) return;
+        const rect = container.getBoundingClientRect();
+        let clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        carX = clientX - rect.left - (car.offsetWidth / 2);
+        carX = Math.max(5, Math.min(345, carX));
+        car.style.left = carX + 'px';
+    }
+
+    container.addEventListener('mousemove', moveCar);
+    container.addEventListener('touchmove', e => { e.preventDefault(); moveCar(e); }, { passive: false });
+
+    function startGame() {
+        if (!audioCtx) initAudio();
+        score = 0;
+        items.forEach(i => i.el.remove());
+        items = [];
+        scoreEl.innerText = score;
+        overlay.style.display = 'none';
+        gameActive = true;
+        requestAnimationFrame(update);
+    }
+
+    function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const motor = audioCtx.createOscillator();
+        motorGain = audioCtx.createGain();
+        motor.type = 'triangle';
+        motor.frequency.setValueAtTime(40, audioCtx.currentTime);
+        motorGain.gain.setValueAtTime(0.02, audioCtx.currentTime); 
+        motor.connect(motorGain);
+        motorGain.connect(audioCtx.destination);
+        motor.start();
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        if (type === 'pop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        } else { // 'hit'
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        }
+        
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function update(time) {
+        if (!gameActive) return;
+
+        if (time - lastLineSpawn > 250) { 
+            spawnRoadLine();
+            lastLineSpawn = time;
+        }
+
+        // Spawn de Estrelas
+        if (Math.random() < 0.03) spawnItem('star');
+
+        // Spawn de Buracos (Váriavel baseada na pontuação)
+        const currentPits = items.filter(i => i.type === 'pit').length;
+        const pitLimit = Math.max(1, 4 - Math.floor(score / 30));
+        
+        if (currentPits < pitLimit && Math.random() < 0.025) {
+            spawnItem('pit');
+        }
+
+        for (let i = items.length - 1; i >= 0; i--) {
+            let item = items[i];
+            item.y += roadSpeed;
+            item.el.style.top = item.y + 'px';
+
+            if (item.type === 'star' || item.type === 'pit') {
+                if (isColliding(car, item.el)) {
+                    if (item.type === 'star') {
+                        score = Math.min(100, score + 1);
+                        playSound('pop');
+                    } else {
+                        score = Math.max(0, score - 10);
+                        playSound('hit');
+                        car.classList.add('shake');
+                        setTimeout(() => car.classList.remove('shake'), 200);
+                    }
+                    scoreEl.innerText = score;
+                    item.el.remove();
+                    items.splice(i, 1);
+                    if (score >= 100) win();
+                    continue;
+                }
+            }
+
+            if (item.y > 650) {
+                item.el.remove();
+                items.splice(i, 1);
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    function spawnRoadLine() {
+        const line = document.createElement('div');
+        line.className = 'road-line';
+        line.style.top = '-70px';
+        container.appendChild(line);
+        items.push({ el: line, y: -70, type: 'line' });
+    }
+
+    function spawnItem(type) {
+        const el = document.createElement('div');
+        el.className = type === 'star' ? 'star' : 'obstacle';
+        
+        // --- 5. LÓGICA DE TAMANHO, ROTAÇÃO E FORMA IRREGULAR ---
+        if (type === 'pit') {
+            // Variação de tamanho baseada na pontuação (diminui conforme ganha)
+            let baseWidth = 85;
+            let baseHeight = 60;
+            let sizeMod = 1;
+
+            if (score > 60) {
+                sizeMod = Math.max(0.4, 1 - (score - 60) / 50);
+            }
+            
+            // Adiciona variação aleatória substancial no tamanho para irregularidade
+            const randomModW = 1 + (Math.random() - 0.5) * 0.4; // +/- 20%
+            const randomModH = 1 + (Math.random() - 0.5) * 0.4; // +/- 20%
+            
+            el.style.width = (baseWidth * sizeMod * randomModW) + 'px';
+            el.style.height = (baseHeight * sizeMod * randomModH) + 'px';
+            
+            // Rotação aleatória livre para o buraco não parecer repetido
+            const randomRotation = Math.random() * 360; // 0 a 360 graus
+            el.style.transform = `rotate(${randomRotation}deg)`;
+
+            // Distorção aleatória (scale) para formas ainda mais irregulares
+            const randomScaleX = 1 + (Math.random() - 0.5) * 0.3;
+            const randomScaleY = 1 + (Math.random() - 0.5) * 0.3;
+            el.style.transform += ` scaleX(${randomScaleX}) scaleY(${randomScaleY})`;
+
+        } else if (type === 'star') {
+            el.style.width = '35px';
+            el.style.height = '35px';
+        }
+
+        el.style.top = '-100px';
+        // Garante que o item spawne dentro da área visível da pista
+        const spawnPadding = type === 'pit' ? 60 : 35;
+        el.style.left = (Math.random() * (400 - spawnPadding * 2) + spawnPadding) + 'px';
+        
+        container.appendChild(el);
+        items.push({ el, y: -100, type: type });
+    }
+
+    function isColliding(a, b) {
+        const aR = a.getBoundingClientRect();
+        const bR = b.getBoundingClientRect();
+        // Ajuste fino na colisão para buracos (precisa entrar mais no centro para cair)
+        const currentItem = items.find(i => i.el === b);
+        const padding = currentItem.type === 'pit' ? (currentItem.el.offsetWidth * 0.15) : 0;
+        
+        return !(aR.right < bR.left + padding || 
+                 aR.left > bR.right - padding || 
+                 aR.bottom < bR.top + padding || 
+                 aR.top > bR.bottom - padding);
+    }
+
+    function win() {
+        gameActive = false;
+        overlay.style.display = 'flex';
+        document.getElementById('title').innerText = "ESTRADA NOVA!";
+        document.getElementById('title').style.color = '#2ecc71'; // Verde brilhante
+        overlay.querySelector('p').innerText = "Incrível! Sua fiscalização restaurou totalmente a via.";
+    }
+</script>
+
+</body>
+</html>

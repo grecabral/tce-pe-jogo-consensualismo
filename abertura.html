@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abertura - Gestão Consensual</title>
+    <style>
+        :root {
+            --primary: #2dd4bf; /* Turquesa */
+            --accent: #ffde59;  /* Amarelo */
+            --dark: #0f172a;    /* Azul Marinho */
+            --white: #ffffff;
+            /* Fontes de sistema para funcionar offline sem carregar Google Fonts */
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-stack);
+            background-color: var(--dark);
+            color: var(--white);
+            overflow: hidden;
+            cursor: none; /* Esconde o mouse (comum em totens touch) */
+        }
+
+        /* TELA 1: INTRODUÇÃO TEÓRICA */
+        #screen-intro {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
+            z-index: 10;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        /* TELA 2: CENÁRIO DA MISSÃO */
+        #screen-scenario {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Importante: Tenha esta imagem salva localmente para uso offline */
+            background: url('municipio-area.png') center/cover no-repeat;
+            background-color: var(--dark);
+        }
+
+        #screen-scenario::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.75); /* Escurece a foto para o texto saltar */
+        }
+
+        .container {
+            max-width: 700px;
+            text-align: center;
+            padding: 40px;
+            z-index: 20;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 25px; font-weight: 800; line-height: 1.1; }
+        p { font-size: 1.4rem; line-height: 1.5; margin-bottom: 30px; color: rgba(255,255,255,0.9); }
+
+        .status-alert {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.25);
+            color: #f87171;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 22px 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 60px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn:active { transform: scale(0.95); }
+
+        /* ESTADOS DE TRANSIÇÃO */
+        .hidden { opacity: 0; transform: translateY(-30px); pointer-events: none; }
+        .visible { opacity: 1 !important; transform: scale(1) !important; pointer-events: auto !important; }
+        
+        /* Efeito de saída para carregar o novo arquivo HTML */
+        .exit-animation {
+            opacity: 0 !important;
+            transform: scale(0.8) !important;
+            filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+
+    <section id="screen-intro">
+        <div class="container">
+            <h1>Você conhece os caminhos da nossa atuação?</h1>
+            <p>Além dos processos tradicionais, existe uma trilha que ganha espaço: o <strong>Consensualismo</strong>. É o convite ao diálogo e à cooperação.</p>
+            <button class="btn" onclick="proximoCenario()">Toque para continuar</button>
+        </div>
+    </section>
+
+    <section id="screen-scenario">
+        <div class="container">
+            <div class="glass-card">
+                <div class="status-alert">⚠️ Missão Crítica: Transporte e Saúde</div>
+                <h1>Você é o gestor agora.</h1>
+                <p>Ônibus parados e a população precisando de atendimento médico em outra cidade. O clima é tenso, mas as partes aceitaram sentar à mesa.</p>
+                <p>Encontre as <strong>táticas de diálogo</strong> para destravar essa crise e alcançar uma solução ganha-ganha.</p>
+                <button class="btn" style="background: var(--accent);" onclick="abrirJogo()">Iniciar Jogo da Memória</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Transição da Tela 1 para a Tela 2
+        function proximoCenario() {
+            document.getElementById('screen-intro').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('screen-scenario').classList.add('visible');
+            }, 400);
+        }
+
+        // Transição da Tela 2 para o arquivo externo memoria4.html
+        function abrirJogo() {
+            // Aplica efeito de saída na tela atual
+            document.getElementById('screen-scenario').classList.add('exit-animation');
+            
+            // Aguarda a animação visual antes de trocar de arquivo (500ms)
+            setTimeout(() => {
+                window.location.href = 'memoria/memoria4.html';
+            }, 500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Rota do Diálogo - Versão Otimizada</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        canvas { display: block; margin: 0 auto; cursor: crosshair; }
+        
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+            display: flex; justify-content: space-between; pointer-events: none; z-index: 10;
+            box-sizing: border-box;
+        }
+        
+        .hud-lateral { 
+            background: rgba(255,255,255,0.95); padding: 15px; border-radius: 8px; 
+            border: 3px solid #000; color: #111; min-width: 220px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .tempo-box { font-size: 30px; font-weight: bold; color: #d32f2f; display: block; }
+        .stats-val { font-size: 22px; font-weight: bold; display: block; color: #1b5e20; }
+
+        #container-embarque {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; display: none; background: rgba(255,255,255,0.98);
+            padding: 30px; border-radius: 15px; border: 5px solid #ffeb3b;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6); z-index: 50;
+        }
+
+        #audio-aviso { position: absolute; bottom: 10px; left: 10px; color: yellow; font-size: 12px; }
+
+        #tela-final {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); color: white; display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 100;
+        }
+    </style>
+</head>
+<body onclick="iniciarAudio()">
+
+<div id="hud">
+    <div class="hud-lateral">
+        <small>VELOCIDADE</small><br>
+        <span class="stats-val" style="color: #000"><span id="vel-val">0</span> km/h</span>
+    </div>
+    
+    <div id="hud-direita" class="hud-lateral">
+        <span class="tempo-box">⏱ <span id="timer">60</span>s</span>
+        <hr style="border:0; border-top:1px solid #ccc; margin: 8px 0;">
+        <small>PASSAGEIROS</small><br>
+        <span class="stats-val"><span id="total-hud">0</span> / 40</span>
+    </div>
+</div>
+
+<div id="container-embarque">
+    <h2 id="palavra-parada" style="color: #d4a017; margin:0; font-size: 24px; text-transform: uppercase; font-weight: 900;"></h2>
+    <div id="p-count" style="font-size: 40px; font-weight: bold; color: #000; margin-top: 10px;">0</div>
+</div>
+
+<div id="audio-aviso">⚠️ Clique na tela para som.</div>
+
+<div id="tela-final">
+    <h1 id="res-titulo" style="font-size: 60px;"></h1>
+    <p id="res-desc" style="font-size: 24px;"></p>
+    <button style="padding: 20px 40px; font-size: 20px; cursor: pointer;" onclick="location.reload()">REINICIAR</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+
+let audioCtx, motorOsc, motorGain;
+function iniciarAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    motorOsc = audioCtx.createOscillator();
+    motorGain = audioCtx.createGain();
+    motorOsc.type = 'sawtooth';
+    motorOsc.connect(motorGain);
+    motorGain.connect(audioCtx.destination);
+    motorGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    motorOsc.start();
+    document.getElementById('audio-aviso').style.display = 'none';
+}
+
+function playSound(freq, type, duration, vol) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type; osc.connect(g); g.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+
+canvas.width = 600; canvas.height = window.innerHeight;
+ctx.imageSmoothingEnabled = false;
+
+const imgPista = new Image(); imgPista.src = 'pista.jpg';
+const imgBus = new Image(); imgBus.src = 'onibus.png';
+
+let gameActive = true, timeLeft = 60, passageirosTotais = 0;
+let velocidadeCruzeiro = 11.2, velocidadeAtual = 11.2, pistaY = 0;
+let mouseX = 300, estado = "DIRIGINDO", lastParadaTime = Date.now();
+
+const bus = { x: 270, y: canvas.height - 180, w: 65, h: 130 };
+const buracos = [];
+const parada = { x: 420, y: -500, w: 100, h: 320, ativa: false, palavra: "" };
+
+const palavrasBuraco = ["BUROCRACIA", "LITÍGIO", "CONFLITO", "PUNIÇÃO", "ATRASOS", "RETALIAÇÃO", "POLARIZAÇÃO", "FRUSTRAÇÃO"];
+const palavrasParada = ["HORIZONTALIDADE", "ESCUTA", "MEDIAÇÃO", "DIÁLOGO", "CONSENSO"];
+let paradaIndex = 0;
+
+window.addEventListener('mousemove', (e) => mouseX = e.clientX - canvas.getBoundingClientRect().left);
+
+const timerInterval = setInterval(() => {
+    if (gameActive && estado !== "EMBARCANDO") {
+        timeLeft--;
+        document.getElementById('timer').innerText = Math.max(0, timeLeft);
+        if (timeLeft <= 0) finalizar();
+    }
+}, 1000);
+
+function finalizar() {
+    gameActive = false;
+    playSound(200, 'sine', 1, 0.2);
+    document.getElementById('tela-final').style.display = 'flex';
+    const venceu = passageirosTotais >= 40;
+    document.getElementById('res-titulo').innerText = venceu ? "VITÓRIA!" : "DERROTA";
+    document.getElementById('res-desc').innerText = `Passageiros coletados: ${passageirosTotais}/40`;
+}
+
+function update() {
+    if (!gameActive) return;
+    if (motorGain) {
+        motorGain.gain.setTargetAtTime(0.04, audioCtx.currentTime, 0.1);
+        motorOsc.frequency.setTargetAtTime(40 + (velocidadeAtual * 6), audioCtx.currentTime, 0.1);
+    }
+    bus.x += (mouseX - bus.x - bus.w/2) * 0.25;
+
+    if (estado === "DIRIGINDO" && Date.now() - lastParadaTime > 7500) {
+        estado = "PARANDO"; parada.y = -400; parada.ativa = true;
+        parada.palavra = palavrasParada[paradaIndex];
+        paradaIndex = (paradaIndex + 1) % palavrasParada.length;
+    }
+
+    if (estado === "PARANDO") {
+        parada.y += velocidadeAtual;
+        const naZona = bus.x > parada.x - 25 && bus.x < parada.x + 35 && Math.abs((bus.y + 65) - (parada.y + 160)) < 120;
+        if (naZona) {
+            if (velocidadeAtual > 1) playSound(1200, 'triangle', 0.1, 0.02);
+            velocidadeAtual = Math.max(0, velocidadeAtual - 0.9); // Freia um pouco mais rápido para parar na marca
+            if (velocidadeAtual === 0) {
+                estado = "EMBARCANDO";
+                document.getElementById('palavra-parada').innerText = `Embarcando: ${parada.palavra}`;
+                document.getElementById('container-embarque').style.display = 'block';
+                embarcar(0);
+            }
+        } else { velocidadeAtual = Math.max(4, velocidadeAtual - 0.05); }
+
+        if (parada.y > canvas.height && estado === "PARANDO") {
+            estado = "DIRIGINDO"; velocidadeAtual = velocidadeCruzeiro;
+            timeLeft -= 5; parada.ativa = false; lastParadaTime = Date.now();
+            playSound(150, 'square', 0.4, 0.1);
+        }
+    }
+
+    pistaY += velocidadeAtual;
+    if (pistaY >= canvas.height) pistaY = 0;
+
+    buracos.forEach((b, i) => {
+        b.y += velocidadeAtual;
+        if (b.y + b.h > bus.y && b.y < bus.y + bus.h && b.x + b.w > bus.x && b.x < bus.x + bus.w) {
+            playSound(80, 'square', 0.2, 0.1);
+            buracos.splice(i, 1); 
+            velocidadeAtual = 6; // IMPACTO MENOR (Antes era 2)
+            // timeLeft -= 1; // REMOVIDO: Não perde tempo no timer mais
+        }
+        if (b.y > canvas.height) buracos.splice(i, 1);
+    });
+
+    if (estado === "DIRIGINDO") {
+        if (velocidadeAtual < velocidadeCruzeiro) velocidadeAtual += 0.12;
+        if (Math.random() < 0.015) {
+            buracos.push({ 
+                x: 180 + Math.random() * 240, y: -100, w: 60, h: 40, 
+                txt: palavrasBuraco[Math.floor(Math.random() * palavrasBuraco.length)] 
+            });
+        }
+    }
+    document.getElementById('vel-val').innerText = Math.floor(velocidadeAtual * 7);
+}
+
+function embarcar(count) {
+    if (count < 10) { // SOBEM 10 PASSAGEIROS
+        count++; passageirosTotais++;
+        playSound(600 + (count * 60), 'sine', 0.08, 0.1);
+        document.getElementById('total-hud').innerText = passageirosTotais;
+        let label = count === 1 ? "passageiro" : "passageiros";
+        document.getElementById('p-count').innerText = `${count} ${label}`;
+        setTimeout(() => embarcar(count), 250); // EMBARQUE MAIS RÁPIDO (Antes 450ms)
+    } else {
+        setTimeout(() => { // PERDE MENOS TEMPO APÓS EMBARQUE (Antes 1000ms)
+            estado = "DIRIGINDO"; velocidadeAtual = velocidadeCruzeiro;
+            parada.ativa = false; lastParadaTime = Date.now();
+            document.getElementById('container-embarque').style.display = 'none';
+        }, 400);
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imgPista, 0, Math.floor(pistaY - canvas.height), canvas.width, canvas.height);
+    ctx.drawImage(imgPista, 0, Math.floor(pistaY), canvas.width, canvas.height);
+
+    if (parada.ativa) {
+        ctx.fillStyle = "rgba(255, 235, 59, 0.4)";
+        ctx.fillRect(parada.x, parada.y, parada.w, parada.h);
+        ctx.save();
+        ctx.translate(parada.x + parada.w/2, parada.y + parada.h/2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = "900 28px 'Arial Black', sans-serif";
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "black"; ctx.lineWidth = 4;
+        ctx.strokeText(parada.palavra, 0, 10);
+        ctx.fillStyle = "#fff";
+        ctx.fillText(parada.palavra, 0, 10);
+        ctx.restore();
+    }
+
+    buracos.forEach(b => { 
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.beginPath(); ctx.ellipse(b.x+30, b.y+20, 30, 20, 0, 0, Math.PI*2); ctx.fill(); 
+        
+        ctx.font = "bold 16px 'Arial Black', sans-serif";
+        const textWidth = ctx.measureText(b.txt).width;
+        // FUNDO AMARELO PARA BURACOS
+        ctx.fillStyle = "#ffeb3b";
+        ctx.fillRect(b.x + 30 - (textWidth/2 + 5), b.y - 35, textWidth + 10, 25);
+        ctx.strokeStyle = "black"; ctx.lineWidth = 2;
+        ctx.strokeRect(b.x + 30 - (textWidth/2 + 5), b.y - 35, textWidth + 10, 25);
+        ctx.fillStyle = "black"; ctx.textAlign = "center";
+        ctx.fillText(b.txt, b.x + 30, b.y - 17);
+    });
+
+    ctx.drawImage(imgBus, Math.floor(bus.x), Math.floor(bus.y), bus.w, bus.h);
+    update();
+    requestAnimationFrame(draw);
+}
+imgPista.onload = () => draw();
+</script>
+</body>
+</html>

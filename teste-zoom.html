@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCE-PE | O Mistério do Parque</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: 'Special Elite', serif;
+        }
+
+        /* Container de Cena */
+        #scene-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 1.8s cubic-bezier(0.6, -0.28, 0.735, 0.045), 
+                        filter 1.5s ease-in;
+            transform-origin: center center;
+            filter: blur(0px);
+        }
+
+        #map-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('municipio-area.png');
+            background-repeat: no-repeat; background-position: center; background-size: cover;
+            z-index: 1;
+        }
+
+        .map-darkener {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.9) 100%);
+            z-index: 2;
+        }
+
+        #narrative-container {
+            position: absolute; top: 45%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%; max-width: 900px;
+            color: #ffffff; text-align: center;
+            z-index: 5; pointer-events: none;
+            line-height: 1.6; font-size: 1.75rem;
+            text-shadow: 3px 3px 10px rgba(0,0,0,1);
+            transition: opacity 0.5s ease;
+        }
+
+        /* ÁREA ILUMINADA */
+        #poi-link {
+            position: absolute; 
+            bottom: 110px;
+            right: calc(15% + 100px); 
+            z-index: 25; /* Z-index alto para garantir que fique acima de tudo quando revelado */
+            width: 250px; 
+            height: 250px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            opacity: 0; 
+            transition: opacity 0.8s ease-in;
+            cursor: pointer; 
+            pointer-events: none; /* Desativado até ser revelado */
+        }
+
+        #poi-link.full-revealed { 
+            opacity: 1; 
+            pointer-events: auto; /* Torna clicável apenas quando a neblina sai */
+        }
+
+        #light-spot {
+            position: absolute; width: 100%; height: 100%;
+            backdrop-filter: brightness(3) contrast(1.2);
+            -webkit-backdrop-filter: brightness(3) contrast(1.2);
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 100px rgba(255,255,255,0.6);
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        #fog-canvas {
+            position: absolute; top: 0; left: 0;
+            z-index: 20; cursor: crosshair; touch-action: none;
+            transition: opacity 1s ease;
+        }
+
+        #overlay-hint {
+            position: absolute; bottom: 50px; width: 100%; text-align: center;
+            color: #ffffff; z-index: 30; font-size: 1.3rem; text-transform: uppercase;
+            letter-spacing: 2px; pointer-events: none; text-shadow: 2px 2px 8px #000;
+            transition: opacity 1s ease;
+        }
+
+        #flash-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 200; opacity: 0;
+            pointer-events: none; transition: opacity 0.4s ease-in;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.08); filter: brightness(1.2); }
+        }
+
+        .zoom-active #fog-canvas, 
+        .zoom-active #narrative-container, 
+        .zoom-active #overlay-hint {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scene-container">
+        <div id="map-bg"><div class="map-darkener"></div></div>
+        <div id="poi-link" onclick="triggerImmersiveZoom(this)">
+            <div id="light-spot"></div>
+        </div>
+    </div>
+
+    <div id="narrative-container"><div id="typewriter"></div></div>
+    <canvas id="fog-canvas"></canvas>
+    <div id="overlay-hint">Há uma saída oculta na neblina.<br>Limpe o centro para descobrir a história.</div>
+    <div id="flash-overlay"></div>
+
+    <script>
+        const canvas = document.getElementById('fog-canvas');
+        const ctx = canvas.getContext('2d');
+        const scene = document.getElementById('scene-container');
+        const typewriterEl = document.getElementById('typewriter');
+        const poi = document.getElementById('poi-link');
+        const overlayHint = document.getElementById('overlay-hint');
+        const flash = document.getElementById('flash-overlay');
+        
+        let isDrawing = false;
+        let typingStarted = false;
+        let audioCtx;
+
+        const text = "Você sabia que existem vários jeitos de resolver o mesmo problema? Siga a luz para entrar nesta história.";
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.fillStyle = "#2a2a2a"; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function playTypewriterSound() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.02);
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(now + 0.02);
+        }
+
+        function startTyping() {
+            if (typingStarted) return;
+            typingStarted = true;
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    const char = text.charAt(i);
+                    typewriterEl.innerHTML += char === "\n" ? "<br>" : char;
+                    if (char !== " " && char !== "\n") playTypewriterSound();
+                    i++;
+                    setTimeout(type, 50 + Math.random() * 30);
+                }
+            }
+            type();
+        }
+
+        function checkAreaPurity() {
+            const centerData = ctx.getImageData(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2);
+            let centerCleaned = 0;
+            for (let i = 3; i < centerData.data.length; i += 4) {
+                if (centerData.data[i] === 0) centerCleaned++;
+            }
+            if ((centerCleaned / (centerData.data.length / 4)) > 0.35) startTyping();
+
+            const pRect = poi.getBoundingClientRect();
+            const poiData = ctx.getImageData(pRect.left, pRect.top, pRect.width, pRect.height);
+            let poiCleaned = 0;
+            for (let i = 3; i < poiData.data.length; i += 4) {
+                if (poiData.data[i] === 0) poiCleaned++;
+            }
+            // Se a área do brilho estiver 90% limpa, ela aparece e aceita cliques
+            if ((poiCleaned / (poiData.data.length / 4)) > 0.90) {
+                poi.classList.add('full-revealed');
+            }
+        }
+
+        function scratch(e) {
+            if (!isDrawing) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 100, 0, Math.PI * 2);
+            ctx.fill();
+
+            overlayHint.style.opacity = '0';
+            checkAreaPurity();
+        }
+
+        // FUNÇÃO DE ZOOM SEM REDIRECIONAMENTO
+        function triggerImmersiveZoom(element) {
+            // Desativa interações no canvas para garantir o clique
+            canvas.style.pointerEvents = 'none';
+            
+            document.body.classList.add('zoom-active');
+            
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const originX = (centerX / window.innerWidth) * 100;
+            const originY = (centerY / window.innerHeight) * 100;
+            
+            scene.style.transformOrigin = `${originX}% ${originY}%`;
+            
+            // Efeito de entrar na cena
+            scene.style.transform = "scale(18)"; 
+            scene.style.filter = "blur(20px)";
+
+            // Flash de luz final
+            setTimeout(() => {
+                flash.style.opacity = '1';
+            }, 1400);
+
+            console.log("Zoom concluído. Redirecionamento removido.");
+        }
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mousemove', scratch);
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); scratch(e); }, { passive: false });
+
+        window.onload = init;
+        window.onresize = init;
+    </script>
+</body>
+</html>

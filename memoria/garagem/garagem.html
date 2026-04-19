@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Investigação Forense: Garagem Central</title>
+    <style>
+        :root {
+            --ui-accent: #fbc02d;
+            --ui-bg: #1a1c1e;
+            --ui-text: #e1e2e1;
+            --ui-border: #444746;
+            --ui-success: #10b981;
+            --ui-danger: #ef4444;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Inter', sans-serif;
+            color: var(--ui-text);
+        }
+
+        /* Tela de Introdução */
+        #intro-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            transition: opacity 1s ease;
+        }
+
+        #intro-overlay h1 { color: var(--ui-accent); font-size: 2.5rem; margin-bottom: 20px; }
+        #intro-overlay p { max-width: 700px; font-size: 1.3rem; line-height: 1.6; margin-bottom: 30px; }
+
+        #main-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        /* Barra Lateral */
+        #sidebar {
+            width: 25%;
+            background: var(--ui-bg);
+            border-right: 1px solid var(--ui-border);
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--ui-accent);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        #timer { font-size: 3rem; font-weight: 300; margin-bottom: 20px; }
+        #counter { font-size: 1.1rem; font-weight: 500; margin-bottom: 8px; }
+
+        #inventory {
+            font-size: 0.8rem;
+            color: #9aa0a6;
+            height: 50px;
+            border-bottom: 1px solid var(--ui-border);
+            margin-bottom: 20px;
+        }
+
+        .objective-item {
+            background: #2a2c2e;
+            border-left: 3px solid var(--ui-border);
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .objective-item img {
+            width: 35px; height: 35px;
+            background: #1a1c1e; border-radius: 4px; object-fit: contain;
+        }
+
+        .objective-item.found {
+            border-left-color: var(--ui-success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Campo de Jogo */
+        #game-area {
+            position: relative;
+            width: 75%;
+            height: 100%;
+            background: #000 url('bg.png') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        #svg-mask-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .item {
+            position: absolute;
+            width: 75px; height: 75px;
+            cursor: pointer;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        /* Pop-ups e Overlays */
+        #screen-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--ui-accent);
+            border: none;
+            color: #000;
+            padding: 18px 40px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+
+        #bus-animation {
+            position: absolute;
+            bottom: 50px; left: -350px;
+            width: 350px; z-index: 70; display: none;
+        }
+
+        .animate-bus {
+            display: block !important;
+            animation: driveAcross 4s forwards;
+        }
+
+        @keyframes driveAcross {
+            from { left: -350px; }
+            to { left: 110%; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="intro-overlay">
+    <h1>A SOLUÇÃO ESTÁ NO ESCURO...</h1>
+    <p>O acordo foi feito, mas a oficina está às escuras. Para consertar os ônibus e levar saúde à população, você precisa encontrar as ferramentas práticas da cooperação.</p>
+    <p style="color: var(--ui-accent); font-weight: bold;">Encontre os 5 itens listados. Mas cuidado: nem tudo que brilha é consensualismo!</p>
+    <button class="btn" onclick="startEscapeRoom()">Ligar Lanterna</button>
+</div>
+
+<div id="main-wrapper">
+    <div id="sidebar">
+        <div class="label">Tempo</div>
+        <div id="timer">45s</div>
+        
+        <div class="label">Coletados</div>
+        <div id="counter"><span id="score">0</span> de 5</div>
+        <div id="inventory">Iniciando busca...</div>
+
+        <div class="label" style="margin-top:20px;">Lista de Objetivos</div>
+        <div id="objectives-list">
+            <div class="objective-item" id="obj-c1"><img src="c1.png"> <span>Protocolo C1</span></div>
+            <div class="objective-item" id="obj-c2"><img src="c2.png"> <span>Chave C2</span></div>
+            <div class="objective-item" id="obj-c3"><img src="c3.png"> <span>Manual C3</span></div>
+            <div class="objective-item" id="obj-c4"><img src="c4.png"> <span>Peça C4</span></div>
+            <div class="objective-item" id="obj-c5"><img src="c5.png"> <span>Selo C5</span></div>
+        </div>
+    </div>
+
+    <div id="game-area">
+        <div id="items-layer"></div>
+        <img src="1onibus.png" id="bus-animation">
+        
+        <svg id="svg-mask-layer">
+            <defs>
+                <mask id="gameMask">
+                    <rect width="100%" height="100%" fill="white" />
+                    <circle id="mask-flashlight" cx="-500" cy="-500" r="150" fill="black" />
+                </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="black" mask="url(#gameMask)" />
+        </svg>
+    </div>
+</div>
+
+<div id="screen-overlay">
+    <h1 id="ov-title" style="font-size: 3rem;"></h1>
+    <p id="ov-msg" style="font-size: 1.4rem; max-width: 650px; margin-bottom: 20px;"></p>
+    <div id="button-container"></div>
+</div>
+
+<script>
+    // --- SISTEMA DE ÁUDIO (Web Audio API - Sem arquivos externos) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if(type === 'success') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // --- LÓGICA DO JOGO ---
+    const gameArea = document.getElementById('game-area');
+    const flashlight = document.getElementById('mask-flashlight');
+    const scoreEl = document.getElementById('score');
+    const timerEl = document.getElementById('timer');
+    const inventoryEl = document.getElementById('inventory');
+    const itemsLayer = document.getElementById('items-layer');
+    const btnContainer = document.getElementById('button-container');
+    const bus = document.getElementById('bus-animation');
+
+    let timeLeft = 45;
+    let score = 0;
+    let gameActive = false;
+    let clock;
+
+    function startEscapeRoom() {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        document.getElementById('intro-overlay').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('main-wrapper').style.opacity = '1';
+            gameActive = true;
+            startTimer();
+        }, 1000);
+    }
+
+    function startTimer() {
+        clock = setInterval(() => {
+            if(!gameActive) return;
+            timeLeft--;
+            timerEl.innerText = timeLeft + "s";
+            if(timeLeft <= 0) endGame(false);
+        }, 1000);
+    }
+
+    gameArea.addEventListener('mousemove', e => {
+        if(!gameActive) return;
+        const rect = gameArea.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        flashlight.setAttribute('cx', x);
+        flashlight.setAttribute('cy', y);
+
+        document.querySelectorAll('.item').forEach(item => {
+            const ix = parseFloat(item.style.left) + 37;
+            const iy = parseFloat(item.style.top) + 37;
+            const dist = Math.hypot(x - ix, y - iy);
+            item.style.opacity = (dist < 150) ? "1" : "0";
+            item.style.pointerEvents = (dist < 150) ? "all" : "none";
+        });
+    });
+
+    function spawn() {
+        for(let i=1; i<=5; i++){
+            create('c' + i + '.png', 'C', i);
+            create('t' + i + '.png', 'T', i);
+        }
+    }
+
+    function create(src, type, id) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'item';
+        img.style.left = Math.random() * (gameArea.clientWidth - 100) + 'px';
+        img.style.top = Math.random() * (gameArea.clientHeight - 100) + 'px';
+        
+        img.onclick = () => {
+            if(!gameActive) return;
+            if(type === 'C') {
+                score++;
+                playSound('success');
+                document.getElementById('obj-c' + id).classList.add('found');
+                img.remove();
+                inventoryEl.innerText = "Item coletado com sucesso!";
+            } else {
+                playSound('error');
+                timeLeft = Math.max(0, timeLeft - 5);
+                inventoryEl.innerText = "Cuidado! Impasse detectado (-5s)";
+                img.style.filter = "sepia(1) saturate(10) hue-rotate(-50deg)";
+                setTimeout(() => img.style.filter = "", 400);
+            }
+            update();
+        };
+        itemsLayer.appendChild(img);
+    }
+
+    function update() {
+        scoreEl.innerText = score;
+        if(score >= 5) endGame(true);
+    }
+
+    function endGame(win) {
+        gameActive = false;
+        clearInterval(clock);
+        const ov = document.getElementById('screen-overlay');
+        
+        if(win) {
+            document.getElementById('ov-title').innerText = "TUDO PRONTO!";
+            document.getElementById('ov-msg').innerHTML = "As peças foram encontradas e o ônibus está funcionando! Mas a jornada ainda não acabou: agora você deve <strong>conduzir a população com segurança</strong>.<br><br>Evite obstáculos como <strong>Hostilidade</strong> e <strong>Má-fé</strong>. Busque o caminho do <strong>Consenso</strong> nas paradas!";
+            bus.classList.add('animate-bus');
+            setTimeout(() => {
+                btnContainer.innerHTML = '<button class="btn" onclick="proximaFase()">Assumir a Direção</button>';
+            }, 3000);
+        } else {
+            document.getElementById('ov-title').innerText = "OFICINA TRANCADA";
+            document.getElementById('ov-msg').innerText = "O tempo acabou e os ônibus continuam parados. O diálogo precisa ser mais ágil!";
+            btnContainer.innerHTML = '<button class="btn" onclick="location.reload()">Tentar Novamente</button>';
+        }
+        ov.style.display = 'flex';
+    }
+
+    function proximaFase() {
+        // Transição suave de saída
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 1s';
+        setTimeout(() => {
+            window.location.href = 'onibus/onibus.html';
+        }, 1000);
+    }
+
+    spawn();
+</script>
+</body>
+</html>
