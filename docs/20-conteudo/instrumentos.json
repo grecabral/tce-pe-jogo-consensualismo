@@ -3,7 +3,8 @@
 
   "_recomendacoes": {
     "manterTodos": "Os 6 instrumentos foram mantidos. Todos têm base legal e aparecem com frequência em casos reais de gestão pública.",
-    "observacao": "TAG e TAC se confundem para o leigo; os insights diferenciam explicitamente um do outro. Arbitragem é o menos usual para conflitos federativos, mas vale manter como repertório."
+    "observacao": "TAG e TAC se confundem para o leigo; os insights diferenciam explicitamente um do outro. Arbitragem é o menos usual para conflitos federativos, mas vale manter como repertório.",
+    "candidatosV2": "Plano de Ação e Termo de Alerta (art. 59, §1º LRF) são instrumentos de consensualismo citados pela literatura dos TCs (Dortas et al., 2021) mas ficaram fora da V1 para não lotar o Jogo 2. Considerar para V2."
   },
 
   "instrumentos": [
@@ -12,7 +13,7 @@
       "nome": "TAG",
       "nomeCompleto": "Termo de Ajustamento de Gestão",
       "icone": "instrumentos/tag.svg",
-      "insight": "Compromisso entre gestor e órgão de controle para corrigir falhas de gestão, com prazos e metas pactuados, sem abrir processo punitivo."
+      "insight": "Acordo entre gestor e Tribunal de Contas para corrigir falhas com prazos e metas. Em troca, suspende-se o processo que poderia aplicar sanção."
     },
     {
       "id": "tac",
