@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M30 6h22a4 4 0 0 1 4 4v22L30 58 6 34z"/>
+  <circle cx="46" cy="18" r="3"/>
+  <text x="32" y="42" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">TAG</text>
+</svg>
