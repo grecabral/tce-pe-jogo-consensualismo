@@ -35,7 +35,11 @@ button {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--duration-base) var(--easing-standard);
 }
+
+#app.trocando { opacity: 0; }
 
 .cena {
   position: absolute;
