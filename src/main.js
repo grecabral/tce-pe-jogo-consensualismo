@@ -3,13 +3,13 @@
 import { carregarTudo } from './conteudo.js';
 import { registrar, irPara, iniciarIdleGlobal, configurarIdle, onMudarCena } from './estado.js';
 
-import { montar as montarAttract }        from './cenas/attract.js';
-import { montar as montarRoletaGirando }  from './cenas/roleta_girando.js';
-import { montar as montarAbertura }       from './cenas/abertura.js';
-import { montar as montarJogo1 }          from './cenas/jogo1_ligar.js';
-import { montar as montarJogo2 }          from './cenas/jogo2_lanterna.js';
-import { montar as montarJogo3 }          from './cenas/jogo3_coletor.js';
-import { montar as montarFinal }          from './cenas/final.js';
+import { montar as montarAttract }            from './cenas/attract.js';
+import { montar as montarRoletaGirando }      from './cenas/roleta_girando.js';
+import { montar as montarIntroConsensualism } from './cenas/intro_consensualismo.js';
+import { montar as montarJogo1 }              from './cenas/jogo1_coletor.js';
+import { montar as montarJogo2 }              from './cenas/jogo2_ligar.js';
+import { montar as montarJogo3 }              from './cenas/jogo3_lanterna.js';
+import { montar as montarFinal }              from './cenas/final.js';
 
 async function main() {
   const app = document.getElementById('app');
@@ -30,13 +30,13 @@ async function main() {
     document.body.setAttribute('data-estado', nome);
   });
 
-  registrar('ATTRACT',         montarAttract(app, ctx));
-  registrar('ROLETA_GIRANDO',  montarRoletaGirando(app, ctx));
-  registrar('ABERTURA',        montarAbertura(app, ctx));
-  registrar('JOGO1_LIGAR',     montarJogo1(app, ctx));
-  registrar('JOGO2_LANTERNA',  montarJogo2(app, ctx));
-  registrar('JOGO3_COLETOR',   montarJogo3(app, ctx));
-  registrar('FINAL',           montarFinal(app, ctx));
+  registrar('ATTRACT',              montarAttract(app, ctx));
+  registrar('ROLETA_GIRANDO',       montarRoletaGirando(app, ctx));
+  registrar('INTRO_CONSENSUALISMO', montarIntroConsensualism(app, ctx));
+  registrar('JOGO1_COLETOR',        montarJogo1(app, ctx));
+  registrar('JOGO2_LIGAR',          montarJogo2(app, ctx));
+  registrar('JOGO3_LANTERNA',       montarJogo3(app, ctx));
+  registrar('FINAL',                montarFinal(app, ctx));
 
   iniciarIdleGlobal(ctx.config.idleTimeoutMs);
   configurarIdle(ctx.config.idleTimeoutMs);
@@ -50,8 +50,6 @@ async function main() {
     const idx = ctx.historias.findIndex((h) => h.id === historiaId);
     if (idx >= 0) sessao.numero = idx;
   }
-  // Quando pulamos direto para uma cena que depende de historiaAtual,
-  // pré-seleciona (no fluxo normal, ABERTURA que faz isso).
   if (cenaInicial && cenaInicial !== 'ATTRACT') {
     sessao.historiaAtual = ctx.historias[sessao.numero % ctx.historias.length];
   }
@@ -59,7 +57,10 @@ async function main() {
 }
 
 function validaCena(nome) {
-  return ['ATTRACT','ROLETA_GIRANDO','ABERTURA','JOGO1_LIGAR','JOGO2_LANTERNA','JOGO3_COLETOR','FINAL'].includes(nome);
+  return [
+    'ATTRACT', 'ROLETA_GIRANDO', 'INTRO_CONSENSUALISMO',
+    'JOGO1_COLETOR', 'JOGO2_LIGAR', 'JOGO3_LANTERNA', 'FINAL',
+  ].includes(nome);
 }
 
 function mostrarErro(app, titulo, detalhe) {

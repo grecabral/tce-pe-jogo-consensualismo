@@ -1,5 +1,5 @@
-// Jogo 3 — Coletor: itens caem, jogador move cesta por touch horizontal.
-// Adequado +10, inadequado -5. Meta 80 em 60s vence → FINAL.
+// Jogo 1 — Coletor: itens caem, jogador move cesta por touch horizontal.
+// Adequado +10, inadequado -5. Meta 80 em 60s vence → JOGO2_LIGAR.
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
@@ -12,14 +12,14 @@ let cleanup = [];
 export function montar(app, ctx) {
   return {
     onEnter() {
-      const t = ctx.textosUI.jogo3;
+      const t = ctx.textosUI.jogo1;
       const meta = ctx.config.coletorMetaPontos || 80;
       const duracao = 60;
       const adequados = ctx.coletor.adequados;
       const inadequados = ctx.coletor.inadequados;
 
       app.innerHTML = `
-        <section class="cena cena-jogo3" id="cena-jogo3">
+        <section class="cena cena-jogo3" id="cena-jogo1-coletor">
           <div class="coletor-palco" id="coletor-palco">
             <div class="coletor-hud">
               <span class="hud-pill accent" id="hud-pontos">
@@ -35,14 +35,23 @@ export function montar(app, ctx) {
               <img src="assets/ui/cesta.svg" alt="" onerror="this.style.display='none'">
             </div>
           </div>
+          <div class="modal-entrada visivel" id="modal-entrada">
+            <div class="modal-entrada-card">
+              <h2>${t.tituloModal}</h2>
+              <p>${t.instrucaoModal}</p>
+              <button class="btn btn-primary" id="btn-modal-jogar">${t.botaoIniciar}</button>
+            </div>
+          </div>
         </section>`;
 
-      root = app.querySelector('#cena-jogo3');
+      root = app.querySelector('#cena-jogo1-coletor');
       const palco = root.querySelector('#coletor-palco');
       const cesta = root.querySelector('#coletor-cesta');
       const flash = root.querySelector('#coletor-flash');
       const pontosVal = root.querySelector('#pontos-val');
       const tempoVal = root.querySelector('#tempo-val');
+      const modalEntrada = root.querySelector('#modal-entrada');
+      const btnJogar = root.querySelector('#btn-modal-jogar');
 
       let pontos = 0;
       let segundos = duracao;
@@ -94,7 +103,7 @@ export function montar(app, ctx) {
       let ultimoSpawn = 0;
       let velocidadeBase = 220; // px/s
 
-      function spawnarItem(agora) {
+      function spawnarItem() {
         const adequado = Math.random() < 0.6;
         const pool = adequado ? adequados : inadequados;
         const def = pool[Math.floor(Math.random() * pool.length)];
@@ -104,11 +113,7 @@ export function montar(app, ctx) {
         palco.appendChild(el);
         const x = 5 + Math.random() * 90;
         ativos.push({
-          el,
-          x,
-          y: -5,
-          adequado,
-          nome: def.nome,
+          el, x, y: -5, adequado,
           velocidade: velocidadeBase * (0.9 + Math.random() * 0.3),
         });
       }
@@ -136,7 +141,7 @@ export function montar(app, ctx) {
         lastT = agora;
 
         if (agora - ultimoSpawn > 900 - Math.min(500, (duracao - segundos) * 8)) {
-          spawnarItem(agora);
+          spawnarItem();
           ultimoSpawn = agora;
         }
 
@@ -184,23 +189,23 @@ export function montar(app, ctx) {
         raf = requestAnimationFrame(loop);
       }
 
-      raf = requestAnimationFrame(loop);
-
-      tTimer = setInterval(() => {
-        segundos--;
-        tempoVal.textContent = segundos + 's';
-        if (segundos <= 0) encerrar(pontos >= meta);
-      }, 1000);
+      function iniciarJogo() {
+        lastT = performance.now();
+        ultimoSpawn = lastT;
+        raf = requestAnimationFrame(loop);
+        tTimer = setInterval(() => {
+          segundos--;
+          tempoVal.textContent = segundos + 's';
+          if (segundos <= 0) encerrar(pontos >= meta);
+        }, 1000);
+      }
 
       function encerrar(vitoria) {
         cancelAnimationFrame(raf);
         clearInterval(tTimer);
         raf = null;
         tTimer = null;
-        if (vitoria) {
-          irPara('FINAL');
-          return;
-        }
+        if (vitoria) { irPara('JOGO2_LIGAR'); return; }
         mostrarDerrota({
           titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
           texto:  t.derrota,
@@ -209,6 +214,14 @@ export function montar(app, ctx) {
           irPara('ATTRACT');
         });
       }
+      // Modal de entrada
+      btnJogar.addEventListener('pointerdown', () => btnJogar.classList.add('tocando'));
+      btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
+      btnJogar.addEventListener('pointerup', () => {
+        btnJogar.classList.remove('tocando');
+        modalEntrada.classList.remove('visivel');
+        setTimeout(iniciarJogo, 100);
+      });
     },
     onExit() {
       cancelAnimationFrame(raf);

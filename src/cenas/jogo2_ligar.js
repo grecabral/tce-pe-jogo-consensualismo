@@ -1,4 +1,4 @@
-// Jogo 1 — Ligar Pontos (drag-and-drop).
+// Jogo 2 — Ligar Pontos (drag-and-drop).
 // Arrastar 6 cartões-caso para as 3 caixas-pilar corretas.
 // Acerto gruda e mostra feedback. Erro balança e devolve ao pool.
 
@@ -10,10 +10,9 @@ let cleanup = [];
 export function montar(app, ctx) {
   return {
     onEnter() {
-      const t = ctx.textosUI.jogo1;
+      const t = ctx.textosUI.jogo2;
       const { pilares, casos } = ctx.principios;
 
-      const pilarPorId = Object.fromEntries(pilares.map((p) => [p.id, p]));
       const iconePilar = {
         dialogo:    'assets/pilares/dialogo.svg',
         eficiencia: 'assets/pilares/eficiencia.svg',
@@ -23,7 +22,7 @@ export function montar(app, ctx) {
       const casosEmbaralhados = embaralhar(casos);
 
       app.innerHTML = `
-        <section class="cena cena-jogo1" id="cena-jogo1">
+        <section class="cena cena-jogo1" id="cena-jogo2-ligar">
           <div class="jogo1-topo">
             <h2 class="jogo1-titulo">${t.titulo}</h2>
             <p class="jogo1-instrucao">${t.instrucao}</p>
@@ -53,9 +52,16 @@ export function montar(app, ctx) {
             <button class="btn btn-primary escondido" id="btn-avancar1">${t.botaoAvancar}</button>
           </div>
           <div class="jogo1-feedback" id="j1-feedback"></div>
+          <div class="modal-entrada visivel" id="modal-entrada">
+            <div class="modal-entrada-card">
+              <h2>${t.tituloModal}</h2>
+              <p>${t.instrucaoModal}</p>
+              <button class="btn btn-primary" id="btn-modal-jogar">${t.botaoIniciar}</button>
+            </div>
+          </div>
         </section>`;
 
-      root = app.querySelector('#cena-jogo1');
+      root = app.querySelector('#cena-jogo2-ligar');
       const pilaresEl = root.querySelector('#j1-pilares');
       const casosEl = root.querySelector('#j1-casos');
       const feedback = root.querySelector('#j1-feedback');
@@ -162,9 +168,27 @@ export function montar(app, ctx) {
         caixas.forEach((c) => c.classList.remove('drop-ativo'));
       }
 
+      const modalEntrada = root.querySelector('#modal-entrada');
+      const btnJogar = root.querySelector('#btn-modal-jogar');
+
+      // Modal de entrada — drag desativado até fechar
+      casosEl.querySelectorAll('.caso-card').forEach((c) => {
+        c.style.pointerEvents = 'none';
+      });
+
+      btnJogar.addEventListener('pointerdown', () => btnJogar.classList.add('tocando'));
+      btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
+      btnJogar.addEventListener('pointerup', () => {
+        btnJogar.classList.remove('tocando');
+        modalEntrada.classList.remove('visivel');
+        casosEl.querySelectorAll('.caso-card').forEach((c) => {
+          c.style.pointerEvents = '';
+        });
+      });
+
       casosEl.querySelectorAll('.caso-card').forEach(anexarDrag);
 
-      anexarBotao(btnAv, () => irPara('JOGO2_LANTERNA'));
+      anexarBotao(btnAv, () => irPara('JOGO3_LANTERNA'));
     },
     onExit() {
       cleanup.forEach((fn) => { try { fn(); } catch (_) {} });

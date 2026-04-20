@@ -23,8 +23,8 @@ export function montar(app, ctx) {
               <p class="final-inspiracao">${t.inspiracao}</p>
             </div>
             <div class="final-qr">
-              <canvas id="final-qr-canvas" width="280" height="280"></canvas>
-              <span class="legenda">${t.qrLegenda}</span>
+              <canvas id="final-qr-canvas" width="400" height="400"></canvas>
+              <span class="final-qr-legenda">${t.qrLegenda}</span>
             </div>
           </div>
           <div class="final-acoes">
@@ -66,7 +66,7 @@ function renderQR(url) {
     new QRious({
       element: canvas,
       value: url || '',
-      size: 280,
+      size: 400,
       level: 'M',
       background: '#ffffff',
       foreground: '#003366',
