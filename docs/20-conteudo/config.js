@@ -16,8 +16,20 @@ export default {
   // Tempo (ms) na tela final antes de voltar para attract sozinho.
   finalAutoResetMs: 10_000,
 
-  // Meta de pontos para vencer o Jogo 3 (coletor) em 60s.
+  // Meta de pontos para vencer o Jogo 1 (Coletor).
   coletorMetaPontos: 80,
+
+  // Duração total do Jogo 1 (Coletor) em segundos.
+  coletorDuracaoSeg: 40,
+
+  // Velocidade inicial dos itens caindo (pixels por segundo).
+  coletorVelocidadeInicial: 220,
+
+  // A cada quantos segundos a velocidade aumenta.
+  coletorAceleracaoIntervaloSeg: 10,
+
+  // Quanto a velocidade aumenta a cada intervalo (multiplicador).
+  coletorAceleracaoIncremento: 1.5,
 
   // Duração do Jogo 2 (lanterna) em segundos.
   lanternaDuracaoSeg: 60,

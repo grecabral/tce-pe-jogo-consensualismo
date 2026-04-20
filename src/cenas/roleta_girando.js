@@ -51,8 +51,8 @@ export function montar(app, ctx) {
         criarLuzes(anel, raio);
       });
 
-      tMsg  = setTimeout(() => msg.classList.add('visivel'), 3500);
-      tAuto = setTimeout(() => irPara('INTRO_CONSENSUALISMO'), 4200);
+      tMsg  = setTimeout(() => msg.classList.add('visivel'), 4500);
+      tAuto = setTimeout(() => irPara('INTRO_CONSENSUALISMO'), 6000);
 
       onToque = () => irPara('INTRO_CONSENSUALISMO');
       root.addEventListener('pointerdown', onToque, { passive: true });

@@ -1,5 +1,6 @@
 // Jogo 1 — Coletor: itens caem, jogador move cesta por touch horizontal.
-// Adequado +10, inadequado -5. Meta 80 em 60s vence → JOGO2_LIGAR.
+// Adequado +10, inadequado -5. Meta 80 em 40s vence → JOGO2_LIGAR.
+// Velocidade cresce a cada coletorAceleracaoIntervaloSeg segundos.
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
@@ -13,8 +14,11 @@ export function montar(app, ctx) {
   return {
     onEnter() {
       const t = ctx.textosUI.jogo1;
-      const meta = ctx.config.coletorMetaPontos || 80;
-      const duracao = 60;
+      const meta      = ctx.config.coletorMetaPontos || 80;
+      const duracao   = ctx.config.coletorDuracaoSeg || 40;
+      const velInicial = ctx.config.coletorVelocidadeInicial || 220;
+      const acIntervalo = ctx.config.coletorAceleracaoIntervaloSeg || 10;
+      const acIncremento = ctx.config.coletorAceleracaoIncremento || 1.5;
       const adequados = ctx.coletor.adequados;
       const inadequados = ctx.coletor.inadequados;
 
@@ -101,7 +105,8 @@ export function montar(app, ctx) {
       // Itens em queda.
       const ativos = [];
       let ultimoSpawn = 0;
-      let velocidadeBase = 220; // px/s
+      let velocidadeBase = velInicial;
+      let intervaloAnterior = 0; // rastreia quantos intervalos de aceleração já aplicamos
 
       function spawnarItem() {
         const adequado = Math.random() < 0.6;
@@ -145,7 +150,12 @@ export function montar(app, ctx) {
           ultimoSpawn = agora;
         }
 
-        velocidadeBase = 220 + (duracao - segundos) * 4;
+        // Aceleração por intervalo fixo (a cada N segundos decorridos).
+        const intervaloAtual = Math.floor((duracao - segundos) / acIntervalo);
+        if (intervaloAtual > intervaloAnterior) {
+          velocidadeBase *= acIncremento;
+          intervaloAnterior = intervaloAtual;
+        }
 
         const alturaPalco = rect.height || palco.offsetHeight;
         const larguraPalco = rect.width || palco.offsetWidth;

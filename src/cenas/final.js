@@ -18,16 +18,16 @@ export function montar(app, ctx) {
           ${vit ? `<h2 class="final-titulo-fase">${vit.titulo}</h2>` : ''}
           <div class="final-grid">
             <div class="final-texto">
-              <p class="final-frase">${t.fraseSintese}</p>
-              <p class="final-sub">${t.subtexto}</p>
+              <p class="final-frase final-bloco" style="animation-delay:0.2s">${t.fraseSintese}</p>
+              <p class="final-sub final-bloco" style="animation-delay:0.8s">${t.subtexto}</p>
               <p class="final-inspiracao">${t.inspiracao}</p>
             </div>
-            <div class="final-qr">
+            <div class="final-qr final-bloco" style="animation-delay:1.4s">
               <canvas id="final-qr-canvas" width="400" height="400"></canvas>
               <span class="final-qr-legenda">${t.qrLegenda}</span>
             </div>
           </div>
-          <div class="final-acoes">
+          <div class="final-acoes final-bloco" style="animation-delay:2.0s">
             <button class="btn btn-secondary" id="btn-novo">${t.botaoJogarNovo}</button>
           </div>
           <p class="final-creditos">${creditos.orgao} · ${creditos.ano}</p>

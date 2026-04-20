@@ -28,6 +28,14 @@ export function montar(app, ctx) {
             <p class="jogo1-instrucao">${t.instrucao}</p>
           </div>
           <div class="jogo1-stage">
+            <div class="jogo1-casos" id="j1-casos">
+              ${casosEmbaralhados.map((c) => `
+                <div class="caso-card" data-caso-id="${c.id}" data-pilar-correto="${c.pilarCorreto}">
+                  <span class="tag-missao">CASO</span>
+                  <p style="margin: var(--space-2) 0 0;">${c.texto}</p>
+                </div>
+              `).join('')}
+            </div>
             <div class="jogo1-pilares" id="j1-pilares">
               ${pilares.map((p) => `
                 <div class="pilar-box" data-pilar-id="${p.id}">
@@ -36,14 +44,6 @@ export function montar(app, ctx) {
                     <span class="pilar-nome">${p.nome}</span>
                     <span class="pilar-desc">${p.descricaoCurta || ''}</span>
                   </span>
-                </div>
-              `).join('')}
-            </div>
-            <div class="jogo1-casos" id="j1-casos">
-              ${casosEmbaralhados.map((c) => `
-                <div class="caso-card" data-caso-id="${c.id}" data-pilar-correto="${c.pilarCorreto}">
-                  <span class="tag-missao">CASO</span>
-                  <p style="margin: var(--space-2) 0 0;">${c.texto}</p>
                 </div>
               `).join('')}
             </div>

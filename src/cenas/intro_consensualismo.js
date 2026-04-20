@@ -10,7 +10,8 @@ export function montar(app, ctx) {
       ctx.sessao.historiaAtual = sortearHistoria(ctx.historias, ctx.sessao.numero);
 
       const t = ctx.textosUI.introConsensualism;
-      const paragrafos = t.texto.split('\n\n').map((p) => `<p class="intro-texto">${p}</p>`).join('');
+      const linhas = t.texto.split('\n').filter((l) => l.trim() !== '');
+      const paragrafosHTML = `<p>${linhas.map((l) => `<span class="intro-linha">${l}</span>`).join('')}</p>`;
 
       app.innerHTML = `
         <section class="cena cena-intro" id="cena-intro">
@@ -18,7 +19,7 @@ export function montar(app, ctx) {
             <img class="intro-icone" src="assets/ui/toque.svg" alt=""
               onerror="this.style.display='none'">
             <h1 class="intro-titulo">${t.titulo}</h1>
-            ${paragrafos}
+            ${paragrafosHTML}
             <button class="btn btn-primary" id="btn-intro">${t.botaoContinuar}</button>
           </div>
         </section>`;

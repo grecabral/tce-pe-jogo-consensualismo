@@ -31,11 +31,13 @@
 
   .jogo1-stage {
     grid-template-columns: 1fr 1fr !important;
+    align-items: start;
   }
 
   .jogo1-pilares {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: var(--space-3);
   }
 
