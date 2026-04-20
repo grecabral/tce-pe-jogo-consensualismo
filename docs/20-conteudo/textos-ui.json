@@ -10,44 +10,61 @@
     "mensagemParou": "VAMOS JOGAR!"
   },
 
+  "introConsensualism": {
+    "titulo": "Mas o que é Consensualismo?",
+    "texto": "Sabe aquele problema na sua prefeitura que parece não ter saída? Uma obra parada há anos porque o preço dos materiais subiu, ou um contrato de coleta de lixo travado por uma briga judicial sem fim?\n\nDiálogo, cooperação e boa-fé podem ser uma alternativa para encontrar soluções rápidas e eficientes em prol do interesse público. O Consensualismo é esse caminho!",
+    "botaoContinuar": "ENTENDI, VAMOS JOGAR"
+  },
+
   "abertura": {
     "rotuloMissao": "MISSÃO",
     "botaoIniciar": "INICIAR MISSÃO"
   },
 
   "jogo1": {
-    "titulo": "Ligue cada caso ao seu pilar",
-    "instrucao": "Arraste cada cartão para o pilar que ele representa.",
-    "feedbackAcerto": "Certo!",
-    "feedbackErro": "Não é esse pilar. Tente outro.",
-    "botaoAvancar": "AVANÇAR",
-    "aoCompletar": "Você conectou os três pilares do consensualismo."
-  },
-
-  "jogo2": {
-    "titulo": "Encontre os instrumentos",
-    "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
-    "hudContador": "Encontrados",
-    "feedbackArmadilha": "Isso trava o acordo.",
-    "botaoAvancar": "CONTINUAR",
-    "derrota": "O tempo acabou. Acordos também precisam de ritmo."
-  },
-
-  "jogo3": {
     "titulo": "Colete as práticas certas",
     "instrucao": "Arraste a cesta para pegar práticas adequadas. Evite as inadequadas.",
+    "tituloModal": "Vamos começar!",
+    "instrucaoModal": "Mova a cesta para coletar apenas os valores que pertencem ao consensualismo. Evite os que atrapalham!",
+    "botaoIniciar": "JOGAR",
     "hudPontuacao": "Pontos",
     "hudTempo": "Tempo",
     "aoAtingirMeta": "Parabéns! Você reconheceu as práticas do consensualismo.",
     "derrota": "Faltou pouco. Cada prática conta."
   },
 
+  "jogo2": {
+    "titulo": "Ligue cada caso ao seu pilar",
+    "instrucao": "Arraste cada cartão para o pilar que ele representa.",
+    "tituloModal": "Agora vamos praticar!",
+    "instrucaoModal": "Agora que você entendeu o conceito, vamos ver como o consensualismo funciona na prática. Conecte cada caso ao pilar correto.",
+    "botaoIniciar": "JOGAR",
+    "feedbackAcerto": "Certo!",
+    "feedbackErro": "Não é esse pilar. Tente outro.",
+    "botaoAvancar": "AVANÇAR",
+    "aoCompletar": "Você conectou os três pilares do consensualismo."
+  },
+
+  "jogo3": {
+    "titulo": "Encontre os instrumentos",
+    "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
+    "tituloTransicao": "Hora de conhecer um caso real",
+    "textoTransicao": "Vilanova do Rio enfrentava uma crise no transporte público. O contrato com a empresa operadora estava defasado há anos, causando atrasos, veículos sucateados e insatisfação da população. Prefeitura e empresa precisavam encontrar uma saída. Veja como o consensualismo pode ajudar.",
+    "botaoTransicao": "ENTENDER O CASO",
+    "tituloListaItens": "Encontre os instrumentos:",
+    "instrucaoJogo": "Ilumine o cenário e toque nos instrumentos do consensualismo para destravarem o caso.",
+    "hudContador": "Encontrados",
+    "feedbackArmadilha": "Isso trava o acordo.",
+    "botaoAvancar": "CONTINUAR",
+    "derrota": "O tempo acabou. Acordos também precisam de ritmo."
+  },
+
   "final": {
     "fraseSintese": "Consensualismo: uma alternativa quando o diálogo é possível.",
     "subtexto": "Não substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o diálogo é viável e o interesse público ganha com a solução negociada.",
     "inspiracao": "Inspirado no VLT de Salvador: Bahia e Mato Grosso, com atuação dos Tribunais de Contas, firmaram solução consensual para aproveitar trens do consórcio Cuiabá–Várzea Grande, adiantando anos na entrega do sistema.",
-    "qrLegenda": "Saiba mais",
-    "botaoJogarNovo": "TOCAR NOVAMENTE"
+    "qrLegenda": "Ajude o TCE-PE a melhorar este jogo! Responda nossa pesquisa rápida.",
+    "botaoJogarNovo": "VOLTAR AO INÍCIO"
   },
 
   "acessibilidade": {

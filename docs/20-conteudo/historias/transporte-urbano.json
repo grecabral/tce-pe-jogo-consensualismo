@@ -1,24 +1,20 @@
 {
-  "_descricao": "História 3 (neutra): Transporte urbano metropolitano entre dois municípios conurbados. Análoga ao caso real MG×BA de trens urbanos, mas entre MUNICÍPIOS FICTÍCIOS. Esta é a história mais próxima do caso real — e é a que a tela final vai citar como referência.",
+  "_descricao": "História 3 (neutra): Contrato de transporte urbano em município único fictício. Análoga ao caso real MG×BA de trens urbanos. Esta é a história mais próxima do caso real — e é a que a tela final vai citar como referência.",
 
   "id": "transporte-urbano",
-  "titulo": "Transporte urbano compartilhado",
-
-  "cidades": {
-    "cidadeA": "São Pedro das Pedras",
-    "cidadeB": "Riachão do Norte"
-  },
+  "municipio": "Vilanova do Rio",
+  "titulo": "Vilanova do Rio: o contrato parado",
 
   "abertura": {
     "rotulo": "MISSÃO",
-    "titulo": "Duas cidades. Um trajeto. Um sistema.",
-    "contexto": "São Pedro das Pedras e Riachão do Norte estão conurbadas e precisam de um BRT compartilhado para milhares de trabalhadores. O impasse sobre gestão, manutenção e tarifas paralisa o projeto.",
+    "titulo": "Um município. Um contrato. Uma saída.",
+    "contexto": "Vilanova do Rio enfrentava anos de crise no transporte público. O contrato com a empresa operadora estava defasado, os veículos sucateados e a população insatisfeita. Prefeitura e empresa precisavam encontrar uma saída sem recorrer ao litígio.",
     "imagemFundo": "cenarios/transporte_abertura.jpg"
   },
 
   "lanterna": {
     "cenario": "cenarios/transporte_lanterna.jpg",
-    "dicaOnboarding": "Arraste o dedo para iluminar. Toque nos instrumentos que destravam o projeto compartilhado.",
+    "dicaOnboarding": "Ilumine o cenário e toque nos instrumentos que destravam o caso de Vilanova do Rio.",
     "instrumentosAEscolher": [
       "acordo-substitutivo",
       "mediacao",
@@ -49,12 +45,12 @@
   },
 
   "vitoria": {
-    "titulo": "GESTÃO COMPARTILHADA",
-    "texto": "São Pedro das Pedras e Riachão do Norte assinaram acordo de gestão compartilhada do BRT. Tarifas, manutenção e responsabilidades estão definidas. O transporte avança."
+    "titulo": "ACORDO FIRMADO",
+    "texto": "Vilanova do Rio encontrou uma saída consensual. Prefeitura e empresa assinaram um acordo reequilibrando o contrato, com cronograma de renovação da frota e revisão tarifária. O transporte voltou a funcionar."
   },
 
   "derrota": {
-    "titulo": "PROJETO PARALISADO",
-    "texto": "Sem acordo, o BRT continua parado. Milhares de trabalhadores seguem perdendo horas nas estradas todos os dias."
+    "titulo": "CONTRATO PARALISADO",
+    "texto": "Sem acordo, o impasse continua. A população de Vilanova do Rio segue enfrentando ônibus lotados e horários imprevisíveis enquanto prefeitura e empresa travam na justiça."
   }
 }

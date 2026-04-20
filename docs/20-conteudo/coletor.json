@@ -1,32 +1,13 @@
 {
-  "_descricao": "Itens do Jogo 3 (Coletor). Caem do topo da tela. Jogador move cesta para pegar os ADEQUADOS e evitar os INADEQUADOS. Conteúdo compartilhado entre as 3 histórias (não muda por sessão).",
+  "_descricao": "Itens do Jogo 1 (Coletor). Caem do topo da tela. Jogador move cesta para pegar os ADEQUADOS e evitar os INADEQUADOS. Conteúdo compartilhado entre as histórias (não muda por sessão).",
 
   "_recomendacoes": {
-    "adequadosManterTodos": "Lista atual (6 itens) é coerente. 'Acordo' é resultado mais que prática; se o Arquiteto quiser trocar por algo mais comportamental, sugerir 'Celeridade' ou 'Previsibilidade'.",
-    "adequadosAConsiderarAdicionar": "Respeito ao contraditório; Flexibilidade.",
-    "inadequadosAConsiderarAdicionar": "Intransigência; Retórica de guerra.",
-    "inadequadosRevisar": "'Impasse' é mais estado que comportamento. Funciona visualmente, mas se soar abstrato demais em teste, substituir por 'Rigidez'."
+    "adequadosManterTodos": "Lista atual (7 itens) cobre valores comportamentais do consensualismo. Todos têm base nos pilares de boa-fé, diálogo e cooperação.",
+    "iconesPendentes": "Empatia reutiliza escuta.svg (ícone próprio necessário para V2). Imoralidade reutiliza ma-fe.svg (ícone próprio necessário). Vingança reutiliza hostilidade.svg (ícone próprio necessário).",
+    "inadequadosRevisar": "'Indiferença' é mais estado que comportamento ativo, mas funciona bem visualmente no contexto do jogo."
   },
 
   "adequados": [
-    {
-      "id": "escuta-ativa",
-      "nome": "Escuta Ativa",
-      "icone": "itens/escuta.svg",
-      "cor": "#10b981"
-    },
-    {
-      "id": "transparencia",
-      "nome": "Transparência",
-      "icone": "itens/transparencia.svg",
-      "cor": "#10b981"
-    },
-    {
-      "id": "cooperacao",
-      "nome": "Cooperação",
-      "icone": "itens/cooperacao.svg",
-      "cor": "#10b981"
-    },
     {
       "id": "boa-fe",
       "nome": "Boa-fé",
@@ -34,14 +15,38 @@
       "cor": "#10b981"
     },
     {
-      "id": "interesse-publico",
-      "nome": "Interesse Público",
+      "id": "honestidade",
+      "nome": "Honestidade",
+      "icone": "itens/transparencia.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "respeito",
+      "nome": "Respeito",
+      "icone": "itens/escuta.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "dialogo",
+      "nome": "Diálogo",
+      "icone": "itens/cooperacao.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "etica",
+      "nome": "Ética",
       "icone": "itens/interesse-publico.svg",
       "cor": "#10b981"
     },
     {
-      "id": "acordo",
-      "nome": "Acordo",
+      "id": "empatia",
+      "nome": "Empatia",
+      "icone": "itens/escuta.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "acordos-mutuos",
+      "nome": "Acordos Mútuos",
       "icone": "itens/acordo.svg",
       "cor": "#10b981"
     }
@@ -49,33 +54,45 @@
 
   "inadequados": [
     {
-      "id": "imposicao",
-      "nome": "Imposição Unilateral",
-      "icone": "itens/imposicao.svg",
-      "cor": "#ef4444"
-    },
-    {
-      "id": "hostilidade",
-      "nome": "Hostilidade",
-      "icone": "itens/hostilidade.svg",
-      "cor": "#ef4444"
-    },
-    {
       "id": "ma-fe",
       "nome": "Má-fé",
       "icone": "itens/ma-fe.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "impasse",
-      "nome": "Impasse",
+      "id": "desonestidade",
+      "nome": "Desonestidade",
+      "icone": "itens/opacidade.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "desrespeito",
+      "nome": "Desrespeito",
+      "icone": "itens/hostilidade.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "indiferenca",
+      "nome": "Indiferença",
       "icone": "itens/impasse.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "opacidade",
-      "nome": "Opacidade",
-      "icone": "itens/opacidade.svg",
+      "id": "imoralidade",
+      "nome": "Imoralidade",
+      "icone": "itens/ma-fe.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "autoritarismo",
+      "nome": "Autoritarismo",
+      "icone": "itens/imposicao.svg",
+      "cor": "#ef4444"
+    },
+    {
+      "id": "vinganca",
+      "nome": "Vingança",
+      "icone": "itens/hostilidade.svg",
       "cor": "#ef4444"
     }
   ]
