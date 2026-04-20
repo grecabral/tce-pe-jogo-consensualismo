@@ -1,0 +1,50 @@
+/* Orientação portrait (TV 32" vertical) — layout empilhado. */
+@media (orientation: portrait) {
+  :root { --orientacao: 'portrait'; }
+
+  .layout-portrait-stack  { display: flex; flex-direction: column; }
+  .layout-portrait-hidden { display: none !important; }
+
+  .jogo1-stage {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr;
+  }
+
+  .jogo1-pilares {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+
+  .final-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto;
+    text-align: center;
+  }
+}
+
+/* Orientação landscape (TV 50" horizontal) — layout lado a lado. */
+@media (orientation: landscape) {
+  :root { --orientacao: 'landscape'; }
+
+  .layout-landscape-hidden { display: none !important; }
+
+  .jogo1-stage {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .jogo1-pilares {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .final-grid {
+    grid-template-columns: 1fr auto !important;
+  }
+}
+
+/* Safe area mínima em qualquer orientação. */
+.cena {
+  padding-inline: max(var(--space-7), env(safe-area-inset-left));
+}

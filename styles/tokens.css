@@ -1,0 +1,173 @@
+/* =========================================================================
+   tokens.css — cópia runtime de docs/40-design/tokens.css.
+   Razão da cópia: @import entre diretórios quebra resolução de url() das
+   fontes em alguns Chromiums. Com esta cópia os paths ficam relativos
+   ao arquivo que de fato carrega as fontes.
+   Fonte canônica editável: docs/40-design/tokens.css (Visual Designer).
+   Sincronizar manualmente quando o canônico mudar.
+   ========================================================================= */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fontes/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fontes/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Bungee';
+  src: url('../assets/fontes/Bungee-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --color-primary-900: #001a33;
+  --color-primary-800: #002347;
+  --color-primary-700: #003366;
+  --color-primary-600: #14457a;
+  --color-primary-500: #2a5a91;
+  --color-primary-400: #4d7aaa;
+  --color-primary-300: #7fa1c4;
+  --color-primary-200: #b3c8de;
+  --color-primary-100: #d9e3ee;
+  --color-primary-50:  #f0f4f9;
+
+  --color-accent-900: #4d3d00;
+  --color-accent-800: #806600;
+  --color-accent-700: #b38f00;
+  --color-accent-600: #e6b800;
+  --color-accent-500: #ffcc00;
+  --color-accent-400: #ffd633;
+  --color-accent-300: #ffe066;
+  --color-accent-200: #ffeb99;
+  --color-accent-100: #fff5cc;
+
+  --color-neutral-0:   #ffffff;
+  --color-neutral-50:  #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  --color-success-700: #047857;
+  --color-success-500: #10b981;
+  --color-success-200: #a7f3d0;
+
+  --color-warning-700: #b45309;
+  --color-warning-500: #f59e0b;
+  --color-warning-200: #fde68a;
+
+  --color-error-700:   #b91c1c;
+  --color-error-500:   #ef4444;
+  --color-error-200:   #fecaca;
+
+  --overlay-scrim-strong: rgba(0, 26, 51, 0.78);
+  --overlay-scrim-soft:   rgba(0, 26, 51, 0.45);
+  --overlay-glow-accent:  rgba(255, 204, 0, 0.18);
+  --overlay-modal:        rgba(15, 23, 42, 0.65);
+
+  --bg-app:        var(--color-primary-900);
+  --bg-surface:    var(--color-primary-800);
+  --bg-card:       var(--color-neutral-0);
+  --text-on-dark:  var(--color-neutral-0);
+  --text-on-light: var(--color-neutral-900);
+  --text-muted:    var(--color-neutral-500);
+  --border-subtle: var(--color-neutral-200);
+  --focus-ring:    var(--color-accent-500);
+
+  --font-ui:      'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Bungee', 'Inter', system-ui, sans-serif;
+
+  --font-size-display: clamp(3.5rem, 9vmin,   7rem);
+  --font-size-h1:      clamp(2.25rem, 5.5vmin, 4.5rem);
+  --font-size-h2:      clamp(1.75rem, 4vmin,   3.25rem);
+  --font-size-h3:      clamp(1.375rem, 3vmin,  2.25rem);
+  --font-size-body-lg: clamp(1.25rem, 2.4vmin, 1.875rem);
+  --font-size-body:    clamp(1.125rem, 2vmin,  1.5rem);
+  --font-size-small:   clamp(0.95rem, 1.6vmin, 1.25rem);
+  --font-size-caption: clamp(0.85rem, 1.3vmin, 1.05rem);
+
+  --line-height-tight:  1.15;
+  --line-height-normal: 1.45;
+  --line-height-loose:  1.65;
+
+  --letter-spacing-display: 0.02em;
+  --letter-spacing-tight:   -0.01em;
+  --letter-spacing-wide:     0.06em;
+
+  --font-weight-regular: 400;
+  --font-weight-bold:    700;
+
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  --touch-target-min: 80px;
+
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   32px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  --shadow-elev-1: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-elev-2: 0 4px 8px rgba(0, 0, 0, 0.14), 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-elev-3: 0 10px 20px rgba(0, 0, 0, 0.18), 0 3px 6px rgba(0, 0, 0, 0.10);
+  --shadow-elev-4: 0 18px 36px rgba(0, 0, 0, 0.22), 0 6px 10px rgba(0, 0, 0, 0.12);
+  --shadow-glow-accent: 0 0 0 4px var(--overlay-glow-accent);
+
+  --border-thin:   1px solid var(--border-subtle);
+  --border-thick:  2px solid var(--color-primary-700);
+  --border-accent: 3px solid var(--color-accent-500);
+
+  --duration-instant: 80ms;
+  --duration-fast:    150ms;
+  --duration-base:    240ms;
+  --duration-slow:    400ms;
+  --duration-scene:   600ms;
+
+  --easing-standard:  cubic-bezier(0.2, 0.8, 0.2, 1);
+  --easing-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-in:         cubic-bezier(0.4, 0, 1, 1);
+  --easing-out:        cubic-bezier(0, 0, 0.2, 1);
+
+  --z-base:    1;
+  --z-hud:     50;
+  --z-modal:   100;
+  --z-toast:   150;
+  --z-overlay: 200;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast:    0ms;
+    --duration-base:    0ms;
+    --duration-slow:    0ms;
+    --duration-scene:   0ms;
+  }
+}

@@ -26,6 +26,6 @@ export default {
   creditos: {
     orgao: 'Tribunal de Contas do Estado de Pernambuco',
     ano: 2026,
-    logoSrc: 'assets/marca/logo_tce.svg',
+    logoSrc: 'assets/marca/logo_tce.png',
   },
 };
