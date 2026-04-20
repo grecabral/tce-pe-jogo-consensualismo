@@ -4,6 +4,7 @@
 // Tocar armadilha → -5s + shake + explicação.
 
 import { irPara, resetIdleTimer } from '../estado.js';
+import { mostrarDerrota } from '../ui/derrota.js';
 
 let raf = null;
 let tTimer = null;
@@ -177,9 +178,15 @@ export function montar(app, ctx) {
         secundos--;
         hudSeg.textContent = String(secundos).padStart(2, '0') + 's';
         if (secundos <= 0) {
-          // Derrota → attract.
-          ctx.sessao.numero++;
-          irPara('ATTRACT');
+          clearInterval(tTimer);
+          tTimer = null;
+          mostrarDerrota({
+            titulo: historia.derrota?.titulo,
+            texto:  t.derrota,
+          }).then(() => {
+            ctx.sessao.numero++;
+            irPara('ATTRACT');
+          });
         }
       }, 1000);
     },

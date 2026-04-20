@@ -2,6 +2,7 @@
 // Adequado +10, inadequado -5. Meta 80 em 60s vence → FINAL.
 
 import { irPara, resetIdleTimer } from '../estado.js';
+import { mostrarDerrota } from '../ui/derrota.js';
 
 let raf = null;
 let tTimer = null;
@@ -198,10 +199,15 @@ export function montar(app, ctx) {
         tTimer = null;
         if (vitoria) {
           irPara('FINAL');
-        } else {
+          return;
+        }
+        mostrarDerrota({
+          titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
+          texto:  t.derrota,
+        }).then(() => {
           ctx.sessao.numero++;
           irPara('ATTRACT');
-        }
+        });
       }
     },
     onExit() {

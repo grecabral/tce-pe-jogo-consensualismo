@@ -586,6 +586,43 @@
   to { transform: translate(-50%, -200%); opacity: 0; }
 }
 
+/* ---------- OVERLAY DE DERROTA (Jogo 2 e Jogo 3) ---------- */
+.overlay-derrota {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 26, 51, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+  opacity: 0;
+  transition: opacity 300ms var(--easing-standard);
+  padding: var(--space-7);
+}
+.overlay-derrota.visivel { opacity: 1; }
+
+.overlay-derrota-card {
+  max-width: min(720px, 85vw);
+  text-align: center;
+  color: var(--color-neutral-0);
+}
+
+.overlay-derrota h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  letter-spacing: var(--letter-spacing-display);
+  color: var(--color-accent-500);
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--space-5);
+}
+
+.overlay-derrota p {
+  font-size: var(--font-size-body);
+  color: var(--color-primary-100);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
 /* ---------- FINAL ---------- */
 .cena-final {
   background: radial-gradient(ellipse at center, var(--color-primary-700), var(--color-primary-900));
