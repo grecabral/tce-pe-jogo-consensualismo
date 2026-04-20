@@ -41,7 +41,25 @@ async function main() {
   iniciarIdleGlobal(ctx.config.idleTimeoutMs);
   configurarIdle(ctx.config.idleTimeoutMs);
 
-  await irPara('ATTRACT');
+  // Debug: ?cena=NOME permite pular direto (uso do QA). ?historia=ID
+  // força a história sorteada. Em produção, URL fica limpa e cai no ATTRACT.
+  const params = new URLSearchParams(location.search);
+  const cenaInicial = params.get('cena');
+  const historiaId = params.get('historia');
+  if (historiaId) {
+    const idx = ctx.historias.findIndex((h) => h.id === historiaId);
+    if (idx >= 0) sessao.numero = idx;
+  }
+  // Quando pulamos direto para uma cena que depende de historiaAtual,
+  // pré-seleciona (no fluxo normal, ABERTURA que faz isso).
+  if (cenaInicial && cenaInicial !== 'ATTRACT') {
+    sessao.historiaAtual = ctx.historias[sessao.numero % ctx.historias.length];
+  }
+  await irPara(cenaInicial && validaCena(cenaInicial) ? cenaInicial : 'ATTRACT');
+}
+
+function validaCena(nome) {
+  return ['ATTRACT','ROLETA_GIRANDO','ABERTURA','JOGO1_LIGAR','JOGO2_LANTERNA','JOGO3_COLETOR','FINAL'].includes(nome);
 }
 
 function mostrarErro(app, titulo, detalhe) {
