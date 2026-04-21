@@ -1219,6 +1219,7 @@
 
 .caso-card {
   background: #0d1a2e;
+  color: var(--color-neutral-0);
   border: var(--panel-border);
   box-shadow: var(--panel-glow);
   border-radius: var(--radius-card);
