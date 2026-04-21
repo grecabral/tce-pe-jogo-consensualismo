@@ -19,6 +19,18 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Textura de ruído sutil via SVG filter */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  pointer-events: none;
+  z-index: 0;
+}
+
 img, svg { display: block; max-width: 100%; }
 
 button {
@@ -39,6 +51,20 @@ button {
   transition: opacity var(--duration-base) var(--easing-standard);
 }
 
+/* Grade geométrica diagonal subtil */
+#app::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(255,204,0,0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,204,0,0.6) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
 #app.trocando { opacity: 0; }
 
 .cena {
@@ -51,30 +77,42 @@ button {
   padding: var(--space-7);
   opacity: 1;
   transition: opacity var(--duration-scene) var(--easing-standard);
+  z-index: 1;
 }
 
 .cena.entrando  { opacity: 0; }
 .cena.saindo    { opacity: 0; }
 
+/* Animações de entrada escalonadas */
+@keyframes entradaElem {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.entrada-1 { animation: entradaElem 0.5s var(--easing-emphasized) both; }
+.entrada-2 { animation: entradaElem 0.5s 0.15s var(--easing-emphasized) both; }
+.entrada-3 { animation: entradaElem 0.5s 0.30s var(--easing-emphasized) both; }
+.entrada-4 { animation: entradaElem 0.5s 0.45s var(--easing-emphasized) both; }
+
 .tag-missao {
   display: inline-block;
   background: var(--color-accent-500);
-  color: var(--color-neutral-900);
+  color: #003366;
   font-family: var(--font-display);
   font-size: var(--font-size-small);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-xs);
+  border-radius: 2px;
 }
 
+/* ── BOTÕES ─────────────────────────────────────────── */
 .btn {
-  font-family: var(--font-ui);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-display);
   font-size: var(--font-size-body-lg);
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
-  border-radius: var(--radius-md);
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-card);
   padding: var(--space-4) var(--space-6);
   min-width: 240px;
   min-height: var(--touch-target-min);
@@ -82,51 +120,188 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
+  position: relative;
+  overflow: hidden;
   transition:
-    transform var(--duration-instant) var(--easing-standard),
-    box-shadow var(--duration-fast)    var(--easing-standard),
-    background var(--duration-fast)    var(--easing-standard);
+    transform 80ms ease,
+    box-shadow var(--duration-fast) var(--easing-standard);
 }
-.btn.tocando { transform: scale(0.97); }
 
-.btn-primary {
-  background: var(--color-accent-500);
-  color: var(--color-neutral-900);
+.btn.tocando {
+  transform: scale(0.97);
+  transition: transform 80ms ease;
 }
+
+/* Botão primário — gradiente dourado */
+.btn-primary {
+  background: linear-gradient(135deg, #ffcc00 0%, #e6a800 100%);
+  color: #003366;
+  border: none;
+  box-shadow: 0 4px 16px rgba(255,204,0,0.3), 0 1px 4px rgba(0,0,0,0.4);
+}
+
 .btn-primary.tocando,
 .btn-primary:active {
-  background: var(--color-accent-400);
-  box-shadow: var(--shadow-glow-accent);
+  box-shadow: 0 2px 8px rgba(255,204,0,0.2);
 }
 
+/* Shimmer a cada 3s */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: shimmerBtn 3s 1.5s infinite;
+}
+
+@keyframes shimmerBtn {
+  0%   { left: -100%; }
+  40%  { left: 130%; }
+  100% { left: 130%; }
+}
+
+/* Botão secundário — borda dourada sutil */
 .btn-secondary {
   background: transparent;
   color: var(--color-neutral-0);
-  border: 2px solid var(--color-neutral-0);
+  border: 1px solid rgba(255,204,0,0.4);
+  font-family: var(--font-display);
 }
+
 .btn-secondary.tocando,
 .btn-secondary:active {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255,204,0,0.08);
 }
 
 .btn[disabled] { opacity: 0.4; pointer-events: none; }
 
+/* ── HUD ─────────────────────────────────────────────── */
 .hud-pill {
-  background: var(--overlay-scrim-soft);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: var(--color-neutral-0);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-card);
+  border: var(--panel-border);
   padding: var(--space-2) var(--space-4);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-family: var(--font-ui);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-display);
   font-size: var(--font-size-small);
   min-height: calc(var(--touch-target-min) * 0.55);
 }
-.hud-pill.accent { background: var(--color-accent-500); color: var(--color-neutral-900); }
+
+.hud-pill.accent {
+  background: rgba(255,204,0,0.15);
+  border-color: rgba(255,204,0,0.5);
+  color: var(--color-accent-500);
+}
+
 .hud-pill img { width: 22px; height: 22px; }
 
+/* Tick animation no score */
+@keyframes scoreTick {
+  0%   { transform: scale(1);    color: inherit; }
+  40%  { transform: scale(1.45); color: var(--color-accent-500); }
+  100% { transform: scale(1);    color: inherit; }
+}
+
+.score-tick {
+  display: inline-block;
+  animation: scoreTick 0.25s var(--easing-emphasized) forwards;
+}
+
+/* ── TIMER SVG ──────────────────────────────────────── */
+.timer-anel {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  border: var(--panel-border);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-svg {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  transform: rotate(-90deg);
+}
+
+.timer-trilha {
+  fill: none;
+  stroke: rgba(255,255,255,0.12);
+  stroke-width: 3.5;
+}
+
+.timer-prog {
+  fill: none;
+  stroke: var(--color-accent-500);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+
+.timer-prog.urgente { stroke: var(--color-error-500); }
+
+.timer-num {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(0.65rem, 1.4vmin, 0.95rem);
+  color: #fff;
+  line-height: 1;
+}
+
+/* ── OVERLAY DERROTA ────────────────────────────────── */
+.overlay-derrota {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 10, 26, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+  opacity: 0;
+  transition: opacity 300ms var(--easing-standard);
+  padding: var(--space-7);
+}
+
+.overlay-derrota.visivel { opacity: 1; }
+
+.overlay-derrota-card {
+  border: 1px solid rgba(239,68,68,0.4);
+  border-radius: var(--radius-card);
+  padding: var(--space-7) var(--space-6);
+  text-align: center;
+  max-width: min(520px, 90vw);
+  box-shadow: 0 0 40px rgba(239,68,68,0.15);
+}
+
+.overlay-derrota h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  color: var(--color-error-500);
+  margin: 0 0 var(--space-5);
+  letter-spacing: 0.02em;
+}
+
+.overlay-derrota p {
+  font-size: var(--font-size-body);
+  color: var(--color-primary-100);
+}
+
+/* ── UTILIDADES ─────────────────────────────────────── */
 .tela-erro {
   position: absolute;
   inset: 0;
@@ -162,10 +337,12 @@ button {
   position: absolute;
   bottom: var(--space-6);
   right: var(--space-6);
-  background: var(--overlay-scrim-soft);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
   color: var(--color-neutral-0);
   padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-card);
+  border: var(--panel-border);
   font-size: var(--font-size-small);
   pointer-events: none;
   opacity: 0.85;

@@ -30,10 +30,13 @@ export function montar(app, ctx) {
               <span class="hud-pill accent" id="hud-pontos">
                 <span>${t.hudPontuacao}:&nbsp;</span><span id="pontos-val">0</span>
               </span>
-              <span class="hud-pill" id="hud-tempo">
-                <img src="assets/ui/relogio.svg" alt="">
-                <span id="tempo-val">${duracao}s</span>
-              </span>
+              <div class="timer-anel hud-pill" id="hud-tempo">
+                <svg class="timer-svg" viewBox="0 0 44 44" aria-hidden="true">
+                  <circle class="timer-trilha" cx="22" cy="22" r="18"/>
+                  <circle class="timer-prog" id="timer-prog" cx="22" cy="22" r="18"/>
+                </svg>
+                <span class="timer-num" id="tempo-val">${duracao}</span>
+              </div>
             </div>
             <div class="coletor-flash" id="coletor-flash"></div>
             <div class="coletor-cesta" id="coletor-cesta">
@@ -55,6 +58,8 @@ export function montar(app, ctx) {
       const flash = root.querySelector('#coletor-flash');
       const pontosVal = root.querySelector('#pontos-val');
       const tempoVal = root.querySelector('#tempo-val');
+      const timerProg = root.querySelector('#timer-prog');
+      const CIRCUM = 2 * Math.PI * 18; // ≈ 113.1
       const modalEntrada = root.querySelector('#modal-entrada');
       const btnJogar = root.querySelector('#btn-modal-jogar');
 
@@ -181,6 +186,11 @@ export function montar(app, ctx) {
               mostrarFlash(it.adequado);
               flutuarPontos(delta, it.x);
               tocar(it.adequado ? 'coletou' : 'erro');
+              clearTimeout(pontosVal._tt);
+              pontosVal.classList.remove('score-tick');
+              void pontosVal.offsetWidth;
+              pontosVal.classList.add('score-tick');
+              pontosVal._tt = setTimeout(() => pontosVal.classList.remove('score-tick'), 280);
               it.el.remove();
               ativos.splice(i, 1);
               if (pontos >= meta) {
@@ -204,10 +214,15 @@ export function montar(app, ctx) {
       function iniciarJogo() {
         lastT = performance.now();
         ultimoSpawn = lastT;
+        if (timerProg) timerProg.style.strokeDashoffset = 0;
         raf = requestAnimationFrame(loop);
         tTimer = setInterval(() => {
           segundos--;
-          tempoVal.textContent = segundos + 's';
+          tempoVal.textContent = segundos;
+          if (timerProg) {
+            timerProg.style.strokeDashoffset = CIRCUM * (1 - segundos / duracao);
+            if (segundos <= 10) timerProg.classList.add('urgente');
+          }
           if (segundos <= 0) encerrar(pontos >= meta);
         }, 1000);
       }

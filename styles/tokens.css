@@ -80,9 +80,13 @@
   --overlay-glow-accent:  rgba(255, 204, 0, 0.18);
   --overlay-modal:        rgba(15, 23, 42, 0.65);
 
-  --bg-app:        var(--color-primary-900);
-  --bg-surface:    var(--color-primary-800);
-  --bg-card:       var(--color-neutral-0);
+  --bg-app:        #0a0f1e;
+  --bg-surface:    #0d1a2e;
+  --bg-card:       #0d1a2e;
+
+  --radius-card:   4px;
+  --panel-border:  1px solid rgba(255,204,0,0.3);
+  --panel-glow:    0 0 20px rgba(255,204,0,0.1);
   --text-on-dark:  var(--color-neutral-0);
   --text-on-light: var(--color-neutral-900);
   --text-muted:    var(--color-neutral-500);

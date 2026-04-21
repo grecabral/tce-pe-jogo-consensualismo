@@ -1071,3 +1071,352 @@
 }
 
 .btn-mute:active { opacity: 0.7; }
+
+/* ==========================================================================
+   TRIBUNAL ARCADE — overrides visuais completos
+   Dark navy #0a0f1e · Bungee dominante · Dourado como acento.
+   ========================================================================== */
+
+/* ── Fundo padrão para todas as cenas ── */
+.cena {
+  background: #0a0f1e;
+}
+
+/* ── ATTRACT ── */
+.cena-attract {
+  background: radial-gradient(ellipse at 50% 110%, #002347 0%, #0a0f1e 65%);
+  gap: var(--space-5);
+}
+
+.attract-logo {
+  filter: drop-shadow(0 0 18px rgba(255,204,0,0.35));
+}
+
+.attract-chamada {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  color: var(--color-accent-500);
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(255,204,0,0.5), 0 0 60px rgba(255,204,0,0.2);
+  animation: pulsoChamada 2.2s ease-in-out infinite;
+}
+
+.attract-subtitulo {
+  color: rgba(255,255,255,0.65);
+  font-size: var(--font-size-body-lg);
+  font-family: var(--font-ui);
+  text-align: center;
+  margin: 0;
+  max-width: 90%;
+}
+
+/* Partículas flutuantes douradas */
+.attract-particulas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.particula {
+  position: absolute;
+  bottom: -10px;
+  width: 5px;
+  height: 5px;
+  background: var(--color-accent-500);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particulaFlutua var(--dur, 6s) var(--delay, 0s) ease-in infinite;
+}
+
+.particula:nth-child(1)  { left: 7%;  --dur: 7s;  --delay: 0s; }
+.particula:nth-child(2)  { left: 14%; --dur: 9s;  --delay: 0.8s; }
+.particula:nth-child(3)  { left: 21%; --dur: 6s;  --delay: 1.5s; }
+.particula:nth-child(4)  { left: 29%; --dur: 8s;  --delay: 0.3s; }
+.particula:nth-child(5)  { left: 38%; --dur: 7.5s;--delay: 2s; }
+.particula:nth-child(6)  { left: 47%; --dur: 6.5s;--delay: 0.6s; }
+.particula:nth-child(7)  { left: 55%; --dur: 9.5s;--delay: 1.2s; }
+.particula:nth-child(8)  { left: 63%; --dur: 7s;  --delay: 0.9s; }
+.particula:nth-child(9)  { left: 71%; --dur: 8.5s;--delay: 2.5s; }
+.particula:nth-child(10) { left: 79%; --dur: 6s;  --delay: 0.4s; }
+.particula:nth-child(11) { left: 85%; --dur: 7.5s;--delay: 1.8s; }
+.particula:nth-child(12) { left: 92%; --dur: 9s;  --delay: 0.1s; }
+
+@keyframes particulaFlutua {
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.6); }
+  15%  { opacity: 0.7; }
+  85%  { opacity: 0.4; }
+  100% { opacity: 0;   transform: translateY(-95vh) scale(1.2); }
+}
+
+/* ── ROLETA ── */
+.roleta-centro {
+  background: #0a0f1e;
+  border: 2px solid var(--color-accent-500);
+  box-shadow: 0 0 24px rgba(255,204,0,0.4), inset 0 0 12px rgba(255,204,0,0.1);
+  font-family: var(--font-display);
+}
+
+/* ── INTRO CONSENSUALISMO + TRANSIÇÃO J3 ── */
+.cena-intro,
+.cena-jogo3-transicao {
+  background: linear-gradient(160deg, #0a0f1e 0%, #001a33 50%, #0a0f1e 100%);
+}
+
+.intro-titulo {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h1);
+  color: var(--color-accent-500);
+  text-shadow: 0 0 20px rgba(255,204,0,0.3);
+  letter-spacing: 0.03em;
+}
+
+.intro-texto {
+  font-family: var(--font-ui);
+  color: rgba(255,255,255,0.8);
+  line-height: 1.7;
+  max-width: 680px;
+  text-align: center;
+}
+
+.intro-icone {
+  filter: drop-shadow(0 0 16px rgba(255,204,0,0.5));
+}
+
+/* ── JOGO 1 — COLETOR ── */
+.coletor-hud {
+  gap: var(--space-3);
+}
+
+.coletor-item.adequado {
+  filter: drop-shadow(0 0 8px rgba(16,185,129,0.7));
+}
+
+.coletor-item.inadequado {
+  filter: drop-shadow(0 0 8px rgba(239,68,68,0.7));
+}
+
+.coletor-cesta {
+  border: 2px solid rgba(255,204,0,0.6);
+  box-shadow: 0 0 16px rgba(255,204,0,0.25), inset 0 0 8px rgba(255,204,0,0.05);
+  border-radius: var(--radius-card);
+}
+
+/* ── JOGO 2 — LIGAR ── */
+.cena-jogo1 {
+  background: linear-gradient(160deg, #0a0f1e 0%, #001025 100%);
+}
+
+.jogo1-titulo {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 16px rgba(255,204,0,0.25);
+}
+
+.caso-card {
+  background: #0d1a2e;
+  border: var(--panel-border);
+  box-shadow: var(--panel-glow);
+  border-radius: var(--radius-card);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.caso-card.arrastando {
+  border-color: rgba(255,204,0,0.7);
+  box-shadow: 0 0 28px rgba(255,204,0,0.3);
+  z-index: 200;
+}
+
+.caso-card.acerto {
+  border-color: rgba(16,185,129,0.6);
+  box-shadow: 0 0 20px rgba(16,185,129,0.3);
+}
+
+.caso-card.erro {
+  border-color: rgba(239,68,68,0.6);
+  box-shadow: 0 0 20px rgba(239,68,68,0.3);
+}
+
+.pilar-box {
+  background: #0d1a2e;
+  border: var(--panel-border);
+  box-shadow: var(--panel-glow);
+  border-radius: var(--radius-card);
+}
+
+.pilar-box .pilar-nome {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  letter-spacing: 0.03em;
+}
+
+.pilar-box.drop-ativo {
+  border-color: rgba(255,204,0,0.7);
+  box-shadow: 0 0 32px rgba(255,204,0,0.3), inset 0 0 16px rgba(255,204,0,0.05);
+}
+
+/* ── JOGO 3 — LANTERNA ── */
+.cena-jogo2 {
+  background: #000;
+}
+
+.j3-lista {
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-color: rgba(255,204,0,0.3);
+  box-shadow: var(--panel-glow);
+}
+
+.j3-lista-titulo {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  letter-spacing: 0.05em;
+}
+
+.j3-lista-item { font-family: var(--font-ui); }
+
+.j3-lista-item.encontrado span::before {
+  content: '✦ ';
+  color: var(--color-accent-500);
+}
+
+.j3-lista-item.encontrado span::after { content: ''; }
+
+.lanterna-onboarding {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  animation: lantOnboard 2s ease-in-out infinite;
+}
+
+@keyframes lantOnboard {
+  0%, 100% { opacity: 0.9; text-shadow: 0 0 10px rgba(255,204,0,0.3); }
+  50%       { opacity: 0.5; text-shadow: none; }
+}
+
+/* ── MODAL DE ENTRADA ── */
+.modal-entrada-card {
+  background: #0d1a2e;
+  border: var(--panel-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--panel-glow), 0 8px 32px rgba(0,0,0,0.6);
+}
+
+.modal-entrada-card h2 {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 16px rgba(255,204,0,0.25);
+}
+
+/* ── TELA FINAL ── */
+.cena-final {
+  background: radial-gradient(ellipse at 50% 0%, #001a33 0%, #0a0f1e 60%);
+}
+
+.final-titulo-fase {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  text-shadow: 0 0 20px rgba(255,204,0,0.4);
+  letter-spacing: 0.04em;
+}
+
+.final-frase {
+  font-family: var(--font-display);
+  color: var(--color-accent-500);
+  font-size: var(--font-size-h3);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 16px rgba(255,204,0,0.2);
+  line-height: 1.3;
+}
+
+.final-sub, .final-inspiracao {
+  font-family: var(--font-ui);
+  color: rgba(255,255,255,0.75);
+}
+
+/* Moldura dourada animada no QR */
+.final-qr {
+  position: relative;
+  padding: var(--space-3);
+}
+
+.final-qr::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  border: 2px solid transparent;
+  background: linear-gradient(#0a0f1e, #0a0f1e) padding-box,
+              linear-gradient(var(--ang, 0deg), #ffcc00, transparent, #ffcc00) border-box;
+  animation: qrFrame 3s linear infinite;
+}
+
+@property --ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes qrFrame {
+  to { --ang: 360deg; }
+}
+
+.final-qr canvas {
+  position: relative;
+  z-index: 1;
+  border-radius: 2px;
+}
+
+/* Confetti */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.conf {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confettiCai var(--cdur, 2.5s) var(--cd, 0s) ease-in forwards;
+}
+
+@keyframes confettiCai {
+  0%   { opacity: 1; transform: translateY(0) rotate(var(--cr, 0deg)); }
+  100% { opacity: 0; transform: translateY(102vh) rotate(calc(var(--cr, 0deg) + 540deg)); }
+}
+
+/* ── HUD PONTOS com fonte display ── */
+#hud-pontos {
+  font-family: var(--font-display);
+  font-size: var(--font-size-body-lg);
+}
+
+/* ── BOTÃO MUTE ── */
+.btn-mute {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  border: var(--panel-border);
+  border-radius: var(--radius-card);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  z-index: 50;
+  touch-action: none;
+}

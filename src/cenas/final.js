@@ -32,6 +32,7 @@ export function montar(app, ctx) {
             <button class="btn btn-secondary" id="btn-novo">${t.botaoJogarNovo}</button>
           </div>
           <p class="final-creditos">${creditos.orgao} · ${creditos.ano}</p>
+          <div class="confetti-container" aria-hidden="true">${gerarConfetti()}</div>
         </section>`;
 
       root = app.querySelector('#cena-final');
@@ -76,6 +77,18 @@ function renderQR(url) {
   } catch (e) {
     console.error('QR render falhou', e);
   }
+}
+
+function gerarConfetti() {
+  const cores = ['#ffcc00', '#e6a800', '#ffffff', 'rgba(255,204,0,0.6)'];
+  return Array.from({ length: 20 }, (_, i) => {
+    const left  = (i * 5 + (i % 3) * 1.3).toFixed(1);
+    const dur   = (2 + (i % 5) * 0.4).toFixed(1);
+    const delay = (i * 0.12).toFixed(2);
+    const rot   = (i * 37) % 360;
+    const cor   = cores[i % cores.length];
+    return `<div class="conf" style="left:${left}%;--cdur:${dur}s;--cd:${delay}s;--cr:${rot}deg;background:${cor}"></div>`;
+  }).join('');
 }
 
 function anexarBotao(btn, acao) {

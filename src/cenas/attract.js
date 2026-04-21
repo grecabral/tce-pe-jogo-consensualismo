@@ -40,9 +40,12 @@ export function montar(app, ctx) {
             <div class="roleta-labels">${labelsHTML}</div>
             <div class="roleta-centro">GIRAR<br>ROLETA</div>
           </div>
-          <h1 class="attract-chamada">${t.chamada}</h1>
-          <p class="attract-subtitulo">${t.subtitulo}</p>
+          <h1 class="attract-chamada entrada-1">${t.chamada}</h1>
+          <p class="attract-subtitulo entrada-2">${t.subtitulo}</p>
           <button class="btn-mute" id="btn-mute" aria-label="Alternar som"></button>
+          <div class="attract-particulas" aria-hidden="true">
+            ${Array.from({length:12}, () => '<span class="particula"></span>').join('')}
+          </div>
         </section>`;
 
       root = app.querySelector('#cena-attract');

@@ -83,10 +83,13 @@ export function montar(app, ctx) {
             <img src="assets/ui/lanterna.svg" alt="">
             <span id="hud-num">0</span>/${COLETAR_ALVO}
           </span>
-          <span class="hud-pill" id="hud-timer">
-            <img src="assets/ui/relogio.svg" alt="">
-            <span id="hud-seg">${String(duracao).padStart(2, '0')}s</span>
-          </span>
+          <div class="timer-anel hud-pill" id="hud-timer">
+            <svg class="timer-svg" viewBox="0 0 44 44" aria-hidden="true">
+              <circle class="timer-trilha" cx="22" cy="22" r="18"/>
+              <circle class="timer-prog" id="timer-prog-j3" cx="22" cy="22" r="18"/>
+            </svg>
+            <span class="timer-num" id="hud-seg">${duracao}</span>
+          </div>
         </div>
         <div class="lanterna-onboarding" id="lanterna-onboarding">${lanternaCfg.dicaOnboarding || t.instrucaoJogo}</div>
         <div class="lanterna-modal" id="lanterna-modal" aria-hidden="true">
@@ -107,6 +110,8 @@ export function montar(app, ctx) {
     const mascara = root.querySelector('#lanterna-mascara');
     const hudNum = root.querySelector('#hud-num');
     const hudSeg = root.querySelector('#hud-seg');
+    const timerProgJ3 = root.querySelector('#timer-prog-j3');
+    const CIRCUM_J3 = 2 * Math.PI * 18;
     const modal = root.querySelector('#lanterna-modal');
     const onboarding = root.querySelector('#lanterna-onboarding');
     const listaEl = root.querySelector('#j3-lista');
@@ -150,7 +155,8 @@ export function montar(app, ctx) {
 
     let coletados = 0;
     let secundos = duracao;
-    hudSeg.textContent = String(secundos).padStart(2, '0') + 's';
+    hudSeg.textContent = secundos;
+    if (timerProgJ3) timerProgJ3.style.strokeDashoffset = 0;
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -227,7 +233,11 @@ export function montar(app, ctx) {
 
     tTimer = setInterval(() => {
       secundos--;
-      hudSeg.textContent = String(secundos).padStart(2, '0') + 's';
+      hudSeg.textContent = secundos;
+      if (timerProgJ3) {
+        timerProgJ3.style.strokeDashoffset = CIRCUM_J3 * (1 - secundos / duracao);
+        if (secundos <= 10) timerProgJ3.classList.add('urgente');
+      }
       if (secundos <= 0) {
         clearInterval(tTimer);
         tTimer = null;
