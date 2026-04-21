@@ -28,6 +28,18 @@
   font-style: normal;
   font-display: block;
 }
+@font-face {
+  font-family: 'Fredoka One';
+  src: url('../assets/fontes/FredokaOne-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('../assets/fontes/Nunito-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-display: block;
+}
 
 :root {
   --color-primary-900: #001a33;
@@ -164,6 +176,15 @@
   --z-modal:   100;
   --z-toast:   150;
   --z-overlay: 200;
+
+  /* ── Arcade AAA ── */
+  --f-score:     'Fredoka One', cursive;
+  --f-label:     'Nunito', sans-serif;
+  --teal:        #00d68f;
+  --teal-shadow: rgba(0, 214, 143, 0.35);
+  --red:         #ff3f5a;
+  --red-shadow:  rgba(255, 63, 90, 0.35);
+  --navy-panel:  rgba(5, 16, 50, 0.82);
 }
 
 @media (prefers-reduced-motion: reduce) {

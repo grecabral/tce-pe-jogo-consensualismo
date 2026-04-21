@@ -1186,17 +1186,35 @@
   filter: drop-shadow(0 0 16px rgba(255,204,0,0.5));
 }
 
-/* ── JOGO 1 — COLETOR ── */
+/* ── JOGO 1 — COLETOR — arcade flat ── */
 .coletor-hud {
   gap: var(--space-3);
 }
 
+.coletor-item {
+  width: 84px;
+  height: 84px;
+  border-radius: 22px;
+  padding: 18px;
+  background: transparent;
+}
+
+.coletor-item img {
+  filter: brightness(0) invert(1) drop-shadow(0 2px 3px rgba(0,0,0,0.35));
+}
+
 .coletor-item.adequado {
-  filter: drop-shadow(0 0 8px rgba(16,185,129,0.7));
+  background: var(--teal);
+  box-shadow: 0 7px 0 #009966, 0 10px 24px rgba(0,0,0,0.35), 0 0 28px var(--teal-shadow);
+  border: 2px solid rgba(255,255,255,0.2);
+  filter: none;
 }
 
 .coletor-item.inadequado {
-  filter: drop-shadow(0 0 8px rgba(239,68,68,0.7));
+  background: var(--red);
+  box-shadow: 0 7px 0 #cc1f38, 0 10px 24px rgba(0,0,0,0.35), 0 0 28px var(--red-shadow);
+  border: 2px solid rgba(255,255,255,0.15);
+  filter: none;
 }
 
 .coletor-cesta {
@@ -1390,18 +1408,32 @@
   height: 12px;
   border-radius: 2px;
   opacity: 0;
-  animation: confettiCai var(--cdur, 2.5s) var(--cd, 0s) ease-in forwards;
+  animation: cffall var(--cdur, 2.5s) var(--cd, 0s) linear both;
 }
 
-@keyframes confettiCai {
-  0%   { opacity: 1; transform: translateY(0) rotate(var(--cr, 0deg)); }
-  100% { opacity: 0; transform: translateY(102vh) rotate(calc(var(--cr, 0deg) + 540deg)); }
+@keyframes cffall {
+  0%  { transform: translateY(-20px) rotate(0); opacity: 1; }
+  80% { opacity: 1; }
+  100%{ transform: translateY(480px) rotate(720deg); opacity: 0; }
 }
 
-/* ── HUD PONTOS com fonte display ── */
+/* ── HUD PONTOS com fonte Fredoka + glow dourado ── */
 #hud-pontos {
-  font-family: var(--font-display);
+  font-family: var(--f-label);
   font-size: var(--font-size-body-lg);
+}
+
+#pontos-val {
+  font-family: var(--f-score);
+  font-size: 2rem;
+  color: var(--color-accent-500);
+  text-shadow:
+    0 0 8px  rgba(255,204,0,0.95),
+    0 0 22px rgba(255,204,0,0.55),
+    0 0 48px rgba(255,204,0,0.25),
+    0 2px 5px rgba(0,0,0,0.85);
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 /* ── BOTÃO MUTE ── */
@@ -1762,25 +1794,61 @@
 
 .j3-vitoria-card {
   text-align: center;
-  padding: var(--space-7);
-  max-width: min(600px, 90vw);
+  padding: var(--space-7) 40px;
+  max-width: min(560px, 90vw);
   position: relative;
+  overflow: hidden;
+  background: rgba(5,16,50,0.92);
+  border: 1px solid rgba(255,204,0,0.3);
+  border-radius: 28px;
+  box-shadow: 0 0 60px rgba(255,204,0,0.12), 0 30px 70px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
 }
+
+/* Raios de luz conic */
+.j3-vitoria-card::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 700px; height: 700px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,   rgba(255,204,0,0.04) 12deg,  transparent 24deg,
+    transparent 36deg,  rgba(255,204,0,0.04) 48deg,  transparent 60deg,
+    transparent 72deg,  rgba(255,204,0,0.04) 84deg,  transparent 96deg,
+    transparent 108deg, rgba(255,204,0,0.04) 120deg, transparent 132deg,
+    transparent 144deg, rgba(255,204,0,0.04) 156deg, transparent 168deg,
+    transparent 180deg, rgba(255,204,0,0.04) 192deg, transparent 204deg,
+    transparent 216deg, rgba(255,204,0,0.04) 228deg, transparent 240deg,
+    transparent 252deg, rgba(255,204,0,0.04) 264deg, transparent 276deg,
+    transparent 288deg, rgba(255,204,0,0.04) 300deg, transparent 312deg,
+    transparent 324deg, rgba(255,204,0,0.04) 336deg, transparent 348deg
+  );
+  animation: raysRotate 25s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes raysRotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
 .j3-vitoria-titulo {
   font-family: var(--font-display);
   font-size: var(--font-size-h1);
   color: var(--color-accent-500);
-  text-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+  text-shadow: 0 0 8px rgba(255,204,0,0.8), 0 0 22px rgba(255,204,0,0.4);
   margin: 0 0 var(--space-5);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
 }
 
 .j3-vitoria-texto {
   font-size: var(--font-size-body-lg);
-  color: var(--color-neutral-0);
+  color: rgba(255,255,255,0.65);
   margin: 0 0 var(--space-7);
   line-height: var(--line-height-loose);
+  position: relative;
+  z-index: 1;
 }
 
 /* Inventory Jogo3: largura maior para caber ícone + info */
@@ -1934,5 +2002,39 @@
 }
 
 .coletor-item.inadequado {
-  animation: rotInadequado 3s linear infinite, tremInadequado 0.4s ease-in-out infinite, auraVerm 1s ease-in-out infinite;
+  animation: rotInadequado 3s linear infinite, tremInadequado 0.4s ease-in-out infinite;
+}
+
+/* ── Bokeh partículas ── */
+.bokeh { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.b { position: absolute; border-radius: 50%; animation: bfloat linear infinite; opacity: 0; }
+@keyframes bfloat {
+  0%   { opacity: 0;   transform: translateY(0)    scale(1);   }
+  8%   { opacity: 1; }
+  88%  { opacity: 0.4; }
+  100% { opacity: 0;   transform: translateY(-110%) scale(1.5); }
+}
+
+/* ── Texto flutuante AAA ── */
+.float-pts {
+  position: absolute;
+  font-family: var(--f-score);
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: calc(var(--z-hud) + 10);
+  animation: floatUp 1.05s cubic-bezier(0.2,0.8,0.2,1) forwards;
+  white-space: nowrap;
+}
+.float-pts.pos {
+  color: var(--color-accent-500);
+  text-shadow: 0 0 10px rgba(255,204,0,0.95), 0 0 26px rgba(255,204,0,0.5), 0 2px 4px rgba(0,0,0,0.9);
+}
+.float-pts.neg {
+  color: var(--red);
+  text-shadow: 0 0 10px rgba(255,63,90,0.95), 0 0 26px rgba(255,63,90,0.5), 0 2px 4px rgba(0,0,0,0.9);
+}
+@keyframes floatUp {
+  0%  { opacity: 1;   transform: translateY(0)     scale(1.25); }
+  18% { opacity: 1;   transform: translateY(-22px)  scale(1);    }
+  100%{ opacity: 0;   transform: translateY(-110px) scale(0.75); }
 }

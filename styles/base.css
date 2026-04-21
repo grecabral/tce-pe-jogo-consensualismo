@@ -108,13 +108,15 @@ button {
 
 /* ── BOTÕES ─────────────────────────────────────────── */
 .btn {
-  font-family: var(--font-display);
+  font-family: var(--f-label);
+  font-weight: 800;
   font-size: var(--font-size-body-lg);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: var(--radius-card);
-  padding: var(--space-4) var(--space-6);
-  min-width: 240px;
+  border: none;
+  border-radius: 999px;
+  padding: 18px 44px;
+  min-width: 220px;
   min-height: var(--touch-target-min);
   display: inline-flex;
   align-items: center;
@@ -122,75 +124,79 @@ button {
   gap: var(--space-2);
   position: relative;
   overflow: hidden;
-  transition:
-    transform 80ms ease,
-    box-shadow var(--duration-fast) var(--easing-standard);
+  transition: transform 0.1s, box-shadow 0.15s;
+  animation: breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.032); }
 }
 
 .btn.tocando {
-  transform: scale(0.97);
+  animation: none;
+  transform: scale(0.96) translateY(4px);
   transition: transform 80ms ease;
 }
 
-/* Botão primário — gradiente dourado */
-.btn-primary {
-  background: linear-gradient(135deg, #ffcc00 0%, #e6a800 100%);
-  color: #003366;
-  border: none;
-  box-shadow: 0 4px 16px rgba(255,204,0,0.3), 0 1px 4px rgba(0,0,0,0.4);
-}
-
-.btn-primary.tocando,
-.btn-primary:active {
-  box-shadow: 0 2px 8px rgba(255,204,0,0.2);
-}
-
-/* Shimmer a cada 3s */
-.btn-primary::after {
+/* Shine sweep */
+.btn::after {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-  animation: shimmerBtn 3s 1.5s infinite;
+  top: -60%; bottom: -60%; left: -80%;
+  width: 50%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.36) 50%, transparent 100%);
+  transform: skewX(-12deg);
+  animation: shine 3.8s ease-in-out infinite;
+  pointer-events: none;
 }
 
-@keyframes shimmerBtn {
-  0%   { left: -100%; }
-  40%  { left: 130%; }
-  100% { left: 130%; }
+@keyframes shine { 0%, 52% { left: -80%; } 72% { left: 130%; } 100% { left: 130%; } }
+
+/* Primário — ouro 3D */
+.btn-primary {
+  background: linear-gradient(160deg, #ffe033 0%, #ffcc00 45%, #d4a500 100%);
+  color: #1a0f00;
+  box-shadow: 0 6px 0 #9a7000, 0 10px 28px rgba(255,180,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
 }
 
-/* Botão secundário — borda dourada sutil */
+.btn-primary.tocando {
+  box-shadow: 0 1px 0 #9a7000, 0 3px 12px rgba(255,180,0,0.2), inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Secundário — clean outline */
 .btn-secondary {
   background: transparent;
   color: var(--color-neutral-0);
-  border: 1px solid rgba(255,204,0,0.4);
-  font-family: var(--font-display);
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: none;
 }
 
-.btn-secondary.tocando,
-.btn-secondary:active {
-  background: rgba(255,204,0,0.08);
+.btn-secondary.tocando {
+  background: rgba(255,255,255,0.1);
 }
+
+.btn-secondary::after { display: none; }
 
 .btn[disabled] { opacity: 0.4; pointer-events: none; }
 
 /* ── HUD ─────────────────────────────────────────────── */
 .hud-pill {
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: var(--navy-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--color-neutral-0);
-  border-radius: var(--radius-card);
-  border: var(--panel-border);
-  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  border: 1px solid rgba(255,204,0,0.22);
+  padding: 9px 18px 9px 14px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   font-family: var(--font-display);
   font-size: var(--font-size-small);
   min-height: calc(var(--touch-target-min) * 0.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.09), 0 4px 18px rgba(0,0,0,0.4);
 }
 
 .hud-pill.accent {

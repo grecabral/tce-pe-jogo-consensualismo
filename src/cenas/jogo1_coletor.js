@@ -37,6 +37,7 @@ export function montar(app, ctx) {
       app.innerHTML = `
         <section class="cena cena-jogo3" id="cena-jogo1-coletor">
           <div class="coletor-palco" id="coletor-palco">
+            <div class="bokeh" id="coletor-bokeh"></div>
             <div class="coletor-hud">
               <span class="hud-pill accent" id="hud-pontos">
                 <span>${t.hudPontuacao}:&nbsp;</span><span id="pontos-val">0</span>
@@ -69,6 +70,26 @@ export function montar(app, ctx) {
         </section>`;
 
       root = app.querySelector('#cena-jogo1-coletor');
+
+      // Bokeh particles
+      (function makeBokeh(id, n) {
+        const el = root.querySelector('#' + id);
+        if (!el) return;
+        const palette = ['rgba(255,204,0,','rgba(0,214,143,','rgba(14,165,233,','rgba(255,255,255,'];
+        for (let i = 0; i < n; i++) {
+          const d = document.createElement('div');
+          d.className = 'b';
+          const sz  = 3 + Math.random() * 12;
+          const col = palette[i % palette.length];
+          const op  = (0.04 + Math.random() * 0.18).toFixed(2);
+          const op2 = Math.min(1, +op + 0.18).toFixed(2);
+          d.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:${-sz}px;` +
+            `background:radial-gradient(circle at 35% 35%,${col}${op2}) 0%,${col}0) 100%);` +
+            `animation-duration:${7+Math.random()*14}s;animation-delay:${-Math.random()*18}s;`;
+          el.appendChild(d);
+        }
+      })('coletor-bokeh', 20);
+
       const palco      = root.querySelector('#coletor-palco');
       const cesta      = root.querySelector('#coletor-cesta');
       const flash      = root.querySelector('#coletor-flash');
@@ -166,15 +187,14 @@ export function montar(app, ctx) {
         setTimeout(() => flash.classList.remove('ok', 'erro'), 240);
       }
 
-      function flutuarPontos(delta, xPct) {
+      function floatPts(delta, xPx, yPx) {
         const nota = document.createElement('div');
-        nota.className = 'coletor-pontos-flutuante';
-        nota.style.left = xPct + '%';
-        nota.style.top  = cesta.offsetTop + 'px';
-        nota.style.color = delta > 0 ? 'var(--color-success-200)' : 'var(--color-error-200)';
+        nota.className = 'float-pts ' + (delta > 0 ? 'pos' : 'neg');
+        nota.style.left = xPx + 'px';
+        nota.style.top  = yPx + 'px';
         nota.textContent = (delta > 0 ? '+' : '') + delta;
-        palco.appendChild(nota);
-        setTimeout(() => nota.remove(), 900);
+        root.appendChild(nota);
+        setTimeout(() => nota.remove(), 1100);
       }
 
       function spawnBurst(xPx, yPx) {
@@ -232,7 +252,7 @@ export function montar(app, ctx) {
               pontos = Math.max(0, pontos + delta);
               pontosVal.textContent = pontos;
               mostrarFlash(it.adequado);
-              flutuarPontos(delta, it.x);
+              floatPts(delta, (it.x / 100) * larguraPalco, cestaTop - 20);
               tocar(it.adequado ? 'coletou' : 'erro');
 
               clearTimeout(pontosVal._tt);
