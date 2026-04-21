@@ -1,4 +1,5 @@
 import { irPara, pararIdle } from '../estado.js';
+import { toggleMute, isMuted } from '../audio.js';
 
 const LABELS = ['Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Tente de novo', 'Jogar', 'Prêmio'];
 const NUM_LUZES = 24;
@@ -41,6 +42,7 @@ export function montar(app, ctx) {
           </div>
           <h1 class="attract-chamada">${t.chamada}</h1>
           <p class="attract-subtitulo">${t.subtitulo}</p>
+          <button class="btn-mute" id="btn-mute" aria-label="Alternar som"></button>
         </section>`;
 
       root = app.querySelector('#cena-attract');
@@ -50,6 +52,18 @@ export function montar(app, ctx) {
         const anel = root.querySelector('#roleta-anel');
         const raio = anel.offsetWidth / 2;
         criarLuzes(anel, raio);
+      });
+
+      // Botão mute
+      const btnMute = root.querySelector('#btn-mute');
+      function atualizarIconeMute() {
+        btnMute.textContent = isMuted() ? '🔇' : '🔊';
+      }
+      atualizarIconeMute();
+      btnMute.addEventListener('pointerdown', (ev) => {
+        ev.stopPropagation(); // não dispara irPara
+        toggleMute();
+        atualizarIconeMute();
       });
 
       onToque = () => irPara('ROLETA_GIRANDO');

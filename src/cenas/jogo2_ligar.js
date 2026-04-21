@@ -3,6 +3,7 @@
 // Acerto gruda e mostra feedback. Erro balança e devolve ao pool.
 
 import { irPara, resetIdleTimer } from '../estado.js';
+import { tocar } from '../audio.js';
 
 let root = null;
 let cleanup = [];
@@ -88,6 +89,7 @@ export function montar(app, ctx) {
         function onDown(ev) {
           ev.preventDefault();
           resetIdleTimer();
+          tocar('toque');
           pointerId = ev.pointerId;
           arrastando = true;
           const r = cartao.getBoundingClientRect();
@@ -118,6 +120,7 @@ export function montar(app, ctx) {
 
           if (alvo && alvo.dataset.pilarId === cartao.dataset.pilarCorreto) {
             // Acerto.
+            tocar('acerto');
             const caso = casosEmbaralhados.find((c) => c.id === cartao.dataset.casoId);
             mostrarFeedback(caso?.insightAcerto || t.feedbackAcerto, true);
             cartao.classList.remove('arrastando');
@@ -126,6 +129,7 @@ export function montar(app, ctx) {
             setTimeout(() => cartao.remove(), 400);
             coletados++;
             if (coletados === total) {
+              tocar('vitoria');
               setTimeout(() => { btnAv.classList.remove('escondido'); }, 600);
             }
           } else {
@@ -133,6 +137,7 @@ export function montar(app, ctx) {
             cartao.classList.remove('arrastando');
             cartao.removeAttribute('style');
             if (alvo) {
+              tocar('erro');
               mostrarFeedback(t.feedbackErro, false);
               cartao.classList.add('erro');
               setTimeout(() => cartao.classList.remove('erro'), 450);
@@ -176,7 +181,7 @@ export function montar(app, ctx) {
         c.style.pointerEvents = 'none';
       });
 
-      btnJogar.addEventListener('pointerdown', () => btnJogar.classList.add('tocando'));
+      btnJogar.addEventListener('pointerdown', () => { btnJogar.classList.add('tocando'); tocar('toque'); });
       btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
       btnJogar.addEventListener('pointerup', () => {
         btnJogar.classList.remove('tocando');
@@ -208,7 +213,7 @@ function embaralhar(arr) {
 }
 
 function anexarBotao(btn, acao) {
-  btn.addEventListener('pointerdown', () => btn.classList.add('tocando'));
+  btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
   btn.addEventListener('pointerup',   () => { btn.classList.remove('tocando'); acao(); });
   btn.addEventListener('pointercancel', () => btn.classList.remove('tocando'));
   btn.addEventListener('pointerleave',  () => btn.classList.remove('tocando'));

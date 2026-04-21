@@ -1,5 +1,6 @@
 import { irPara, resetIdleTimer, configurarIdle } from '../estado.js';
 import { sortearHistoria } from '../conteudo.js';
+import { tocar } from '../audio.js';
 
 let root = null;
 
@@ -35,7 +36,7 @@ export function montar(app, ctx) {
 }
 
 function anexarBotao(btn, acao) {
-  btn.addEventListener('pointerdown', () => btn.classList.add('tocando'));
+  btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
   btn.addEventListener('pointerup',   () => { btn.classList.remove('tocando'); acao(); });
   btn.addEventListener('pointercancel', () => btn.classList.remove('tocando'));
   btn.addEventListener('pointerleave',  () => btn.classList.remove('tocando'));

@@ -5,6 +5,7 @@
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
+import { tocar } from '../audio.js';
 
 let raf = null;
 let tTimer = null;
@@ -35,7 +36,7 @@ export function montar(app, ctx) {
       root.addEventListener('pointerdown', resetIdleTimer, { passive: true });
 
       const btnTrans = root.querySelector('#btn-transicao');
-      btnTrans.addEventListener('pointerdown', () => btnTrans.classList.add('tocando'));
+      btnTrans.addEventListener('pointerdown', () => { btnTrans.classList.add('tocando'); tocar('toque'); });
       btnTrans.addEventListener('pointercancel', () => btnTrans.classList.remove('tocando'));
       btnTrans.addEventListener('pointerup', () => {
         btnTrans.classList.remove('tocando');
@@ -184,11 +185,14 @@ export function montar(app, ctx) {
         coletados++;
         hudNum.textContent = coletados;
         listaEl.querySelector(`[data-inst-id="${data.id}"]`)?.classList.add('encontrado');
+        tocar('coletou');
         mostrarModal(data, false);
         if (coletados >= COLETAR_ALVO) {
+          tocar('vitoria');
           setTimeout(() => irPara('FINAL'), 1800);
         }
       } else {
+        tocar('armadilha');
         secundos = Math.max(0, secundos - 5);
         hudSeg.textContent = String(secundos).padStart(2, '0') + 's';
         alvo.classList.add('tocada');
@@ -227,6 +231,7 @@ export function montar(app, ctx) {
       if (secundos <= 0) {
         clearInterval(tTimer);
         tTimer = null;
+        tocar('derrota');
         mostrarDerrota({
           titulo: historia.derrota?.titulo,
           texto:  t.derrota,

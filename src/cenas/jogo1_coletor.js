@@ -4,6 +4,7 @@
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
+import { tocar } from '../audio.js';
 
 let raf = null;
 let tTimer = null;
@@ -179,6 +180,7 @@ export function montar(app, ctx) {
               pontosVal.textContent = pontos;
               mostrarFlash(it.adequado);
               flutuarPontos(delta, it.x);
+              tocar(it.adequado ? 'coletou' : 'erro');
               it.el.remove();
               ativos.splice(i, 1);
               if (pontos >= meta) {
@@ -215,7 +217,8 @@ export function montar(app, ctx) {
         clearInterval(tTimer);
         raf = null;
         tTimer = null;
-        if (vitoria) { irPara('JOGO2_LIGAR'); return; }
+        if (vitoria) { tocar('vitoria'); irPara('JOGO2_LIGAR'); return; }
+        tocar('derrota');
         mostrarDerrota({
           titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
           texto:  t.derrota,
@@ -225,7 +228,7 @@ export function montar(app, ctx) {
         });
       }
       // Modal de entrada
-      btnJogar.addEventListener('pointerdown', () => btnJogar.classList.add('tocando'));
+      btnJogar.addEventListener('pointerdown', () => { btnJogar.classList.add('tocando'); tocar('toque'); });
       btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
       btnJogar.addEventListener('pointerup', () => {
         btnJogar.classList.remove('tocando');

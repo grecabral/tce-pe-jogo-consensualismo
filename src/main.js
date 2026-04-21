@@ -2,6 +2,7 @@
 
 import { carregarTudo } from './conteudo.js';
 import { registrar, irPara, iniciarIdleGlobal, configurarIdle, onMudarCena } from './estado.js';
+import { carregarSons } from './audio.js';
 
 import { montar as montarAttract }            from './cenas/attract.js';
 import { montar as montarRoletaGirando }      from './cenas/roleta_girando.js';
@@ -13,6 +14,8 @@ import { montar as montarFinal }              from './cenas/final.js';
 
 async function main() {
   const app = document.getElementById('app');
+
+  carregarSons();
 
   let conteudo;
   try {

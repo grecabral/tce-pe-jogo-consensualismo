@@ -1,4 +1,5 @@
 import { irPara, configurarIdle, pararIdle } from '../estado.js';
+import { tocar } from '../audio.js';
 
 let root = null;
 let tAuto = null;
@@ -34,6 +35,7 @@ export function montar(app, ctx) {
         </section>`;
 
       root = app.querySelector('#cena-final');
+      tocar('vitoria');
 
       renderQR(ctx.config.qrUrl);
 
@@ -77,7 +79,7 @@ function renderQR(url) {
 }
 
 function anexarBotao(btn, acao) {
-  btn.addEventListener('pointerdown', () => btn.classList.add('tocando'));
+  btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
   btn.addEventListener('pointerup', () => {
     btn.classList.remove('tocando');
     acao();
