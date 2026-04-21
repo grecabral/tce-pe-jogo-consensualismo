@@ -1,5 +1,5 @@
 // Jogo 1 — Coletor: itens caem, jogador move cesta por touch horizontal.
-// Adequado +10, inadequado -5. Meta 80 em 40s vence → JOGO2_LIGAR.
+// Adequado +10, inadequado -5. Timer zera → vitória se >= meta, derrota se <.
 // Velocidade cresce a cada coletorAceleracaoIntervaloSeg segundos.
 
 import { irPara, resetIdleTimer } from '../estado.js';
@@ -28,6 +28,10 @@ export function montar(app, ctx) {
       const invHTML = adequadosUnicos.map((a) => `
         <div class="inv-slot" data-inv-id="${a.id}">
           <img src="assets/${a.icone}" alt="" onerror="this.style.visibility='hidden'">
+          <div class="inv-slot-info">
+            <span class="inv-slot-nome">${a.nome || a.id}</span>
+            <div class="inv-stars"></div>
+          </div>
         </div>`).join('');
 
       app.innerHTML = `
@@ -54,7 +58,6 @@ export function montar(app, ctx) {
           <aside class="coletor-inventory" id="coletor-inventory">
             <h3 class="inv-titulo">COLETADOS</h3>
             <div class="inv-slots" id="inv-slots">${invHTML}</div>
-            <div class="inv-contador" id="inv-contador">0/${adequadosUnicos.length}</div>
           </aside>
           <div class="modal-entrada visivel" id="modal-entrada">
             <div class="modal-entrada-card">
@@ -74,7 +77,6 @@ export function montar(app, ctx) {
       const timerProg  = root.querySelector('#timer-prog');
       const comboEl    = root.querySelector('#combo-display');
       const invSlotsEl = root.querySelector('#inv-slots');
-      const invContEl  = root.querySelector('#inv-contador');
       const CIRCUM = 2 * Math.PI * 18;
       const modalEntrada = root.querySelector('#modal-entrada');
       const btnJogar     = root.querySelector('#btn-modal-jogar');
@@ -121,7 +123,8 @@ export function montar(app, ctx) {
       let velocidadeBase = velInicial;
       let intervaloAnterior = 0;
 
-      const inventario = new Set();
+      // Stars: track contagem por defId (max 5 visual).
+      const inventarioContagem = {};
       let comboCount = 0;
       let comboTimer = null;
       cleanup.push(() => clearTimeout(comboTimer));
@@ -131,14 +134,30 @@ export function montar(app, ctx) {
         const pool = adequado ? adequados : inadequados;
         const def  = pool[Math.floor(Math.random() * pool.length)];
         const el   = document.createElement('div');
-        el.className = 'coletor-item ' + (adequado ? 'adequado' : 'inadequado');
+        el.className = 'coletor-item ' + (adequado ? 'adequado' : 'inadequado') + ' spawn-in';
         el.innerHTML = `<img src="assets/${def.icone}" alt="" onerror="this.style.visibility='hidden'">`;
         palco.appendChild(el);
+        setTimeout(() => el.classList.remove('spawn-in'), 220);
         const x = 5 + Math.random() * 90;
         ativos.push({
           el, x, y: -5, adequado, defId: def.id,
           velocidade: velocidadeBase * (0.9 + Math.random() * 0.3),
         });
+      }
+
+      function adicionarEstrela(defId) {
+        const slotEl = invSlotsEl.querySelector(`[data-inv-id="${defId}"]`);
+        if (!slotEl) return;
+        slotEl.classList.add('inv-slot-coletado');
+        const count = inventarioContagem[defId];
+        if (count <= 5) {
+          const starsEl = slotEl.querySelector('.inv-stars');
+          const star = document.createElement('span');
+          star.className = 'inv-star nova';
+          star.textContent = '★';
+          starsEl.appendChild(star);
+          requestAnimationFrame(() => star.classList.remove('nova'));
+        }
       }
 
       function mostrarFlash(ok) {
@@ -224,11 +243,8 @@ export function montar(app, ctx) {
 
               if (it.adequado) {
                 comboCount++;
-                if (!inventario.has(it.defId)) {
-                  inventario.add(it.defId);
-                  invSlotsEl.querySelector(`[data-inv-id="${it.defId}"]`)?.classList.add('inv-slot-coletado');
-                  invContEl.textContent = `${inventario.size}/${adequadosUnicos.length}`;
-                }
+                inventarioContagem[it.defId] = (inventarioContagem[it.defId] || 0) + 1;
+                adicionarEstrela(it.defId);
                 if (comboCount >= 3) mostrarComboUI(comboCount);
                 spawnBurst(xPx, yPx);
               } else {
@@ -237,7 +253,6 @@ export function montar(app, ctx) {
 
               it.el.remove();
               ativos.splice(i, 1);
-              if (pontos >= meta) { encerrar(true); return; }
               continue;
             }
           }

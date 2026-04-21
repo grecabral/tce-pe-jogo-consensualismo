@@ -47,7 +47,7 @@
   }
 }
 
-/* Portrait: inventory vai para rodapé horizontal */
+/* Portrait: inventory vai para rodapé, Jogo3 inventory fica compacto */
 @media (orientation: portrait) {
   .coletor-inventory {
     top: auto;
@@ -56,16 +56,30 @@
     left: 50%;
     transform: translateX(-50%);
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     min-width: unset;
+    max-width: 95vw;
+    overflow-x: auto;
   }
 
   .inv-slots {
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .j3-inv {
     left: var(--space-2);
+    max-width: 180px;
+  }
+
+  .j3-inv-slot {
+    padding: 5px var(--space-1);
+  }
+
+  .j3-inv-slot img {
+    width: 32px;
+    height: 32px;
   }
 }
 

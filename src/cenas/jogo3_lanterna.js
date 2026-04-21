@@ -2,6 +2,7 @@
 // Máscara radial segue o dedo (PointerEvent). Itens escondidos só aparecem
 // dentro do círculo. Tocar instrumento → coleta + insight modal 2s.
 // Tocar armadilha → -5s + shake + explicação.
+// Tocar instrumento JÁ coletado → abre modal de insight detalhado.
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
@@ -15,6 +16,8 @@ let fase = 'transicao'; // reset em onExit
 
 const RAIO = 180;
 const COLETAR_ALVO = 5;
+// Circunferência do anel SVG grande (r=42): 2π×42 ≈ 263.9
+const CIRCUM_J3 = 2 * Math.PI * 42;
 
 export function montar(app, ctx) {
   return {
@@ -70,7 +73,10 @@ export function montar(app, ctx) {
     const invHTML = instrumentosNaCena.map((inst) => `
       <div class="j3-inv-slot" data-inst-id="${inst.id}">
         <img src="assets/${inst.icone}" alt="" onerror="this.style.visibility='hidden'">
-        <span>${inst.nome}</span>
+        <div class="j3-inv-slot-info">
+          <span class="j3-inv-slot-nome">${inst.nomeCompleto || inst.nome}</span>
+          <span class="j3-inv-slot-status">NÃO ENCONTRADO</span>
+        </div>
       </div>`).join('');
 
     const app = document.getElementById('app');
@@ -78,20 +84,24 @@ export function montar(app, ctx) {
       <section class="cena cena-jogo2" id="cena-jogo3-jogo">
         <div class="lanterna-palco fundo-fallback-${historia.id}" id="lanterna-palco"></div>
         <div class="lanterna-mascara" id="lanterna-mascara"></div>
+
+        <div class="j3-timer-grande" id="j3-timer-grande">
+          <svg class="j3-timer-svg" viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="j3-timer-trilha" cx="50" cy="50" r="42"/>
+            <circle class="j3-timer-prog" id="timer-prog-j3" cx="50" cy="50" r="42"/>
+          </svg>
+          <span class="j3-timer-num" id="hud-seg">${duracao}</span>
+        </div>
+
         <div class="lanterna-hud">
           <span class="hud-pill" id="hud-contador">
             <img src="assets/ui/lanterna.svg" alt="">
             <span id="hud-num">0</span>/${COLETAR_ALVO}
           </span>
-          <div class="timer-anel hud-pill" id="hud-timer">
-            <svg class="timer-svg" viewBox="0 0 44 44" aria-hidden="true">
-              <circle class="timer-trilha" cx="22" cy="22" r="18"/>
-              <circle class="timer-prog" id="timer-prog-j3" cx="22" cy="22" r="18"/>
-            </svg>
-            <span class="timer-num" id="hud-seg">${duracao}</span>
-          </div>
         </div>
+
         <div class="lanterna-onboarding" id="lanterna-onboarding">${lanternaCfg.dicaOnboarding || t.instrucaoJogo}</div>
+
         <div class="lanterna-modal" id="lanterna-modal" aria-hidden="true">
           <div class="card">
             <img id="modal-icone" src="" alt="" onerror="this.style.display='none'">
@@ -99,6 +109,16 @@ export function montar(app, ctx) {
             <p id="modal-texto"></p>
           </div>
         </div>
+
+        <div class="insight-modal" id="insight-modal" aria-hidden="true">
+          <div class="insight-card">
+            <button class="insight-fechar" id="insight-fechar">✕</button>
+            <img id="insight-icone" src="" alt="" onerror="this.style.display='none'">
+            <h3 id="insight-titulo"></h3>
+            <p id="insight-texto"></p>
+          </div>
+        </div>
+
         <aside class="j3-inv" id="j3-inv">
           <h3 class="j3-inv-titulo">INSTRUMENTOS</h3>
           <div class="j3-inv-slots">${invHTML}</div>
@@ -107,16 +127,23 @@ export function montar(app, ctx) {
       </section>`;
 
     root = app.querySelector('#cena-jogo3-jogo');
-    const palco      = root.querySelector('#lanterna-palco');
-    const mascara    = root.querySelector('#lanterna-mascara');
-    const hudNum     = root.querySelector('#hud-num');
-    const hudSeg     = root.querySelector('#hud-seg');
+    const palco       = root.querySelector('#lanterna-palco');
+    const mascara     = root.querySelector('#lanterna-mascara');
+    const hudNum      = root.querySelector('#hud-num');
+    const hudSeg      = root.querySelector('#hud-seg');
     const timerProgJ3 = root.querySelector('#timer-prog-j3');
-    const CIRCUM_J3  = 2 * Math.PI * 18;
-    const modal      = root.querySelector('#lanterna-modal');
-    const onboarding = root.querySelector('#lanterna-onboarding');
-    const invEl      = root.querySelector('#j3-inv');
-    const invContEl  = root.querySelector('#j3-inv-contador');
+    const modal       = root.querySelector('#lanterna-modal');
+    const onboarding  = root.querySelector('#lanterna-onboarding');
+    const invEl       = root.querySelector('#j3-inv');
+    const invContEl   = root.querySelector('#j3-inv-contador');
+    const insightModal  = root.querySelector('#insight-modal');
+    const insightFechar = root.querySelector('#insight-fechar');
+
+    // Insight modal — fecha ao tocar fora ou no ✕.
+    insightFechar.addEventListener('pointerup', () => insightModal.classList.remove('visivel'));
+    insightModal.addEventListener('pointerup', (ev) => {
+      if (ev.target === insightModal) insightModal.classList.remove('visivel');
+    });
 
     // Fundo (tenta imagem, fallback já via classe).
     const bgPath = `assets/${lanternaCfg.cenario}`;
@@ -184,15 +211,32 @@ export function montar(app, ctx) {
     }
 
     function onTap(ev) {
+      // Insight modal fecha ao toque no palco, mas não ativa coleta.
+      if (insightModal.classList.contains('visivel')) {
+        insightModal.classList.remove('visivel');
+        return;
+      }
+
       const alvo = ev.target.closest('.lanterna-item');
       if (!alvo || !alvo.classList.contains('revelado')) return;
-      if (alvo.classList.contains('coletado')) return;
+
       const data = alvo._data;
+
+      // Item já coletado → abre insight detalhado.
+      if (alvo.classList.contains('coletado')) {
+        mostrarInsight(data);
+        return;
+      }
+
       if (data.tipo === 'instrumento') {
         alvo.classList.add('coletado');
         coletados++;
         hudNum.textContent = coletados;
-        invEl.querySelector(`[data-inst-id="${data.id}"]`)?.classList.add('inv-encontrado');
+        const slotEl = invEl.querySelector(`[data-inst-id="${data.id}"]`);
+        if (slotEl) {
+          slotEl.classList.add('inv-encontrado');
+          slotEl.querySelector('.j3-inv-slot-status').textContent = '✓ ENCONTRADO';
+        }
         invContEl.textContent = `${coletados}/${COLETAR_ALVO} encontrados`;
         tocar('coletou');
         mostrarModal(data, false);
@@ -225,6 +269,13 @@ export function montar(app, ctx) {
       modal.classList.toggle('armadilha', !!armadilha);
       modal.classList.add('visivel');
       modalTimer = setTimeout(() => modal.classList.remove('visivel'), 1800);
+    }
+
+    function mostrarInsight(data) {
+      insightModal.querySelector('#insight-icone').src = data.icone;
+      insightModal.querySelector('#insight-titulo').textContent = data.nome;
+      insightModal.querySelector('#insight-texto').textContent  = data.texto;
+      insightModal.classList.add('visivel');
     }
 
     function mostrarVitoriaJogo3(t, historia) {
