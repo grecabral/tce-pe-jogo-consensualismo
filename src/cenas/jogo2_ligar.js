@@ -63,6 +63,12 @@ export function montar(app, ctx) {
         </section>`;
 
       root = app.querySelector('#cena-jogo2-ligar');
+
+      // Tenta carregar bg fotográfico; fallback está no CSS.
+      const bgProbe = new Image();
+      bgProbe.onload = () => { root.style.backgroundImage = `url('assets/cenarios/jogo2_bg.jpg')`; };
+      bgProbe.src = 'assets/cenarios/jogo2_bg.jpg';
+
       const pilaresEl = root.querySelector('#j1-pilares');
       const casosEl = root.querySelector('#j1-casos');
       const feedback = root.querySelector('#j1-feedback');

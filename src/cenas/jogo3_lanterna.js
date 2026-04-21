@@ -67,11 +67,11 @@ export function montar(app, ctx) {
 
     const armadilhas = lanternaCfg.armadilhas || [];
 
-    const listaHTML = instrumentosNaCena.map((inst) => `
-      <li class="j3-lista-item" data-inst-id="${inst.id}">
+    const invHTML = instrumentosNaCena.map((inst) => `
+      <div class="j3-inv-slot" data-inst-id="${inst.id}">
         <img src="assets/${inst.icone}" alt="" onerror="this.style.visibility='hidden'">
-        <span>${inst.nomeCompleto || inst.nome}</span>
-      </li>`).join('');
+        <span>${inst.nome}</span>
+      </div>`).join('');
 
     const app = document.getElementById('app');
     app.innerHTML = `
@@ -99,22 +99,24 @@ export function montar(app, ctx) {
             <p id="modal-texto"></p>
           </div>
         </div>
-        <aside class="j3-lista" id="j3-lista">
-          <h3 class="j3-lista-titulo">${t.tituloListaItens}</h3>
-          <ul>${listaHTML}</ul>
+        <aside class="j3-inv" id="j3-inv">
+          <h3 class="j3-inv-titulo">INSTRUMENTOS</h3>
+          <div class="j3-inv-slots">${invHTML}</div>
+          <div class="j3-inv-contador" id="j3-inv-contador">0/${COLETAR_ALVO} encontrados</div>
         </aside>
       </section>`;
 
     root = app.querySelector('#cena-jogo3-jogo');
-    const palco = root.querySelector('#lanterna-palco');
-    const mascara = root.querySelector('#lanterna-mascara');
-    const hudNum = root.querySelector('#hud-num');
-    const hudSeg = root.querySelector('#hud-seg');
+    const palco      = root.querySelector('#lanterna-palco');
+    const mascara    = root.querySelector('#lanterna-mascara');
+    const hudNum     = root.querySelector('#hud-num');
+    const hudSeg     = root.querySelector('#hud-seg');
     const timerProgJ3 = root.querySelector('#timer-prog-j3');
-    const CIRCUM_J3 = 2 * Math.PI * 18;
-    const modal = root.querySelector('#lanterna-modal');
+    const CIRCUM_J3  = 2 * Math.PI * 18;
+    const modal      = root.querySelector('#lanterna-modal');
     const onboarding = root.querySelector('#lanterna-onboarding');
-    const listaEl = root.querySelector('#j3-lista');
+    const invEl      = root.querySelector('#j3-inv');
+    const invContEl  = root.querySelector('#j3-inv-contador');
 
     // Fundo (tenta imagem, fallback já via classe).
     const bgPath = `assets/${lanternaCfg.cenario}`;
@@ -144,9 +146,9 @@ export function montar(app, ctx) {
       const el = document.createElement('div');
       el.className = 'lanterna-item' + (item.tipo === 'armadilha' ? ' armadilha' : '');
       el.dataset.tipo = item.tipo;
-      el.dataset.id = item.id;
-      el.style.left = posicoes[i].x + '%';
-      el.style.top  = posicoes[i].y + '%';
+      el.dataset.id   = item.id;
+      el.style.left   = posicoes[i].x + '%';
+      el.style.top    = posicoes[i].y + '%';
       el.innerHTML = `<img src="${item.icone}" alt="" onerror="this.style.visibility='hidden'">`;
       palco.appendChild(el);
       el._data = item;
@@ -154,11 +156,11 @@ export function montar(app, ctx) {
     });
 
     let coletados = 0;
-    let secundos = duracao;
+    let secundos  = duracao;
     hudSeg.textContent = secundos;
     if (timerProgJ3) timerProgJ3.style.strokeDashoffset = 0;
 
-    let mouseX = window.innerWidth / 2;
+    let mouseX = window.innerWidth  / 2;
     let mouseY = window.innerHeight / 2;
 
     function atualizarMascara() {
@@ -166,9 +168,9 @@ export function montar(app, ctx) {
       mascara.style.setProperty('--my', mouseY + 'px');
       itensEls.forEach((el) => {
         if (el.classList.contains('coletado')) return;
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
+        const r  = el.getBoundingClientRect();
+        const cx = r.left + r.width  / 2;
+        const cy = r.top  + r.height / 2;
         el.classList.toggle('revelado', Math.hypot(cx - mouseX, cy - mouseY) <= RAIO);
       });
       raf = requestAnimationFrame(atualizarMascara);
@@ -190,17 +192,22 @@ export function montar(app, ctx) {
         alvo.classList.add('coletado');
         coletados++;
         hudNum.textContent = coletados;
-        listaEl.querySelector(`[data-inst-id="${data.id}"]`)?.classList.add('encontrado');
+        invEl.querySelector(`[data-inst-id="${data.id}"]`)?.classList.add('inv-encontrado');
+        invContEl.textContent = `${coletados}/${COLETAR_ALVO} encontrados`;
         tocar('coletou');
         mostrarModal(data, false);
         if (coletados >= COLETAR_ALVO) {
           tocar('vitoria');
-          setTimeout(() => irPara('FINAL'), 1800);
+          clearInterval(tTimer);
+          tTimer = null;
+          cancelAnimationFrame(raf);
+          raf = null;
+          setTimeout(() => mostrarVitoriaJogo3(t, historia), 600);
         }
       } else {
         tocar('armadilha');
         secundos = Math.max(0, secundos - 5);
-        hudSeg.textContent = String(secundos).padStart(2, '0') + 's';
+        hudSeg.textContent = secundos;
         alvo.classList.add('tocada');
         setTimeout(() => alvo.classList.remove('tocada'), 400);
         root.classList.add('shake');
@@ -214,10 +221,37 @@ export function montar(app, ctx) {
       clearTimeout(modalTimer);
       modal.querySelector('#modal-icone').src = data.icone;
       modal.querySelector('#modal-titulo').textContent = data.nome;
-      modal.querySelector('#modal-texto').textContent = data.texto;
+      modal.querySelector('#modal-texto').textContent  = data.texto;
       modal.classList.toggle('armadilha', !!armadilha);
       modal.classList.add('visivel');
       modalTimer = setTimeout(() => modal.classList.remove('visivel'), 1800);
+    }
+
+    function mostrarVitoriaJogo3(t, historia) {
+      const vit = historia.vitoria;
+      const overlay = document.createElement('div');
+      overlay.className = 'j3-vitoria-overlay';
+      overlay.innerHTML = `
+        <div class="j3-vitoria-card">
+          <div class="confetti-container" aria-hidden="true">${gerarConfetti()}</div>
+          <h2 class="j3-vitoria-titulo">${t.tituloVitoria || 'CASO RESOLVIDO!'}</h2>
+          <p class="j3-vitoria-texto">${vit?.texto || ''}</p>
+          <button class="btn btn-primary" id="btn-j3-resultado">${t.botaoAvancar || 'VER RESULTADO'}</button>
+        </div>`;
+      root.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add('visivel'));
+
+      const btn = overlay.querySelector('#btn-j3-resultado');
+      btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
+      btn.addEventListener('pointerup',   () => { btn.classList.remove('tocando'); irPara('FINAL'); });
+
+      const autoTimer = setTimeout(() => irPara('FINAL'), 8000);
+      cleanup.push(() => clearTimeout(autoTimer));
+
+      const bgVit = 'assets/cenarios/transporte_vitoria.jpg';
+      const pv = new Image();
+      pv.onload = () => { overlay.style.backgroundImage = `url('${bgVit}')`; };
+      pv.src = bgVit;
     }
 
     palco.addEventListener('pointermove', onMove);
@@ -252,6 +286,18 @@ export function montar(app, ctx) {
       }
     }, 1000);
   }
+}
+
+function gerarConfetti() {
+  const cores = ['#ffcc00', '#e6a800', '#ffffff', 'rgba(255,204,0,0.6)'];
+  return Array.from({ length: 20 }, (_, i) => {
+    const left  = (i * 5 + (i % 3) * 1.3).toFixed(1);
+    const dur   = (2 + (i % 5) * 0.4).toFixed(1);
+    const delay = (i * 0.12).toFixed(2);
+    const rot   = (i * 37) % 360;
+    const cor   = cores[i % cores.length];
+    return `<div class="conf" style="left:${left}%;--cdur:${dur}s;--cd:${delay}s;--cr:${rot}deg;background:${cor}"></div>`;
+  }).join('');
 }
 
 function gerarPosicoes(n, palco) {

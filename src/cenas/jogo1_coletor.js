@@ -15,13 +15,20 @@ export function montar(app, ctx) {
   return {
     onEnter() {
       const t = ctx.textosUI.jogo1;
-      const meta      = ctx.config.coletorMetaPontos || 80;
-      const duracao   = ctx.config.coletorDuracaoSeg || 40;
-      const velInicial = ctx.config.coletorVelocidadeInicial || 220;
-      const acIntervalo = ctx.config.coletorAceleracaoIntervaloSeg || 10;
+      const meta         = ctx.config.coletorMetaPontos || 80;
+      const duracao      = ctx.config.coletorDuracaoSeg || 40;
+      const velInicial   = ctx.config.coletorVelocidadeInicial || 220;
+      const acIntervalo  = ctx.config.coletorAceleracaoIntervaloSeg || 10;
       const acIncremento = ctx.config.coletorAceleracaoIncremento || 1.5;
-      const adequados = ctx.coletor.adequados;
-      const inadequados = ctx.coletor.inadequados;
+      const adequados    = ctx.coletor.adequados;
+      const inadequados  = ctx.coletor.inadequados;
+
+      const adequadosUnicos = adequados.filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i);
+
+      const invHTML = adequadosUnicos.map((a) => `
+        <div class="inv-slot" data-inv-id="${a.id}">
+          <img src="assets/${a.icone}" alt="" onerror="this.style.visibility='hidden'">
+        </div>`).join('');
 
       app.innerHTML = `
         <section class="cena cena-jogo3" id="cena-jogo1-coletor">
@@ -39,10 +46,16 @@ export function montar(app, ctx) {
               </div>
             </div>
             <div class="coletor-flash" id="coletor-flash"></div>
+            <div class="combo-display" id="combo-display"></div>
             <div class="coletor-cesta" id="coletor-cesta">
               <img src="assets/ui/cesta.svg" alt="" onerror="this.style.display='none'">
             </div>
           </div>
+          <aside class="coletor-inventory" id="coletor-inventory">
+            <h3 class="inv-titulo">COLETADOS</h3>
+            <div class="inv-slots" id="inv-slots">${invHTML}</div>
+            <div class="inv-contador" id="inv-contador">0/${adequadosUnicos.length}</div>
+          </aside>
           <div class="modal-entrada visivel" id="modal-entrada">
             <div class="modal-entrada-card">
               <h2>${t.tituloModal}</h2>
@@ -53,20 +66,23 @@ export function montar(app, ctx) {
         </section>`;
 
       root = app.querySelector('#cena-jogo1-coletor');
-      const palco = root.querySelector('#coletor-palco');
-      const cesta = root.querySelector('#coletor-cesta');
-      const flash = root.querySelector('#coletor-flash');
-      const pontosVal = root.querySelector('#pontos-val');
-      const tempoVal = root.querySelector('#tempo-val');
-      const timerProg = root.querySelector('#timer-prog');
-      const CIRCUM = 2 * Math.PI * 18; // ≈ 113.1
+      const palco      = root.querySelector('#coletor-palco');
+      const cesta      = root.querySelector('#coletor-cesta');
+      const flash      = root.querySelector('#coletor-flash');
+      const pontosVal  = root.querySelector('#pontos-val');
+      const tempoVal   = root.querySelector('#tempo-val');
+      const timerProg  = root.querySelector('#timer-prog');
+      const comboEl    = root.querySelector('#combo-display');
+      const invSlotsEl = root.querySelector('#inv-slots');
+      const invContEl  = root.querySelector('#inv-contador');
+      const CIRCUM = 2 * Math.PI * 18;
       const modalEntrada = root.querySelector('#modal-entrada');
-      const btnJogar = root.querySelector('#btn-modal-jogar');
+      const btnJogar     = root.querySelector('#btn-modal-jogar');
 
-      let pontos = 0;
+      let pontos   = 0;
       let segundos = duracao;
-      let cestaX = 0.5; // fracional (0..1) para responsividade
-      let rect = palco.getBoundingClientRect();
+      let cestaX   = 0.5;
+      let rect     = palco.getBoundingClientRect();
       function recalcRect() { rect = palco.getBoundingClientRect(); }
       window.addEventListener('resize', recalcRect);
       cleanup.push(() => window.removeEventListener('resize', recalcRect));
@@ -80,17 +96,9 @@ export function montar(app, ctx) {
       }
       setTimeout(() => { recalcRect(); posicionarCesta(); }, 0);
 
-      // Input touch: arrastar em qualquer lugar do palco move a cesta.
       let arrastando = false;
-      function onDown(ev) {
-        resetIdleTimer();
-        arrastando = true;
-        moverPara(ev.clientX);
-      }
-      function onMove(ev) {
-        if (!arrastando) return;
-        moverPara(ev.clientX);
-      }
+      function onDown(ev) { resetIdleTimer(); arrastando = true; moverPara(ev.clientX); }
+      function onMove(ev) { if (!arrastando) return; moverPara(ev.clientX); }
       function onUp() { arrastando = false; }
       function moverPara(clientX) {
         const x = clientX - rect.left;
@@ -99,32 +107,36 @@ export function montar(app, ctx) {
       }
       palco.addEventListener('pointerdown', onDown);
       palco.addEventListener('pointermove', onMove);
-      palco.addEventListener('pointerup', onUp);
+      palco.addEventListener('pointerup',   onUp);
       palco.addEventListener('pointercancel', onUp);
       cleanup.push(() => {
         palco.removeEventListener('pointerdown', onDown);
         palco.removeEventListener('pointermove', onMove);
-        palco.removeEventListener('pointerup', onUp);
+        palco.removeEventListener('pointerup',   onUp);
         palco.removeEventListener('pointercancel', onUp);
       });
 
-      // Itens em queda.
       const ativos = [];
-      let ultimoSpawn = 0;
+      let ultimoSpawn    = 0;
       let velocidadeBase = velInicial;
-      let intervaloAnterior = 0; // rastreia quantos intervalos de aceleração já aplicamos
+      let intervaloAnterior = 0;
+
+      const inventario = new Set();
+      let comboCount = 0;
+      let comboTimer = null;
+      cleanup.push(() => clearTimeout(comboTimer));
 
       function spawnarItem() {
         const adequado = Math.random() < 0.6;
         const pool = adequado ? adequados : inadequados;
-        const def = pool[Math.floor(Math.random() * pool.length)];
-        const el = document.createElement('div');
+        const def  = pool[Math.floor(Math.random() * pool.length)];
+        const el   = document.createElement('div');
         el.className = 'coletor-item ' + (adequado ? 'adequado' : 'inadequado');
         el.innerHTML = `<img src="assets/${def.icone}" alt="" onerror="this.style.visibility='hidden'">`;
         palco.appendChild(el);
         const x = 5 + Math.random() * 90;
         ativos.push({
-          el, x, y: -5, adequado,
+          el, x, y: -5, adequado, defId: def.id,
           velocidade: velocidadeBase * (0.9 + Math.random() * 0.3),
         });
       }
@@ -139,11 +151,30 @@ export function montar(app, ctx) {
         const nota = document.createElement('div');
         nota.className = 'coletor-pontos-flutuante';
         nota.style.left = xPct + '%';
-        nota.style.top = (cesta.offsetTop) + 'px';
+        nota.style.top  = cesta.offsetTop + 'px';
         nota.style.color = delta > 0 ? 'var(--color-success-200)' : 'var(--color-error-200)';
         nota.textContent = (delta > 0 ? '+' : '') + delta;
         palco.appendChild(nota);
         setTimeout(() => nota.remove(), 900);
+      }
+
+      function spawnBurst(xPx, yPx) {
+        for (let i = 0; i < 6; i++) {
+          const p = document.createElement('div');
+          p.className = 'burst-part';
+          p.style.cssText = `left:${xPx}px;top:${yPx}px;--bang:${Math.round(i / 6 * 360)}deg`;
+          palco.appendChild(p);
+          setTimeout(() => p.remove(), 700);
+        }
+      }
+
+      function mostrarComboUI(n) {
+        comboEl.textContent = `COMBO x${n}!`;
+        comboEl.classList.remove('ativo');
+        void comboEl.offsetWidth;
+        comboEl.classList.add('ativo');
+        clearTimeout(comboTimer);
+        comboTimer = setTimeout(() => comboEl.classList.remove('ativo'), 1200);
       }
 
       let lastT = performance.now();
@@ -156,27 +187,25 @@ export function montar(app, ctx) {
           ultimoSpawn = agora;
         }
 
-        // Aceleração por intervalo fixo (a cada N segundos decorridos).
         const intervaloAtual = Math.floor((duracao - segundos) / acIntervalo);
         if (intervaloAtual > intervaloAnterior) {
           velocidadeBase *= acIncremento;
           intervaloAnterior = intervaloAtual;
         }
 
-        const alturaPalco = rect.height || palco.offsetHeight;
-        const larguraPalco = rect.width || palco.offsetWidth;
-        const cestaTop = cesta.offsetTop;
-        const cestaLeftPx = parseFloat(cesta.style.left || (larguraPalco / 2));
+        const alturaPalco  = rect.height || palco.offsetHeight;
+        const larguraPalco = rect.width  || palco.offsetWidth;
+        const cestaTop     = cesta.offsetTop;
+        const cestaLeftPx  = parseFloat(cesta.style.left || (larguraPalco / 2));
         const cestaMeiaLarg = cesta.offsetWidth / 2;
 
         for (let i = ativos.length - 1; i >= 0; i--) {
           const it = ativos[i];
-          it.y += (it.velocidade * dt / alturaPalco) * 100; // percentual
+          it.y += (it.velocidade * dt / alturaPalco) * 100;
           const yPx = (it.y / 100) * alturaPalco;
           it.el.style.left = it.x + '%';
-          it.el.style.top = yPx + 'px';
+          it.el.style.top  = yPx + 'px';
 
-          // Colisão com cesta.
           if (yPx >= cestaTop - 10 && yPx <= cestaTop + 40) {
             const xPx = (it.x / 100) * larguraPalco;
             if (Math.abs(xPx - cestaLeftPx) < cestaMeiaLarg + 20) {
@@ -186,22 +215,33 @@ export function montar(app, ctx) {
               mostrarFlash(it.adequado);
               flutuarPontos(delta, it.x);
               tocar(it.adequado ? 'coletou' : 'erro');
+
               clearTimeout(pontosVal._tt);
               pontosVal.classList.remove('score-tick');
               void pontosVal.offsetWidth;
               pontosVal.classList.add('score-tick');
               pontosVal._tt = setTimeout(() => pontosVal.classList.remove('score-tick'), 280);
+
+              if (it.adequado) {
+                comboCount++;
+                if (!inventario.has(it.defId)) {
+                  inventario.add(it.defId);
+                  invSlotsEl.querySelector(`[data-inv-id="${it.defId}"]`)?.classList.add('inv-slot-coletado');
+                  invContEl.textContent = `${inventario.size}/${adequadosUnicos.length}`;
+                }
+                if (comboCount >= 3) mostrarComboUI(comboCount);
+                spawnBurst(xPx, yPx);
+              } else {
+                comboCount = 0;
+              }
+
               it.el.remove();
               ativos.splice(i, 1);
-              if (pontos >= meta) {
-                encerrar(true);
-                return;
-              }
+              if (pontos >= meta) { encerrar(true); return; }
               continue;
             }
           }
 
-          // Passou da tela.
           if (yPx > alturaPalco + 40) {
             it.el.remove();
             ativos.splice(i, 1);
@@ -230,19 +270,15 @@ export function montar(app, ctx) {
       function encerrar(vitoria) {
         cancelAnimationFrame(raf);
         clearInterval(tTimer);
-        raf = null;
-        tTimer = null;
+        raf = null; tTimer = null;
         if (vitoria) { tocar('vitoria'); irPara('JOGO2_LIGAR'); return; }
         tocar('derrota');
         mostrarDerrota({
           titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
           texto:  t.derrota,
-        }).then(() => {
-          ctx.sessao.numero++;
-          irPara('ATTRACT');
-        });
+        }).then(() => { ctx.sessao.numero++; irPara('ATTRACT'); });
       }
-      // Modal de entrada
+
       btnJogar.addEventListener('pointerdown', () => { btnJogar.classList.add('tocando'); tocar('toque'); });
       btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
       btnJogar.addEventListener('pointerup', () => {
@@ -254,8 +290,7 @@ export function montar(app, ctx) {
     onExit() {
       cancelAnimationFrame(raf);
       clearInterval(tTimer);
-      raf = null;
-      tTimer = null;
+      raf = null; tTimer = null;
       cleanup.forEach((fn) => { try { fn(); } catch (_) {} });
       cleanup = [];
       root = null;

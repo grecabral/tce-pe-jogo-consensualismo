@@ -30,7 +30,7 @@
   .layout-landscape-hidden { display: none !important; }
 
   .jogo1-stage {
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: 45fr 55fr !important;
     align-items: start;
   }
 
@@ -39,10 +39,33 @@
     flex-direction: column;
     justify-content: space-between;
     gap: var(--space-3);
+    align-self: center;
   }
 
   .final-grid {
     grid-template-columns: 1fr auto !important;
+  }
+}
+
+/* Portrait: inventory vai para rodapé horizontal */
+@media (orientation: portrait) {
+  .coletor-inventory {
+    top: auto;
+    right: auto;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    align-items: center;
+    min-width: unset;
+  }
+
+  .inv-slots {
+    flex-direction: row;
+  }
+
+  .j3-inv {
+    left: var(--space-2);
   }
 }
 

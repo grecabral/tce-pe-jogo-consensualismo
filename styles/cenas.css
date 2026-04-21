@@ -1421,3 +1421,291 @@
   z-index: 50;
   touch-action: none;
 }
+
+/* ═══════════════════════════════════════════════════════
+   JOGO 1 — itens animados, inventory, burst, combo
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes pulsAdequado {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%       { transform: translate(-50%, -50%) scale(1.08); }
+}
+@keyframes rotInadequado {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes tremInadequado {
+  0%, 100% { translate: 0 0; }
+  25%       { translate: -3px 0; }
+  75%       { translate: 3px 0; }
+}
+
+.coletor-item.adequado {
+  animation: pulsAdequado 1.2s ease-in-out infinite;
+}
+
+.coletor-item.inadequado {
+  animation: rotInadequado 3s linear infinite, tremInadequado 0.4s ease-in-out infinite;
+}
+
+.burst-part {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent-500);
+  pointer-events: none;
+  z-index: calc(var(--z-hud) + 20);
+  animation: burstOut 0.7s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes burstOut {
+  0%   { transform: translate(-50%, -50%) rotate(var(--bang, 0deg)) translateY(0);     opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(var(--bang, 0deg)) translateY(-60px); opacity: 0; }
+}
+
+.coletor-inventory {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 10, 26, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: var(--panel-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-3) var(--space-2);
+  z-index: var(--z-hud);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 72px;
+}
+
+.inv-titulo {
+  font-family: var(--font-display);
+  font-size: var(--font-size-caption);
+  color: var(--color-accent-500);
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-align: center;
+}
+
+.inv-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.inv-slot {
+  width: 52px;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed rgba(255, 204, 0, 0.3);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.inv-slot img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.3;
+  transition: filter 0.4s, opacity 0.4s;
+}
+
+.inv-slot.inv-slot-coletado {
+  border: 1px solid rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  animation: slotUnlock 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.inv-slot.inv-slot-coletado img {
+  filter: none;
+  opacity: 1;
+}
+
+@keyframes slotUnlock {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+.inv-contador {
+  font-family: var(--font-display);
+  font-size: var(--font-size-caption);
+  color: var(--color-neutral-0);
+  text-align: center;
+}
+
+.combo-display {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  color: var(--color-accent-500);
+  text-shadow: 0 0 24px rgba(255, 204, 0, 0.7);
+  pointer-events: none;
+  z-index: calc(var(--z-hud) + 5);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.combo-display.ativo {
+  opacity: 1;
+  animation: comboPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes comboPop {
+  from { transform: translate(-50%, -50%) scale(0.4); }
+  to   { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   JOGO 2 — layout com mais espaço
+   ═══════════════════════════════════════════════════════ */
+
+.cena-jogo1 {
+  background: linear-gradient(135deg, #0a1628 0%, #001a4d 50%, #0a0f1e 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.jogo1-stage { gap: var(--space-7); }
+
+.caso-card {
+  padding: var(--space-5);
+  line-height: var(--line-height-normal);
+}
+
+.pilar-box { min-height: 100px; }
+
+/* ═══════════════════════════════════════════════════════
+   JOGO 3 — inventory de colecionáveis + tela vitória
+   ═══════════════════════════════════════════════════════ */
+
+.j3-inv {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 10, 26, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: var(--panel-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-3) var(--space-2);
+  z-index: var(--z-hud);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 80px;
+}
+
+.j3-inv-titulo {
+  font-family: var(--font-display);
+  font-size: var(--font-size-caption);
+  color: var(--color-accent-500);
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-align: center;
+}
+
+.j3-inv-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.j3-inv-slot {
+  width: 60px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(255, 204, 0, 0.25);
+  border-radius: var(--radius-card);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.j3-inv-slot img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.3;
+  transition: filter 0.4s, opacity 0.4s;
+}
+
+.j3-inv-slot span {
+  font-size: clamp(0.5rem, 1vmin, 0.7rem);
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  line-height: 1.1;
+  transition: color 0.3s;
+}
+
+.j3-inv-slot.inv-encontrado {
+  border: 1px solid rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  animation: slotUnlock 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.j3-inv-slot.inv-encontrado img { filter: none; opacity: 1; }
+.j3-inv-slot.inv-encontrado span { color: rgba(255, 255, 255, 0.8); }
+
+.j3-inv-contador {
+  font-family: var(--font-display);
+  font-size: clamp(0.5rem, 1.1vmin, 0.75rem);
+  color: var(--color-neutral-0);
+  text-align: center;
+}
+
+.j3-vitoria-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 40, 20, 0.97) 0%, rgba(0, 20, 10, 0.98) 100%);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-overlay);
+  opacity: 0;
+  transition: opacity 0.5s var(--easing-standard);
+}
+
+.j3-vitoria-overlay.visivel { opacity: 1; }
+
+.j3-vitoria-card {
+  text-align: center;
+  padding: var(--space-7);
+  max-width: min(600px, 90vw);
+  position: relative;
+}
+
+.j3-vitoria-titulo {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h1);
+  color: var(--color-accent-500);
+  text-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+  margin: 0 0 var(--space-5);
+  letter-spacing: 0.03em;
+}
+
+.j3-vitoria-texto {
+  font-size: var(--font-size-body-lg);
+  color: var(--color-neutral-0);
+  margin: 0 0 var(--space-7);
+  line-height: var(--line-height-loose);
+}
