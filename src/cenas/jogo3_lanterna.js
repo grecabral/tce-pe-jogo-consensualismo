@@ -112,7 +112,7 @@ export function montar(app, ctx) {
     const listaEl = root.querySelector('#j3-lista');
 
     // Fundo (tenta imagem, fallback já via classe).
-    const bgPath = lanternaCfg.cenario;
+    const bgPath = `assets/${lanternaCfg.cenario}`;
     const probe = new Image();
     probe.onload = () => { palco.style.backgroundImage = `url('${bgPath}')`; };
     probe.src = bgPath;
