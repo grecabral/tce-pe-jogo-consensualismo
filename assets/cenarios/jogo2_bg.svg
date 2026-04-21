@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="#001a4d"/>
+      <stop offset="55%"  stop-color="#001433"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#ffcc00" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ffcc00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <!-- Halo dourado central suave -->
+  <ellipse cx="960" cy="540" rx="700" ry="500" fill="url(#glow)"/>
+
+  <!-- Linhas de conexão — grafo institucional, todas irradiando do centro -->
+  <g stroke="#ffcc00" stroke-opacity="0.18" stroke-width="1.5" fill="none">
+    <!-- Hub central → nós externos primários -->
+    <line x1="960" y1="540" x2="340"  y2="200"/>
+    <line x1="960" y1="540" x2="700"  y2="120"/>
+    <line x1="960" y1="540" x2="960"  y2="80"/>
+    <line x1="960" y1="540" x2="1220" y2="120"/>
+    <line x1="960" y1="540" x2="1580" y2="200"/>
+    <line x1="960" y1="540" x2="1740" y2="440"/>
+    <line x1="960" y1="540" x2="1760" y2="700"/>
+    <line x1="960" y1="540" x2="1560" y2="900"/>
+    <line x1="960" y1="540" x2="1220" y2="980"/>
+    <line x1="960" y1="540" x2="960"  y2="1000"/>
+    <line x1="960" y1="540" x2="700"  y2="980"/>
+    <line x1="960" y1="540" x2="400"  y2="900"/>
+    <line x1="960" y1="540" x2="160"  y2="700"/>
+    <line x1="960" y1="540" x2="180"  y2="440"/>
+    <!-- Nós externos → entre si (anel externo) -->
+    <line x1="340"  y1="200" x2="700"  y2="120"/>
+    <line x1="700"  y1="120" x2="960"  y2="80"/>
+    <line x1="960"  y1="80"  x2="1220" y2="120"/>
+    <line x1="1220" y1="120" x2="1580" y2="200"/>
+    <line x1="1580" y1="200" x2="1740" y2="440"/>
+    <line x1="1740" y1="440" x2="1760" y2="700"/>
+    <line x1="1760" y1="700" x2="1560" y2="900"/>
+    <line x1="1560" y1="900" x2="1220" y2="980"/>
+    <line x1="1220" y1="980" x2="960"  y2="1000"/>
+    <line x1="960"  y1="1000" x2="700"  y2="980"/>
+    <line x1="700"  y1="980" x2="400"  y2="900"/>
+    <line x1="400"  y1="900" x2="160"  y2="700"/>
+    <line x1="160"  y1="700" x2="180"  y2="440"/>
+    <line x1="180"  y1="440" x2="340"  y2="200"/>
+    <!-- Anel intermediário -->
+    <line x1="960" y1="540" x2="580"  y2="320"/>
+    <line x1="960" y1="540" x2="830"  y2="280"/>
+    <line x1="960" y1="540" x2="1090" y2="280"/>
+    <line x1="960" y1="540" x2="1340" y2="320"/>
+    <line x1="960" y1="540" x2="1440" y2="540"/>
+    <line x1="960" y1="540" x2="1340" y2="760"/>
+    <line x1="960" y1="540" x2="1090" y2="800"/>
+    <line x1="960" y1="540" x2="830"  y2="800"/>
+    <line x1="960" y1="540" x2="580"  y2="760"/>
+    <line x1="960" y1="540" x2="480"  y2="540"/>
+    <!-- Conexões entre nós intermediários -->
+    <line x1="580"  y1="320" x2="830"  y2="280"/>
+    <line x1="830"  y1="280" x2="1090" y2="280"/>
+    <line x1="1090" y1="280" x2="1340" y2="320"/>
+    <line x1="1340" y1="320" x2="1440" y2="540"/>
+    <line x1="1440" y1="540" x2="1340" y2="760"/>
+    <line x1="1340" y1="760" x2="1090" y2="800"/>
+    <line x1="1090" y1="800" x2="830"  y2="800"/>
+    <line x1="830"  y1="800" x2="580"  y2="760"/>
+    <line x1="580"  y1="760" x2="480"  y2="540"/>
+    <line x1="480"  y1="540" x2="580"  y2="320"/>
+    <!-- Diagonais adicionais para densidade visual -->
+    <line x1="580"  y1="320" x2="1090" y2="280"/>
+    <line x1="580"  y1="320" x2="1440" y2="540"/>
+    <line x1="1340" y1="320" x2="480"  y2="540"/>
+    <line x1="580"  y1="760" x2="1340" y2="760"/>
+    <line x1="830"  y1="280" x2="830"  y2="800"/>
+    <line x1="1090" y1="280" x2="1090" y2="800"/>
+  </g>
+
+  <!-- Nós externos (anel externo) — círculos dourados -->
+  <g fill="#ffcc00" fill-opacity="0.28">
+    <circle cx="340"  cy="200"  r="7"/>
+    <circle cx="700"  cy="120"  r="7"/>
+    <circle cx="960"  cy="80"   r="7"/>
+    <circle cx="1220" cy="120"  r="7"/>
+    <circle cx="1580" cy="200"  r="7"/>
+    <circle cx="1740" cy="440"  r="7"/>
+    <circle cx="1760" cy="700"  r="7"/>
+    <circle cx="1560" cy="900"  r="7"/>
+    <circle cx="1220" cy="980"  r="7"/>
+    <circle cx="960"  cy="1000" r="7"/>
+    <circle cx="700"  cy="980"  r="7"/>
+    <circle cx="400"  cy="900"  r="7"/>
+    <circle cx="160"  cy="700"  r="7"/>
+    <circle cx="180"  cy="440"  r="7"/>
+  </g>
+
+  <!-- Nós intermediários -->
+  <g fill="#ffcc00" fill-opacity="0.45">
+    <circle cx="580"  cy="320" r="9"/>
+    <circle cx="830"  cy="280" r="9"/>
+    <circle cx="1090" cy="280" r="9"/>
+    <circle cx="1340" cy="320" r="9"/>
+    <circle cx="1440" cy="540" r="9"/>
+    <circle cx="1340" cy="760" r="9"/>
+    <circle cx="1090" cy="800" r="9"/>
+    <circle cx="830"  cy="800" r="9"/>
+    <circle cx="580"  cy="760" r="9"/>
+    <circle cx="480"  cy="540" r="9"/>
+  </g>
+
+  <!-- Nó central — destaque -->
+  <circle cx="960" cy="540" r="18" fill="#ffcc00" fill-opacity="0.7"/>
+  <circle cx="960" cy="540" r="10" fill="#ffcc00" fill-opacity="0.95"/>
+</svg>

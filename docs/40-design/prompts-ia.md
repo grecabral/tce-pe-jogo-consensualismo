@@ -182,6 +182,36 @@ Para cada uma das 6 imagens, antes de salvar:
 
 Se aparecerem cores fora do permitido (laranja, verde vivo, magenta), **regenere**. Não tente "corrigir em pós" no Photoshop — fica sintético e contrasta mal com a UI.
 
+---
+
+## 7. `assets/cenarios/transporte_vitoria.jpg`
+
+**Cena:** tela de vitória da história "Transporte urbano compartilhado" (São Pedro das Pedras × Riachão do Norte).
+**Tom:** resolução, progresso, infraestrutura funcionando — o acordo virou realidade.
+
+```
+PROMPT:
+Aerial symbolic view of a modern shared BRT/light-rail corridor operating
+between two fictional Brazilian municipalities, editorial illustration style,
+deep navy blue (#003366) and golden accent (#ffcc00) palette, centered radial
+composition with the transit line as a luminous golden axis connecting both
+city silhouettes, daytime soft institutional light from above, sense of flow
+and movement suggested by abstract lines and geometric city forms (no vehicles
+with visible drivers or passengers), muted triumphant atmosphere, clean and
+optimistic mood, no people, no faces, no text, no logos, square aspect ratio,
+4k detail, documentary editorial tone
+
+NEGATIVE: people, characters, faces, hands, drivers, passengers, text,
+letters, station names, logos, brand marks, saturated orange, neon green,
+magenta, dark or menacing atmosphere, watermark
+ASPECT: 1:1 (square, centrally composed, safe crop both 9:16 and 16:9)
+TOOL: Midjourney v6 (also works in DALL-E 3, Imagen 3)
+```
+
+**Diferença em relação a `transporte_abertura.jpg`:** a abertura tem clima tenso/não resolvido; esta deve transmitir **conclusão e progresso** — luz mais quente, linhas mais fluidas, composição mais aberta e positiva.
+
+---
+
 ## Fallback se a geração travar
 
 Se em 2 horas não houver imagem aceitável para um dado slot, usar **fundo de cor sólida** com gradiente radial sutil:
