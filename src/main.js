@@ -54,7 +54,7 @@ async function main() {
     if (idx >= 0) sessao.numero = idx;
   }
   if (cenaInicial && cenaInicial !== 'ATTRACT') {
-    sessao.historiaAtual = ctx.historias[sessao.numero % ctx.historias.length];
+    sessao.historiaAtual = ctx.historias[0];
   }
   await irPara(cenaInicial && validaCena(cenaInicial) ? cenaInicial : 'ATTRACT');
 }

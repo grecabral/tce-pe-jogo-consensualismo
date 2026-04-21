@@ -4,7 +4,7 @@
 export default {
   // Histórias ativas. A cada sessão, o jogo sorteia uma dessas pela rotação `sessao % N`.
   // Nome deve bater com o arquivo em ./historias/<nome>.json
-  historiasAtivas: ['aterro', 'escolar', 'transporte-urbano'],
+  historiasAtivas: ['transporte-urbano'],
 
   // URL para onde o QR code da tela final aponta.
   // Placeholder até o dono fornecer a URL oficial.

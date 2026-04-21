@@ -34,6 +34,6 @@ export async function carregarTudo() {
   };
 }
 
-export function sortearHistoria(historias, sessao) {
-  return historias[sessao % historias.length];
+export function sortearHistoria(historias) {
+  return historias[0];
 }
