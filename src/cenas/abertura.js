@@ -17,7 +17,7 @@ function revelarEmBlocos(texto) {
   return blocos.map((bloco) => {
     const d = delay.toFixed(2);
     const palavrasBloco = bloco.trim().split(/\s+/).length;
-    delay += palavrasBloco * 0.30 + 0.2; // 300ms/palavra + 200ms de pausa entre sentenças
+    delay += palavrasBloco * 0.90 + 0.6; // 900ms/palavra + 600ms de pausa entre sentenças
     return `<span class="bloco-texto" style="animation-delay:${d}s">${bloco.trim()} </span>`;
   }).join('');
 }

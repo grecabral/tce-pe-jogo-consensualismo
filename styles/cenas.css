@@ -1062,6 +1062,9 @@
   display: inline;
   opacity: 0;
   animation: blocoReveal 0.55s ease forwards;
+  font-family: var(--f-label, 'Nunito', sans-serif);
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 @keyframes blocoReveal {
   from { opacity: 0; transform: translateY(8px); }

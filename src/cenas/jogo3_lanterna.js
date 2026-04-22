@@ -15,11 +15,30 @@ function calcularTempoLeitura(texto) {
 
 function revelarEmBlocos(texto) {
   const palavras = texto.trim().split(/\s+/);
-  // 120ms por palavra — ritmo de typing visível mas fluído
+  // 240ms por palavra — typing lento e legível
   return palavras.map((p, i) => {
-    const delay = (i * 0.12).toFixed(2);
+    const delay = (i * 0.24).toFixed(2);
     return `<span class="typing-palavra" style="animation-delay:${delay}s">${p} </span>`;
   }).join('');
+}
+
+let _typingCtx = null;
+function tocarTeclado() {
+  try {
+    if (!_typingCtx) _typingCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _typingCtx;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.06);
+  } catch (_) {}
 }
 
 let raf = null;
@@ -55,6 +74,13 @@ export function montar(app, ctx) {
       const bgTrans = new Image();
       bgTrans.onload = () => { if (root) root.style.backgroundImage = `url('assets/cenarios/transporte_lanterna.jpg')`; };
       bgTrans.src = 'assets/cenarios/transporte_lanterna.jpg';
+
+      // Som de teclado sincronizado com cada palavra
+      const palavras = t.textoTransicao.trim().split(/\s+/);
+      palavras.forEach((_, i) => {
+        const tid = setTimeout(tocarTeclado, i * 240);
+        cleanup.push(() => clearTimeout(tid));
+      });
 
       const btnTrans = root.querySelector('#btn-transicao');
       const tLeitura = calcularTempoLeitura(t.textoTransicao);
