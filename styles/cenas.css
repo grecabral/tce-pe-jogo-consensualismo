@@ -1512,13 +1512,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  min-width: 190px;
-  max-width: 220px;
+  min-width: 260px;
+  max-width: 300px;
+  padding: var(--space-4);
 }
 
 .inv-titulo {
   font-family: var(--font-display);
-  font-size: var(--font-size-caption);
+  font-size: 0.85rem;
   color: var(--color-accent-500);
   letter-spacing: 0.05em;
   margin: 0;
@@ -1528,7 +1529,7 @@
 .inv-slots {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 /* Cada slot: linha horizontal ícone + nome + estrelas */
@@ -1536,17 +1537,17 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   background: rgba(0, 0, 0, 0.4);
   border: 1px dashed rgba(255, 204, 0, 0.3);
   border-radius: var(--radius-card);
-  padding: 6px var(--space-2);
+  padding: 8px var(--space-3);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .inv-slot img {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   object-fit: contain;
   filter: grayscale(1);
@@ -1563,7 +1564,7 @@
 
 .inv-slot-nome {
   font-family: var(--font-ui);
-  font-size: clamp(0.65rem, 1.2vmin, 0.85rem);
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.4);
   white-space: nowrap;
   overflow: hidden;
@@ -1579,7 +1580,7 @@
 
 .inv-star {
   color: var(--color-accent-500);
-  font-size: clamp(0.6rem, 1vmin, 0.8rem);
+  font-size: 1.2rem;
   line-height: 1;
 }
 
@@ -1635,6 +1636,130 @@
 @keyframes comboPop {
   from { transform: translate(-50%, -50%) scale(0.4); }
   to   { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ── Notificação de item coletado (J1) ── */
+.item-coletado-notif {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: rgba(5, 16, 50, 0.9);
+  border: 2px solid rgba(255,204,0,0.4);
+  border-radius: 20px;
+  padding: 20px 32px;
+  backdrop-filter: blur(12px);
+  transition: opacity 0.15s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.item-coletado-notif.visivel {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.item-coletado-notif img {
+  width: 72px;
+  height: 72px;
+  filter: brightness(0) invert(1);
+}
+.item-coletado-notif span {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-accent-500);
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+/* ── Tela vitória Jogo 1 ── */
+.j1-vitoria-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 11, 31, 0.85);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.j1-vitoria-overlay.visivel { opacity: 1; }
+
+.j1-vitoria-card {
+  background: rgba(5,16,50,0.95);
+  border: 1px solid rgba(255,204,0,0.3);
+  border-radius: 28px;
+  padding: 40px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(255,204,0,0.12), 0 30px 70px rgba(0,0,0,0.65);
+  max-width: 520px;
+  width: 90%;
+}
+
+.j1-vitoria-titulo {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--color-accent-500);
+  text-shadow: 0 0 8px rgba(255,204,0,0.8), 0 0 22px rgba(255,204,0,0.4);
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.j1-vitoria-pontos {
+  font-family: var(--f-score);
+  font-size: 2.8rem;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.j1-vitoria-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.j1-vitoria-lista li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--f-label);
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+
+.j1-vitoria-lista li img {
+  width: 36px;
+  height: 36px;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+.j1-vitoria-lista li strong {
+  margin-left: auto;
+  color: var(--color-accent-500);
+  font-family: var(--f-score);
+  font-size: 1.2rem;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1703,14 +1828,14 @@
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 204, 0, 0.2);
   border-radius: var(--radius-card);
-  padding: 7px var(--space-2);
+  padding: 10px var(--space-3);
   backdrop-filter: blur(4px);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .j3-inv-slot img {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   object-fit: contain;
   filter: grayscale(1);
@@ -1727,7 +1852,7 @@
 
 .j3-inv-slot-nome {
   font-family: var(--font-display);
-  font-size: clamp(0.6rem, 1.1vmin, 0.8rem);
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.4);
   white-space: nowrap;
   overflow: hidden;
@@ -1853,8 +1978,9 @@
 
 /* Inventory Jogo3: largura maior para caber ícone + info */
 .j3-inv {
-  min-width: 200px;
-  max-width: 230px;
+  min-width: 260px;
+  max-width: 300px;
+  padding: var(--space-4) var(--space-3);
 }
 
 /* ── Timer grande Jogo 3 ── */

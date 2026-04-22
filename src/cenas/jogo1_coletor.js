@@ -51,7 +51,10 @@ export function montar(app, ctx) {
               </div>
             </div>
             <div class="coletor-flash" id="coletor-flash"></div>
-            <div class="combo-display" id="combo-display"></div>
+            <div class="item-coletado-notif" id="item-coletado-notif" aria-hidden="true">
+              <img id="notif-icone" src="" alt="">
+              <span id="notif-nome"></span>
+            </div>
             <div class="coletor-cesta" id="coletor-cesta">
               <img src="assets/ui/cesta.svg" alt="" onerror="this.style.display='none'">
             </div>
@@ -96,7 +99,6 @@ export function montar(app, ctx) {
       const pontosVal  = root.querySelector('#pontos-val');
       const tempoVal   = root.querySelector('#tempo-val');
       const timerProg  = root.querySelector('#timer-prog');
-      const comboEl    = root.querySelector('#combo-display');
       const invSlotsEl = root.querySelector('#inv-slots');
       const CIRCUM = 2 * Math.PI * 18;
       const modalEntrada = root.querySelector('#modal-entrada');
@@ -146,9 +148,18 @@ export function montar(app, ctx) {
 
       // Stars: track contagem por defId (max 5 visual).
       const inventarioContagem = {};
-      let comboCount = 0;
-      let comboTimer = null;
-      cleanup.push(() => clearTimeout(comboTimer));
+      let notifTimer = null;
+      cleanup.push(() => clearTimeout(notifTimer));
+
+      function mostrarNotifItem(icone, nome) {
+        const notif = root.querySelector('#item-coletado-notif');
+        if (!notif) return;
+        notif.querySelector('#notif-icone').src = 'assets/' + icone;
+        notif.querySelector('#notif-nome').textContent = nome;
+        notif.classList.add('visivel');
+        clearTimeout(notifTimer);
+        notifTimer = setTimeout(() => notif.classList.remove('visivel'), 1200);
+      }
 
       function spawnarItem() {
         const adequado = Math.random() < 0.6;
@@ -159,9 +170,14 @@ export function montar(app, ctx) {
         el.innerHTML = `<img src="assets/${def.icone}" alt="" onerror="this.style.visibility='hidden'">`;
         palco.appendChild(el);
         setTimeout(() => el.classList.remove('spawn-in'), 220);
-        const x = 5 + Math.random() * 90;
+        const larguraPalco = rect.width || palco.offsetWidth;
+        const invEl = root.querySelector('#coletor-inventory');
+        const invW = invEl ? invEl.offsetWidth + 16 : 280;
+        const maxXPct = larguraPalco > 0 ? Math.max(30, ((larguraPalco - invW - 40) / larguraPalco) * 100) : 55;
+        const x = 5 + Math.random() * (maxXPct - 5);
         ativos.push({
           el, x, y: -5, adequado, defId: def.id,
+          icone: def.icone, nome: def.nome,
           velocidade: velocidadeBase * (0.9 + Math.random() * 0.3),
         });
       }
@@ -205,15 +221,6 @@ export function montar(app, ctx) {
           palco.appendChild(p);
           setTimeout(() => p.remove(), 700);
         }
-      }
-
-      function mostrarComboUI(n) {
-        comboEl.textContent = `COMBO x${n}!`;
-        comboEl.classList.remove('ativo');
-        void comboEl.offsetWidth;
-        comboEl.classList.add('ativo');
-        clearTimeout(comboTimer);
-        comboTimer = setTimeout(() => comboEl.classList.remove('ativo'), 1200);
       }
 
       let lastT = performance.now();
@@ -262,13 +269,10 @@ export function montar(app, ctx) {
               pontosVal._tt = setTimeout(() => pontosVal.classList.remove('score-tick'), 280);
 
               if (it.adequado) {
-                comboCount++;
                 inventarioContagem[it.defId] = (inventarioContagem[it.defId] || 0) + 1;
                 adicionarEstrela(it.defId);
-                if (comboCount >= 3) mostrarComboUI(comboCount);
+                mostrarNotifItem(it.icone, it.nome);
                 spawnBurst(xPx, yPx);
-              } else {
-                comboCount = 0;
               }
 
               it.el.remove();
@@ -306,12 +310,53 @@ export function montar(app, ctx) {
         cancelAnimationFrame(raf);
         clearInterval(tTimer);
         raf = null; tTimer = null;
-        if (vitoria) { tocar('vitoria'); irPara('JOGO2_LIGAR'); return; }
+        if (vitoria) { tocar('vitoria'); mostrarVitoriaJogo1(); return; }
         tocar('derrota');
         mostrarDerrota({
           titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
           texto:  t.derrota,
         }).then(() => { ctx.sessao.numero++; irPara('ATTRACT'); });
+      }
+
+      function gerarConfetti() {
+        const cores = ['#ffcc00', '#e6a800', '#ffffff', 'rgba(255,204,0,0.6)'];
+        return Array.from({ length: 20 }, (_, i) => {
+          const left  = (i * 5 + (i % 3) * 1.3).toFixed(1);
+          const dur   = (2 + (i % 5) * 0.4).toFixed(1);
+          const delay = (i * 0.12).toFixed(2);
+          const rot   = (i * 37) % 360;
+          const cor   = cores[i % cores.length];
+          return `<div class="conf" style="left:${left}%;--cdur:${dur}s;--cd:${delay}s;--cr:${rot}deg;background:${cor}"></div>`;
+        }).join('');
+      }
+
+      function mostrarVitoriaJogo1() {
+        const listaHTML = Object.entries(inventarioContagem)
+          .sort((a, b) => b[1] - a[1])
+          .map(([id, qtd]) => {
+            const def = ctx.coletor.adequados.find((a) => a.id === id);
+            return `<li><img src="assets/${def?.icone || ''}" alt=""> ${def?.nome || id} <strong>×${qtd}</strong></li>`;
+          }).join('');
+
+        const overlay = document.createElement('div');
+        overlay.className = 'j1-vitoria-overlay';
+        overlay.innerHTML = `
+          <div class="j1-vitoria-card">
+            <div class="confetti-container" aria-hidden="true">${gerarConfetti()}</div>
+            <h2 class="j1-vitoria-titulo">${t.tituloVitoria || 'PARABÉNS!'}</h2>
+            <p class="j1-vitoria-pontos">${pontos} pontos</p>
+            <ul class="j1-vitoria-lista">${listaHTML}</ul>
+            <button class="btn btn-primary" id="btn-j1-avancar">${t.botaoAvancar || 'AVANÇAR'}</button>
+          </div>`;
+        root.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add('visivel'));
+
+        const btn = overlay.querySelector('#btn-j1-avancar');
+        btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
+        btn.addEventListener('pointerup', () => { btn.classList.remove('tocando'); irPara('JOGO2_LIGAR'); });
+
+        const autoTimer = setTimeout(() => irPara('JOGO2_LIGAR'), 10000);
+        cleanup.push(() => clearTimeout(autoTimer));
       }
 
       btnJogar.addEventListener('pointerdown', () => { btnJogar.classList.add('tocando'); tocar('toque'); });
