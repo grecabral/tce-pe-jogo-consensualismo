@@ -23,6 +23,15 @@ export function tocar(id) {
   clone.play().catch(() => {});
 }
 
+export function tocarBeep() {
+  const s = sons['toque'];
+  if (!s || silenciado) return;
+  const clone = s.cloneNode();
+  clone.volume = 0.08;
+  clone.playbackRate = 2.5;
+  clone.play().catch(() => {});
+}
+
 export function toggleMute() {
   silenciado = !silenciado;
   localStorage.setItem('muted', silenciado);

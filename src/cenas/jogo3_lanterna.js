@@ -6,7 +6,7 @@
 
 import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
-import { tocar } from '../audio.js';
+import { tocar, tocarBeep } from '../audio.js';
 
 function calcularTempoLeitura(texto) {
   const palavras = texto.trim().split(/\s+/).length;
@@ -22,28 +22,6 @@ function revelarEmBlocos(texto) {
   }).join('');
 }
 
-let _typingCtx = null;
-function getTypingCtx() {
-  if (!_typingCtx) _typingCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (_typingCtx.state === 'suspended') _typingCtx.resume();
-  return _typingCtx;
-}
-function tocarTeclado() {
-  try {
-    const ctx = getTypingCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.04);
-    gain.gain.setValueAtTime(0.08, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.07);
-  } catch (_) {}
-}
 
 let raf = null;
 let tTimer = null;
@@ -79,14 +57,10 @@ export function montar(app, ctx) {
       bgTrans.onload = () => { if (root) root.style.backgroundImage = `url('assets/cenarios/transporte_lanterna.jpg')`; };
       bgTrans.src = 'assets/cenarios/transporte_lanterna.jpg';
 
-      // Resume AudioContext no primeiro toque (política do browser) e agenda sons
-      const resumeCtx = () => { getTypingCtx(); root.removeEventListener('pointerdown', resumeCtx); };
-      root.addEventListener('pointerdown', resumeCtx);
-
-      // Som de teclado sincronizado com cada palavra (começa 300ms após entrada para dar tempo ao ctx)
+      // Som de teclado sincronizado com cada palavra
       const palavras = t.textoTransicao.trim().split(/\s+/);
       palavras.forEach((_, i) => {
-        const tid = setTimeout(tocarTeclado, 300 + i * 240);
+        const tid = setTimeout(tocarBeep, i * 240);
         cleanup.push(() => clearTimeout(tid));
       });
 
