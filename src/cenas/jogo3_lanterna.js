@@ -38,6 +38,10 @@ export function montar(app, ctx) {
       root = app.querySelector('#cena-jogo3-trans');
       root.addEventListener('pointerdown', resetIdleTimer, { passive: true });
 
+      const bgTrans = new Image();
+      bgTrans.onload = () => { if (root) root.style.backgroundImage = `url('assets/cenarios/transporte_lanterna.jpg')`; };
+      bgTrans.src = 'assets/cenarios/transporte_lanterna.jpg';
+
       const btnTrans = root.querySelector('#btn-transicao');
       btnTrans.addEventListener('pointerdown', () => { btnTrans.classList.add('tocando'); tocar('toque'); });
       btnTrans.addEventListener('pointercancel', () => btnTrans.classList.remove('tocando'));

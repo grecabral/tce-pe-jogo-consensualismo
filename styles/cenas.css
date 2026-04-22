@@ -1164,7 +1164,18 @@
 .cena-intro,
 .cena-jogo3-transicao {
   background: linear-gradient(160deg, #0a0f1e 0%, #001a33 50%, #0a0f1e 100%);
+  background-size: cover;
+  background-position: center;
+  position: absolute;
 }
+.cena-jogo3-transicao::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 11, 31, 0.65);
+  z-index: 0;
+}
+.cena-jogo3-transicao > * { position: relative; z-index: 1; }
 
 .intro-titulo {
   font-family: var(--font-display);
