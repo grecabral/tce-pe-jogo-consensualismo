@@ -12,12 +12,9 @@ function calcularTempoLeitura(texto) {
 
 function revelarEmBlocos(texto) {
   const blocos = texto.split(/(?<=[.!?])\s+|\n/).filter((b) => b.trim());
-  // Pausa por bloco = palavras × 300ms (ritmo confortável de leitura em totem)
-  let delay = 0;
-  return blocos.map((bloco) => {
-    const d = delay.toFixed(2);
-    const palavrasBloco = bloco.trim().split(/\s+/).length;
-    delay += palavrasBloco * 0.90 + 0.6; // 900ms/palavra + 600ms de pausa entre sentenças
+  // 1500ms fixo entre blocos
+  return blocos.map((bloco, i) => {
+    const d = (i * 1.5).toFixed(2);
     return `<span class="bloco-texto" style="animation-delay:${d}s">${bloco.trim()} </span>`;
   }).join('');
 }

@@ -257,10 +257,11 @@
 }
 
 .abertura-contexto {
-  font-size: var(--font-size-body-lg);
+  font-size: calc(var(--font-size-body-lg) * 1.5);
   max-width: min(720px, 90%);
   color: var(--color-primary-100);
   margin: 0;
+  line-height: 1.8;
 }
 
 /* Fallbacks de gradiente quando cenários de imagem não existem */
