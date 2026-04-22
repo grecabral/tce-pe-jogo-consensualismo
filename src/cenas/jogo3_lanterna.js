@@ -14,14 +14,11 @@ function calcularTempoLeitura(texto) {
 }
 
 function revelarEmBlocos(texto) {
-  const blocos = texto.split(/(?<=[.!?])\s+|\n/).filter((b) => b.trim());
-  const totalPalavras = blocos.reduce((acc, b) => acc + b.trim().split(/\s+/).length, 0);
-  let acumulado = 0;
-  return blocos.map((bloco) => {
-    const palavrasBloco = bloco.trim().split(/\s+/).length;
-    const delay = (acumulado / Math.max(1, totalPalavras) * 2).toFixed(2);
-    acumulado += palavrasBloco;
-    return `<span class="bloco-texto" style="animation-delay:${delay}s">${bloco.trim()} </span>`;
+  const palavras = texto.trim().split(/\s+/);
+  // 120ms por palavra — ritmo de typing visível mas fluído
+  return palavras.map((p, i) => {
+    const delay = (i * 0.12).toFixed(2);
+    return `<span class="typing-palavra" style="animation-delay:${delay}s">${p} </span>`;
   }).join('');
 }
 

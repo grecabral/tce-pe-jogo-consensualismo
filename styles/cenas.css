@@ -1057,14 +1057,26 @@
 }
 
 /* ── Reveal em bloco ── */
+/* Abertura: reveal em bloco com pausa entre sentenças */
 .bloco-texto {
   display: inline;
   opacity: 0;
-  animation: blocoReveal 0.45s ease forwards;
+  animation: blocoReveal 0.55s ease forwards;
 }
 @keyframes blocoReveal {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Jogo 3 transição: efeito typing por palavra */
+.typing-palavra {
+  display: inline;
+  opacity: 0;
+  animation: typingReveal 0.12s ease forwards;
+}
+@keyframes typingReveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ---------- FINAL — blocos sequenciais ---------- */
@@ -1197,10 +1209,25 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(2, 11, 31, 0.65);
+  background: rgba(2, 11, 31, 0.72);
   z-index: 0;
 }
 .cena-jogo3-transicao > * { position: relative; z-index: 1; }
+
+/* Texto específico da transição do Jogo 3 */
+.cena-jogo3-transicao .intro-titulo {
+  font-size: clamp(2rem, 5vmin, 3rem);
+  color: var(--color-accent-500);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 24px rgba(255,204,0,0.4);
+}
+.cena-jogo3-transicao .intro-texto {
+  font-size: clamp(1.15rem, 2.8vmin, 1.6rem);
+  color: var(--color-accent-500);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.95), 0 0 16px rgba(0,0,0,0.8);
+  line-height: 1.75;
+  max-width: 720px;
+  text-align: center;
+}
 
 .intro-titulo {
   font-family: var(--font-display);

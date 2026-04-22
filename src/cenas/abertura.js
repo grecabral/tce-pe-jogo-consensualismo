@@ -12,13 +12,13 @@ function calcularTempoLeitura(texto) {
 
 function revelarEmBlocos(texto) {
   const blocos = texto.split(/(?<=[.!?])\s+|\n/).filter((b) => b.trim());
-  const totalPalavras = blocos.reduce((acc, b) => acc + b.trim().split(/\s+/).length, 0);
-  let acumulado = 0;
+  // Pausa por bloco = palavras × 300ms (ritmo confortável de leitura em totem)
+  let delay = 0;
   return blocos.map((bloco) => {
+    const d = delay.toFixed(2);
     const palavrasBloco = bloco.trim().split(/\s+/).length;
-    const delay = (acumulado / Math.max(1, totalPalavras) * 2).toFixed(2);
-    acumulado += palavrasBloco;
-    return `<span class="bloco-texto" style="animation-delay:${delay}s">${bloco.trim()} </span>`;
+    delay += palavrasBloco * 0.30 + 0.2; // 300ms/palavra + 200ms de pausa entre sentenças
+    return `<span class="bloco-texto" style="animation-delay:${d}s">${bloco.trim()} </span>`;
   }).join('');
 }
 
