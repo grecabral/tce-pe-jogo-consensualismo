@@ -3,6 +3,12 @@ import { sortearHistoria } from '../conteudo.js';
 import { tocar } from '../audio.js';
 
 let root = null;
+let cleanup = [];
+
+function calcularTempoLeitura(texto) {
+  const palavras = texto.trim().split(/\s+/).length;
+  return Math.max(2500, Math.ceil((palavras / 200) * 60 * 1000));
+}
 
 export function montar(app, ctx) {
   return {
@@ -21,15 +27,28 @@ export function montar(app, ctx) {
               onerror="this.style.display='none'">
             <h1 class="intro-titulo">${t.titulo}</h1>
             ${paragrafosHTML}
-            <button class="btn btn-primary" id="btn-intro">${t.botaoContinuar}</button>
+            <button class="btn btn-primary btn-bloqueado" id="btn-intro">${t.botaoContinuar}</button>
           </div>
         </section>`;
 
       root = app.querySelector('#cena-intro');
       root.addEventListener('pointerdown', resetIdleTimer, { passive: true });
-      anexarBotao(root.querySelector('#btn-intro'), () => irPara('JOGO1_COLETOR'));
+
+      const btn = root.querySelector('#btn-intro');
+      const textoCompleto = linhas.join(' ');
+      const tLeitura = calcularTempoLeitura(textoCompleto);
+      const tid = setTimeout(() => {
+        if (!btn) return;
+        btn.classList.remove('btn-bloqueado');
+        btn.classList.add('btn-desbloqueado');
+      }, tLeitura);
+      cleanup.push(() => clearTimeout(tid));
+
+      anexarBotao(btn, () => irPara('JOGO1_COLETOR'));
     },
     onExit() {
+      cleanup.forEach((fn) => { try { fn(); } catch (_) {} });
+      cleanup = [];
       root = null;
     },
   };

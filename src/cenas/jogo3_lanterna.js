@@ -8,6 +8,23 @@ import { irPara, resetIdleTimer } from '../estado.js';
 import { mostrarDerrota } from '../ui/derrota.js';
 import { tocar } from '../audio.js';
 
+function calcularTempoLeitura(texto) {
+  const palavras = texto.trim().split(/\s+/).length;
+  return Math.max(2500, Math.ceil((palavras / 200) * 60 * 1000));
+}
+
+function revelarEmBlocos(texto) {
+  const blocos = texto.split(/(?<=[.!?])\s+|\n/).filter((b) => b.trim());
+  const totalPalavras = blocos.reduce((acc, b) => acc + b.trim().split(/\s+/).length, 0);
+  let acumulado = 0;
+  return blocos.map((bloco) => {
+    const palavrasBloco = bloco.trim().split(/\s+/).length;
+    const delay = (acumulado / Math.max(1, totalPalavras) * 2).toFixed(2);
+    acumulado += palavrasBloco;
+    return `<span class="bloco-texto" style="animation-delay:${delay}s">${bloco.trim()} </span>`;
+  }).join('');
+}
+
 let raf = null;
 let tTimer = null;
 let root = null;
@@ -30,8 +47,8 @@ export function montar(app, ctx) {
         <section class="cena cena-jogo3-transicao" id="cena-jogo3-trans">
           <div class="intro-conteudo">
             <h1 class="intro-titulo">${t.tituloTransicao}</h1>
-            <p class="intro-texto">${t.textoTransicao}</p>
-            <button class="btn btn-primary" id="btn-transicao">${t.botaoTransicao}</button>
+            <p class="intro-texto">${revelarEmBlocos(t.textoTransicao)}</p>
+            <button class="btn btn-primary btn-bloqueado" id="btn-transicao">${t.botaoTransicao}</button>
           </div>
         </section>`;
 
@@ -43,6 +60,14 @@ export function montar(app, ctx) {
       bgTrans.src = 'assets/cenarios/transporte_lanterna.jpg';
 
       const btnTrans = root.querySelector('#btn-transicao');
+      const tLeitura = calcularTempoLeitura(t.textoTransicao);
+      const tidTrans = setTimeout(() => {
+        if (!btnTrans) return;
+        btnTrans.classList.remove('btn-bloqueado');
+        btnTrans.classList.add('btn-desbloqueado');
+      }, tLeitura);
+      cleanup.push(() => clearTimeout(tidTrans));
+
       btnTrans.addEventListener('pointerdown', () => { btnTrans.classList.add('tocando'); tocar('toque'); });
       btnTrans.addEventListener('pointercancel', () => btnTrans.classList.remove('tocando'));
       btnTrans.addEventListener('pointerup', () => {
