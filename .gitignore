@@ -17,3 +17,11 @@ dist/
 # Temporários / rascunhos
 _rascunho*.md
 *.tmp
+.vercel
+www/
+android/
+*.apk
+node_modules/
+www/
+android/
+*.apk
