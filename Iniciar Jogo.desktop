@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Jogo do Consensualismo
+Comment=Inicia o jogo TCE-PE
+Exec=bash -c "cd '%k' && cd .. && bash iniciar.sh"
+Icon=applications-games
+Terminal=false
+StartupNotify=false
