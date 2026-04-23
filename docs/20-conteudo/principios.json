@@ -22,13 +22,13 @@
   "casos": [
     {
       "id": "caso1",
-      "texto": "Reunião entre as duas prefeituras para entender os interesses de cada lado.",
+      "texto": "Reunião entre as duas partes para entender os interesses de cada lado.",
       "pilarCorreto": "dialogo",
       "insightAcerto": "Ouvir o outro lado revela caminhos que a disputa esconde."
     },
     {
       "id": "caso2",
-      "texto": "Convidar um terceiro neutro para mediar a conversa sobre a compensação.",
+      "texto": "Convidar um terceiro neutro para mediar a conversa sobre o conflito.",
       "pilarCorreto": "dialogo",
       "insightAcerto": "Um terceiro imparcial ajuda a destravar o diálogo sem tomar partido."
     },

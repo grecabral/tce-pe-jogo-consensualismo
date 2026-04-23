@@ -7,7 +7,7 @@ import config from '../docs/20-conteudo/config.js';
 const BASE = 'docs/20-conteudo';
 
 async function lerJson(caminho) {
-  const resp = await fetch(caminho, { cache: 'no-store' });
+  const resp = await fetch(caminho);
   if (!resp.ok) throw new Error(`Falha ao carregar ${caminho}: HTTP ${resp.status}`);
   return resp.json();
 }
