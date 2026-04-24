@@ -162,7 +162,6 @@ export function montar(app, ctx) {
         mostrarFlash(it.adequado);
         const xPx = (it.x / 100) * larguraPalco;
         const yPx = (it.y / 100) * alturaPalco;
-        floatNome(it.nome, xPx, yPx, it.adequado);
         tocar(it.adequado ? 'coletou' : 'erro');
 
         clearTimeout(pontosVal._tt);
@@ -222,15 +221,6 @@ export function montar(app, ctx) {
         setTimeout(() => flash.classList.remove('ok', 'erro'), 240);
       }
 
-      function floatNome(nome, xPx, yPx, adequado) {
-        const nota = document.createElement('div');
-        nota.className = 'float-pts float-nome ' + (adequado ? 'pos' : 'neg');
-        nota.style.left = xPx + 'px';
-        nota.style.top  = yPx + 'px';
-        nota.textContent = nome;
-        root.appendChild(nota);
-        setTimeout(() => nota.remove(), 1400);
-      }
 
       function spawnBurst(xPx, yPx) {
         for (let i = 0; i < 6; i++) {

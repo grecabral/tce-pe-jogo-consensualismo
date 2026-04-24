@@ -27,14 +27,14 @@
       "id": "conciliacao",
       "nome": "Conciliação",
       "nomeCompleto": "Conciliação",
-      "icone": "instrumentos/conciliacao.svg",
+      "icone": "instrumentos/conciliação.png",
       "insight": "Um terceiro propõe caminhos possíveis para o acordo. As partes avaliam e decidem se aceitam."
     },
     {
       "id": "arbitragem",
       "nome": "Arbitragem",
       "nomeCompleto": "Arbitragem",
-      "icone": "instrumentos/arbitragem.svg",
+      "icone": "instrumentos/arbitragem.png",
       "insight": "As partes escolhem um especialista para decidir o conflito. A decisão tem força vinculante, como alternativa ao Judiciário."
     },
     {

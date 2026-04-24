@@ -35,7 +35,7 @@
 
   "jogo2": {
     "titulo": "Ligue cada caso ao seu pilar",
-    "instrucao": "Arraste cada cartão para o pilar que ele representa.",
+    "instrucao": "Selecione cada cartão e toque no pilar que ele representa.",
     "tituloModal": "Agora vamos praticar!",
     "instrucaoModal": "Agora que você entendeu o conceito e sabe os valores do consensualismo, vamos ver como ele funciona na prática. Conecte cada caso ao pilar correto.",
     "botaoIniciar": "JOGAR",
@@ -63,7 +63,7 @@
     "fraseSintese": "Consensualismo: uma alternativa quando o diálogo é possível.",
     "subtexto": "Não substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o diálogo é viável e o interesse público ganha com a solução negociada.",
     "inspiracao": "Inspirado no VLT de Salvador: Bahia e Mato Grosso, com atuação dos Tribunais de Contas, firmaram solução consensual para aproveitar trens do consórcio Cuiabá–Várzea Grande, adiantando anos na entrega do sistema.",
-    "qrLegenda": "Ajude o TCE-PE a melhorar este jogo! Responda nossa pesquisa rápida.",
+    "qrLegenda": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
     "qrLegendaVitoria": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
     "botaoJogarNovo": "VOLTAR AO INÍCIO"
   },
