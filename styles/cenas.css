@@ -33,6 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: var(--space-6);
 }
 
 /* Ponteiro/seta no topo */
@@ -824,10 +825,7 @@
 }
 
 .final-inspiracao {
-  font-size: var(--font-size-body);
-  color: var(--color-primary-200);
-  margin: 0;
-  font-style: italic;
+  display: none;
 }
 
 .final-qr {
@@ -1207,6 +1205,12 @@
   filter: drop-shadow(0 0 18px rgba(255,204,0,0.35));
 }
 
+.attract-logo-prisma {
+  max-width: min(40vw, 220px);
+  height: auto;
+  opacity: 0.9;
+}
+
 .attract-chamada {
   font-family: var(--font-display);
   font-size: var(--font-size-display);
@@ -1553,26 +1557,6 @@
   padding: var(--space-3);
 }
 
-.final-qr::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-card);
-  border: 2px solid transparent;
-  background: linear-gradient(#0a0f1e, #0a0f1e) padding-box,
-              linear-gradient(var(--ang, 0deg), #ffcc00, transparent, #ffcc00) border-box;
-  animation: qrFrame 3s linear infinite;
-}
-
-@property --ang {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@keyframes qrFrame {
-  to { --ang: 360deg; }
-}
 
 .final-qr canvas {
   position: relative;

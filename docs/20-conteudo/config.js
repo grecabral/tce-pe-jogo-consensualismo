@@ -36,7 +36,7 @@ export default {
 
   // Créditos mostrados na tela final (e no rodapé do attract, se fizer sentido).
   creditos: {
-    orgao: 'Tribunal de Contas do Estado de Pernambuco',
+    orgao: 'TCE-PE',
     ano: 2026,
     logoSrc: 'assets/marca/logo_tce.png',
   },

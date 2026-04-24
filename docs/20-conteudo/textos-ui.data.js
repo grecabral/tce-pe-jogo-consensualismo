@@ -47,7 +47,6 @@ export default {
 
   "jogo3": {
     "titulo": "Encontre os instrumentos",
-    "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
     "tituloTransicao": "Uma cidade e um trajeto de solução.",
     "textoTransicao": "O risco da paralisia: um contrato de transporte público de passageiros defasado pela inflação e imprevistos técnicos ameaçava deixar a população sem transporte.\n\nO contratado alegava prejuízo na operação e o gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
     "botaoTransicao": "Agir",
@@ -63,8 +62,8 @@ export default {
     "fraseSintese": "Consensualismo: uma alternativa quando o diálogo é possível.",
     "subtexto": "Não substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o diálogo é viável e o interesse público ganha com a solução negociada.",
     "inspiracao": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
-    "qrLegenda": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
-    "qrLegendaVitoria": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
+    "qrLegenda": "Sua opinião é importante! Acesse o QR Code ao lado e responda a pesquisa. Contamos com você!",
+    "qrLegendaVitoria": "Sua opinião é importante! Acesse o QR Code ao lado e responda a pesquisa. Contamos com você!",
     "botaoJogarNovo": "VOLTAR AO INÍCIO"
   },
 

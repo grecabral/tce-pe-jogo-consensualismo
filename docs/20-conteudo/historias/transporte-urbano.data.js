@@ -14,7 +14,6 @@ export default {
 
   "lanterna": {
     "cenario": "cenarios/transporte_lanterna.jpg",
-    "dicaOnboarding": "Ilumine o cenário e toque nos instrumentos que destravam o caso de Vilanova do Rio.",
     "instrumentosAEscolher": [
       "interesse-publico",
       "boa-fe",

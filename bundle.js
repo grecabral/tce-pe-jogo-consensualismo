@@ -24,7 +24,7 @@ var config_default = {
   lanternaDuracaoSeg: 60,
   // Créditos mostrados na tela final (e no rodapé do attract, se fizer sentido).
   creditos: {
-    orgao: "Tribunal de Contas do Estado de Pernambuco",
+    orgao: "TCE-PE",
     ano: 2026,
     logoSrc: "assets/marca/logo_tce.png"
   }
@@ -290,7 +290,6 @@ var textos_ui_data_default = {
   },
   "jogo3": {
     "titulo": "Encontre os instrumentos",
-    "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
     "tituloTransicao": "Uma cidade e um trajeto de solu\xE7\xE3o.",
     "textoTransicao": "O risco da paralisia: um contrato de transporte p\xFAblico de passageiros defasado pela infla\xE7\xE3o e imprevistos t\xE9cnicos amea\xE7ava deixar a popula\xE7\xE3o sem transporte.\n\nO contratado alegava preju\xEDzo na opera\xE7\xE3o e o gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
     "botaoTransicao": "Agir",
@@ -305,8 +304,8 @@ var textos_ui_data_default = {
     "fraseSintese": "Consensualismo: uma alternativa quando o di\xE1logo \xE9 poss\xEDvel.",
     "subtexto": "N\xE3o substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o di\xE1logo \xE9 vi\xE1vel e o interesse p\xFAblico ganha com a solu\xE7\xE3o negociada.",
     "inspiracao": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
-    "qrLegenda": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
-    "qrLegendaVitoria": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
+    "qrLegenda": "Sua opini\xE3o \xE9 importante! Acesse o QR Code ao lado e responda a pesquisa. Contamos com voc\xEA!",
+    "qrLegendaVitoria": "Sua opini\xE3o \xE9 importante! Acesse o QR Code ao lado e responda a pesquisa. Contamos com voc\xEA!",
     "botaoJogarNovo": "VOLTAR AO IN\xCDCIO"
   },
   "acessibilidade": {
@@ -330,7 +329,6 @@ var transporte_urbano_data_default = {
   },
   "lanterna": {
     "cenario": "cenarios/transporte_lanterna.jpg",
-    "dicaOnboarding": "Ilumine o cen\xE1rio e toque nos instrumentos que destravam o caso de Vilanova do Rio.",
     "instrumentosAEscolher": [
       "interesse-publico",
       "boa-fe",
@@ -679,6 +677,7 @@ function montar(app, ctx) {
           </div>
           <h1 class="attract-chamada entrada-1">${t.chamada}</h1>
           <p class="attract-subtitulo entrada-2">${t.subtitulo}</p>
+          <img class="attract-logo-prisma entrada-2" src="assets/marca/Logo_prisma.png" alt="" onerror="this.style.display='none'">
           <button class="btn-mute" id="btn-mute" aria-label="Alternar som"></button>
           <div class="attract-particulas" aria-hidden="true">
             ${Array.from({ length: 12 }, () => '<span class="particula"></span>').join("")}
@@ -999,7 +998,7 @@ function montar4(app, ctx) {
         const alturaPalco = rect.height || palco.offsetHeight;
         const touchX = ev.clientX - rect.left;
         const touchY = ev.clientY - rect.top;
-        const HIT_RAIO = 110;
+        const HIT_RAIO = 160;
         let closestIdx = -1;
         let closestDist = HIT_RAIO;
         for (let i = 0; i < ativos.length; i++) {
@@ -1107,7 +1106,7 @@ function montar4(app, ctx) {
         }
         const intervaloAtual = Math.floor((duracao - segundos) / acIntervalo);
         if (intervaloAtual > intervaloAnterior) {
-          velocidadeBase *= acIncremento;
+          velocidadeBase = Math.min(velocidadeBase * acIncremento, 420);
           intervaloAnterior = intervaloAtual;
         }
         const alturaPalco = rect.height || palco.offsetHeight;

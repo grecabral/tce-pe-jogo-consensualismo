@@ -41,6 +41,7 @@ export function montar(app, ctx) {
           </div>
           <h1 class="attract-chamada entrada-1">${t.chamada}</h1>
           <p class="attract-subtitulo entrada-2">${t.subtitulo}</p>
+          <img class="attract-logo-prisma entrada-2" src="assets/marca/Logo_prisma.png" alt="" onerror="this.style.display='none'">
           <button class="btn-mute" id="btn-mute" aria-label="Alternar som"></button>
           <div class="attract-particulas" aria-hidden="true">
             ${Array.from({length:12}, () => '<span class="particula"></span>').join('')}

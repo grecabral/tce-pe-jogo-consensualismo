@@ -136,7 +136,7 @@ export function montar(app, ctx) {
         const alturaPalco  = rect.height || palco.offsetHeight;
         const touchX = ev.clientX - rect.left;
         const touchY = ev.clientY - rect.top;
-        const HIT_RAIO = 110; // px — raio de detecção
+        const HIT_RAIO = 160; // px — raio de detecção
 
         let closestIdx = -1;
         let closestDist = HIT_RAIO;
@@ -254,7 +254,7 @@ export function montar(app, ctx) {
 
         const intervaloAtual = Math.floor((duracao - segundos) / acIntervalo);
         if (intervaloAtual > intervaloAnterior) {
-          velocidadeBase *= acIncremento;
+          velocidadeBase = Math.min(velocidadeBase * acIncremento, 420);
           intervaloAnterior = intervaloAtual;
         }
 
