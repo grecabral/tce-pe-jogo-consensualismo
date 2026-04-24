@@ -15,11 +15,11 @@ function calcularTempoLeitura(texto) {
 
 function revelarEmBlocos(texto) {
   const palavras = texto.trim().split(/\s+/);
-  // 240ms por palavra — typing lento e legível
-  return palavras.map((p, i) => {
-    const delay = (i * 0.24).toFixed(2);
-    return `<span class="typing-palavra" style="animation-delay:${delay}s">${p} </span>`;
-  }).join('');
+  const blocos = [];
+  for (let i = 0; i < palavras.length; i += 4) {
+    blocos.push(palavras.slice(i, i + 4).join(' '));
+  }
+  return blocos.map((b) => `<span class="bloco-texto">${b} </span>`).join('');
 }
 
 
@@ -29,7 +29,7 @@ let root = null;
 let cleanup = [];
 let fase = 'transicao'; // reset em onExit
 
-const RAIO = 180;
+const RAIO = 360;
 const COLETAR_ALVO = 5;
 // Circunferência do anel SVG grande (r=42): 2π×42 ≈ 263.9
 const CIRCUM_J3 = 2 * Math.PI * 42;
@@ -54,7 +54,7 @@ export function montar(app, ctx) {
         <section class="cena cena-jogo3-transicao" id="cena-jogo3-trans">
           <div class="intro-conteudo">
             <h1 class="intro-titulo">${t.tituloTransicao}</h1>
-            <p class="intro-texto">${revelarEmBlocos(t.textoTransicao)}</p>
+            ${t.textoTransicao.split('\n\n').map((b) => `<p class="intro-texto bloco-texto">${b.trim()}</p>`).join('')}
             <button class="btn btn-primary btn-bloqueado" id="btn-transicao">${t.botaoTransicao}</button>
           </div>
         </section>`;
@@ -66,12 +66,7 @@ export function montar(app, ctx) {
       bgTrans.onload = () => { if (root) root.style.backgroundImage = `url('assets/cenarios/transporte_lanterna.jpg')`; };
       bgTrans.src = 'assets/cenarios/transporte_lanterna.jpg';
 
-      // Som de teclado sincronizado com cada palavra
-      const palavras = t.textoTransicao.trim().split(/\s+/);
-      palavras.forEach((_, i) => {
-        const tid = setTimeout(tocarBeep, i * 240);
-        cleanup.push(() => clearTimeout(tid));
-      });
+
 
       const btnTrans = root.querySelector('#btn-transicao');
       const tLeitura = calcularTempoLeitura(t.textoTransicao);
@@ -175,7 +170,6 @@ export function montar(app, ctx) {
     const hudNum      = root.querySelector('#hud-num');
     const hudSeg      = root.querySelector('#hud-seg');
     const timerProgJ3 = root.querySelector('#timer-prog-j3');
-    const modal       = root.querySelector('#lanterna-modal');
     const onboarding  = root.querySelector('#lanterna-onboarding');
     const invEl       = root.querySelector('#j3-inv');
     const invContEl   = root.querySelector('#j3-inv-contador');
@@ -198,22 +192,13 @@ export function montar(app, ctx) {
     probe.onload = () => { palco.style.backgroundImage = `url('${bgPath}')`; };
     probe.src = bgPath;
 
-    const itens = [
-      ...instrumentosNaCena.map((inst) => ({
-        tipo: 'instrumento',
-        id: inst.id,
-        nome: inst.nomeCompleto || inst.nome,
-        icone: `assets/${inst.icone}`,
-        texto: inst.insight,
-      })),
-      ...armadilhas.map((arm) => ({
-        tipo: 'armadilha',
-        id: arm.id,
-        nome: arm.nome,
-        icone: `assets/${arm.icone}`,
-        texto: arm.explicacao,
-      })),
-    ];
+    const itens = instrumentosNaCena.map((inst) => ({
+      tipo: 'instrumento',
+      id: inst.id,
+      nome: inst.nomeCompleto || inst.nome,
+      icone: `assets/${inst.icone}`,
+      texto: inst.insight,
+    }));
 
     const posicoes = gerarPosicoes(itens.length, palco);
     const itensEls = itens.map((item, i) => {
@@ -269,11 +254,8 @@ export function montar(app, ctx) {
 
       const data = alvo._data;
 
-      // Item já coletado → abre insight detalhado.
-      if (alvo.classList.contains('coletado')) {
-        mostrarInsight(data);
-        return;
-      }
+      // Item já coletado → ignorar
+      if (alvo.classList.contains('coletado')) return;
 
       if (data.tipo === 'instrumento') {
         alvo.classList.add('coletado');
@@ -286,7 +268,7 @@ export function montar(app, ctx) {
         }
         invContEl.textContent = `${coletados}/${COLETAR_ALVO} encontrados`;
         tocar('coletou');
-        mostrarModal(data, false);
+        mostrarInsight(data);
         if (coletados >= COLETAR_ALVO) {
           tocar('vitoria');
           clearInterval(tTimer);
@@ -303,31 +285,14 @@ export function montar(app, ctx) {
         setTimeout(() => alvo.classList.remove('tocada'), 400);
         root.classList.add('shake');
         setTimeout(() => root.classList.remove('shake'), 350);
-        mostrarModal(data, true);
+        mostrarInsight(data);
       }
     }
 
-    let modalTimer = null;
     let timerPausado = false;
 
-    function mostrarModal(data, armadilha) {
-      clearTimeout(modalTimer);
-      modal.querySelector('#modal-icone').src = data.icone;
-      modal.querySelector('#modal-titulo').textContent = data.nome;
-      modal.querySelector('#modal-texto').textContent  = data.texto;
-      modal.classList.toggle('armadilha', !!armadilha);
-      modal.classList.add('visivel');
-      timerPausado = true;
-      modalTimer = setTimeout(() => {
-        modal.classList.remove('visivel');
-        timerPausado = false;
-      }, 5000);
-    }
-
     function mostrarInsight(data) {
-      // Fecha o toast e pausa o timer enquanto o insight estiver aberto
-      clearTimeout(modalTimer);
-      modal.classList.remove('visivel');
+      timerPausado = true;
       timerPausado = true;
       insightModal.querySelector('#insight-icone').src = data.icone;
       insightModal.querySelector('#insight-titulo').textContent = data.nome;

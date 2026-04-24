@@ -23,13 +23,13 @@ export default {
   coletorDuracaoSeg: 40,
 
   // Velocidade inicial dos itens caindo (pixels por segundo).
-  coletorVelocidadeInicial: 220,
+  coletorVelocidadeInicial: 180,
 
   // A cada quantos segundos a velocidade aumenta.
-  coletorAceleracaoIntervaloSeg: 10,
+  coletorAceleracaoIntervaloSeg: 8,
 
   // Quanto a velocidade aumenta a cada intervalo (multiplicador).
-  coletorAceleracaoIncremento: 1.25,
+  coletorAceleracaoIncremento: 1.45,
 
   // Duração do Jogo 2 (lanterna) em segundos.
   lanternaDuracaoSeg: 60,

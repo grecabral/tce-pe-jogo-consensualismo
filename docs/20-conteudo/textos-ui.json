@@ -12,7 +12,7 @@
 
   "introConsensualism": {
     "titulo": "Mas o que é Consensualismo?",
-    "texto": "Sabe aquele problema na sua prefeitura que parece não ter saída? Uma obra parada há anos porque o preço dos materiais subiu, ou um contrato de coleta de lixo travado por uma briga judicial sem fim?\n\nDiálogo, cooperação e boa-fé podem ser uma alternativa para encontrar soluções rápidas e eficientes em prol do interesse público. O Consensualismo é esse caminho!",
+    "texto": "Sabe aquele problema na sua prefeitura que parece não ter saída? Uma obra parada há anos porque o <strong>preço dos materiais</strong> subiu, ou um <strong>contrato de coleta de lixo</strong> travado por uma <strong>briga judicial</strong> sem fim?\n\n<strong>Diálogo</strong>, <strong>cooperação</strong> e <strong>boa-fé</strong> podem ser uma alternativa para encontrar soluções <strong>rápidas e eficientes</strong> em prol do <strong>interesse público</strong>.\n\nO Consensualismo é esse caminho!",
     "botaoContinuar": "ENTENDI, VAMOS JOGAR"
   },
 
@@ -49,7 +49,7 @@
     "titulo": "Encontre os instrumentos",
     "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
     "tituloTransicao": "Uma cidade e um trajeto de solução.",
-    "textoTransicao": "O risco da paralisia: um contrato de transporte público de passageiros defasado pela inflação e imprevistos técnicos ameaçava deixar a população sem transporte. O contratado alegava prejuízo na operação e gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
+    "textoTransicao": "O risco da paralisia: um contrato de transporte público de passageiros defasado pela inflação e imprevistos técnicos ameaçava deixar a população sem transporte.\n\nO contratado alegava prejuízo na operação e o gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
     "botaoTransicao": "Agir",
     "tituloListaItens": "Encontre os instrumentos:",
     "instrucaoJogo": "Ilumine o cenário e toque nos instrumentos do consensualismo para destravarem o caso.",
@@ -62,7 +62,7 @@
   "final": {
     "fraseSintese": "Consensualismo: uma alternativa quando o diálogo é possível.",
     "subtexto": "Não substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o diálogo é viável e o interesse público ganha com a solução negociada.",
-    "inspiracao": "Inspirado no VLT de Salvador: Bahia e Mato Grosso, com atuação dos Tribunais de Contas, firmaram solução consensual para aproveitar trens do consórcio Cuiabá–Várzea Grande, adiantando anos na entrega do sistema.",
+    "inspiracao": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
     "qrLegenda": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
     "qrLegendaVitoria": "Sabemos que o diálogo e a construção pactuada de soluções podem ajudar a aumentar a eficiência da Administração Pública. Por isso, sua opinião é importante! Queremos entender sua percepção sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conheça o fato real. Contamos com você!",
     "botaoJogarNovo": "VOLTAR AO INÍCIO"

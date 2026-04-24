@@ -15,11 +15,11 @@ var config_default = {
   // Duração total do Jogo 1 (Coletor) em segundos.
   coletorDuracaoSeg: 40,
   // Velocidade inicial dos itens caindo (pixels por segundo).
-  coletorVelocidadeInicial: 220,
+  coletorVelocidadeInicial: 180,
   // A cada quantos segundos a velocidade aumenta.
-  coletorAceleracaoIntervaloSeg: 10,
+  coletorAceleracaoIntervaloSeg: 8,
   // Quanto a velocidade aumenta a cada intervalo (multiplicador).
-  coletorAceleracaoIncremento: 1.25,
+  coletorAceleracaoIncremento: 1.45,
   // Duração do Jogo 2 (lanterna) em segundos.
   lanternaDuracaoSeg: 60,
   // Créditos mostrados na tela final (e no rodapé do attract, se fizer sentido).
@@ -163,11 +163,6 @@ var instrumentos_data_default = {
 // docs/20-conteudo/coletor.data.js
 var coletor_data_default = {
   "_descricao": "Itens do Jogo 1 (Coletor). Caem do topo da tela. Jogador move cesta para pegar os ADEQUADOS e evitar os INADEQUADOS. Conte\xFAdo compartilhado entre as hist\xF3rias (n\xE3o muda por sess\xE3o).",
-  "_recomendacoes": {
-    "adequadosManterTodos": "Lista atual (7 itens) cobre valores comportamentais do consensualismo. Todos t\xEAm base nos pilares de boa-f\xE9, di\xE1logo e coopera\xE7\xE3o.",
-    "iconesPendentes": "Empatia reutiliza escuta.svg (\xEDcone pr\xF3prio necess\xE1rio para V2). Imoralidade reutiliza ma-fe.svg (\xEDcone pr\xF3prio necess\xE1rio). Vingan\xE7a reutiliza hostilidade.svg (\xEDcone pr\xF3prio necess\xE1rio).",
-    "inadequadosRevisar": "'Indiferen\xE7a' \xE9 mais estado que comportamento ativo, mas funciona bem visualmente no contexto do jogo."
-  },
   "adequados": [
     {
       "id": "boa-fe",
@@ -176,15 +171,9 @@ var coletor_data_default = {
       "cor": "#10b981"
     },
     {
-      "id": "honestidade",
-      "nome": "Honestidade",
-      "icone": "itens/transparencia.svg",
-      "cor": "#10b981"
-    },
-    {
-      "id": "respeito",
-      "nome": "Respeito",
-      "icone": "itens/escuta.svg",
+      "id": "rapidez",
+      "nome": "Rapidez",
+      "icone": "itens/interesse-publico.svg",
       "cor": "#10b981"
     },
     {
@@ -196,7 +185,7 @@ var coletor_data_default = {
     {
       "id": "etica",
       "nome": "\xC9tica",
-      "icone": "itens/interesse-publico.svg",
+      "icone": "itens/transparencia.svg",
       "cor": "#10b981"
     },
     {
@@ -207,52 +196,52 @@ var coletor_data_default = {
     },
     {
       "id": "acordos-mutuos",
-      "nome": "Acordos M\xFAtuos",
+      "nome": "Acordos m\xFAtuos",
       "icone": "itens/acordo.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "cooperacao",
+      "nome": "Coopera\xE7\xE3o",
+      "icone": "itens/cooperacao.svg",
+      "cor": "#10b981"
+    },
+    {
+      "id": "escuta",
+      "nome": "Escuta",
+      "icone": "itens/escuta.svg",
       "cor": "#10b981"
     }
   ],
   "inadequados": [
     {
-      "id": "ma-fe",
-      "nome": "M\xE1-f\xE9",
-      "icone": "itens/ma-fe.svg",
-      "cor": "#ef4444"
-    },
-    {
-      "id": "desonestidade",
-      "nome": "Desonestidade",
-      "icone": "itens/opacidade.svg",
-      "cor": "#ef4444"
-    },
-    {
-      "id": "desrespeito",
-      "nome": "Desrespeito",
+      "id": "polarizacao",
+      "nome": "Polariza\xE7\xE3o",
       "icone": "itens/hostilidade.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "indiferenca",
-      "nome": "Indiferen\xE7a",
+      "id": "processo",
+      "nome": "Processo",
       "icone": "itens/impasse.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "imoralidade",
-      "nome": "Imoralidade",
+      "id": "adversario",
+      "nome": "Advers\xE1rio",
       "icone": "itens/ma-fe.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "autoritarismo",
-      "nome": "Autoritarismo",
+      "id": "imposicao",
+      "nome": "Imposi\xE7\xE3o",
       "icone": "itens/imposicao.svg",
       "cor": "#ef4444"
     },
     {
-      "id": "vinganca",
-      "nome": "Vingan\xE7a",
-      "icone": "itens/hostilidade.svg",
+      "id": "julgado",
+      "nome": "Julgado",
+      "icone": "itens/opacidade.svg",
       "cor": "#ef4444"
     }
   ]
@@ -270,7 +259,7 @@ var textos_ui_data_default = {
   },
   "introConsensualism": {
     "titulo": "Mas o que \xE9 Consensualismo?",
-    "texto": "Sabe aquele problema na sua prefeitura que parece n\xE3o ter sa\xEDda? Uma obra parada h\xE1 anos porque o pre\xE7o dos materiais subiu, ou um contrato de coleta de lixo travado por uma briga judicial sem fim?\n\nDi\xE1logo, coopera\xE7\xE3o e boa-f\xE9 podem ser uma alternativa para encontrar solu\xE7\xF5es r\xE1pidas e eficientes em prol do interesse p\xFAblico. O Consensualismo \xE9 esse caminho!",
+    "texto": "Sabe aquele problema na sua prefeitura que parece n\xE3o ter sa\xEDda? Uma obra parada h\xE1 anos porque o <strong>pre\xE7o dos materiais</strong> subiu, ou um <strong>contrato de coleta de lixo</strong> travado por uma <strong>briga judicial</strong> sem fim?\n\n<strong>Di\xE1logo</strong>, <strong>coopera\xE7\xE3o</strong> e <strong>boa-f\xE9</strong> podem ser uma alternativa para encontrar solu\xE7\xF5es <strong>r\xE1pidas e eficientes</strong> em prol do <strong>interesse p\xFAblico</strong>.\n\nO Consensualismo \xE9 esse caminho!",
     "botaoContinuar": "ENTENDI, VAMOS JOGAR"
   },
   "abertura": {
@@ -303,7 +292,7 @@ var textos_ui_data_default = {
     "titulo": "Encontre os instrumentos",
     "instrucao": "Arraste o dedo para iluminar. Toque nos instrumentos do consensualismo.",
     "tituloTransicao": "Uma cidade e um trajeto de solu\xE7\xE3o.",
-    "textoTransicao": "O risco da paralisia: um contrato de transporte p\xFAblico de passageiros defasado pela infla\xE7\xE3o e imprevistos t\xE9cnicos amea\xE7ava deixar a popula\xE7\xE3o sem transporte. O contratado alegava preju\xEDzo na opera\xE7\xE3o e gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
+    "textoTransicao": "O risco da paralisia: um contrato de transporte p\xFAblico de passageiros defasado pela infla\xE7\xE3o e imprevistos t\xE9cnicos amea\xE7ava deixar a popula\xE7\xE3o sem transporte.\n\nO contratado alegava preju\xEDzo na opera\xE7\xE3o e o gestor temia assinar aditivos e enfrentar multas ou longos processos por anos.",
     "botaoTransicao": "Agir",
     "tituloListaItens": "Encontre os instrumentos:",
     "instrucaoJogo": "Ilumine o cen\xE1rio e toque nos instrumentos do consensualismo para destravarem o caso.",
@@ -315,7 +304,7 @@ var textos_ui_data_default = {
   "final": {
     "fraseSintese": "Consensualismo: uma alternativa quando o di\xE1logo \xE9 poss\xEDvel.",
     "subtexto": "N\xE3o substitui processo, auditoria ou julgamento. Oferece um caminho a mais quando o di\xE1logo \xE9 vi\xE1vel e o interesse p\xFAblico ganha com a solu\xE7\xE3o negociada.",
-    "inspiracao": "Inspirado no VLT de Salvador: Bahia e Mato Grosso, com atua\xE7\xE3o dos Tribunais de Contas, firmaram solu\xE7\xE3o consensual para aproveitar trens do cons\xF3rcio Cuiab\xE1\u2013V\xE1rzea Grande, adiantando anos na entrega do sistema.",
+    "inspiracao": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
     "qrLegenda": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
     "qrLegendaVitoria": "Sabemos que o di\xE1logo e a constru\xE7\xE3o pactuada de solu\xE7\xF5es podem ajudar a aumentar a efici\xEAncia da Administra\xE7\xE3o P\xFAblica. Por isso, sua opini\xE3o \xE9 importante! Queremos entender sua percep\xE7\xE3o sobre esse tema. Acesse o QR Code ao lado, responda a pesquisa e conhe\xE7a o fato real. Contamos com voc\xEA!",
     "botaoJogarNovo": "VOLTAR AO IN\xCDCIO"
@@ -645,15 +634,6 @@ function tocar(id) {
   clone.play().catch(() => {
   });
 }
-function tocarBeep() {
-  const s = sons["toque"];
-  if (!s || silenciado) return;
-  const clone = s.cloneNode();
-  clone.volume = 0.08;
-  clone.playbackRate = 2.5;
-  clone.play().catch(() => {
-  });
-}
 function toggleMute() {
   silenciado = !silenciado;
   localStorage.setItem("muted", silenciado);
@@ -794,9 +774,8 @@ function montar2(app, ctx) {
 // src/cenas/intro_consensualismo.js
 var root3 = null;
 var cleanup = [];
-function calcularTempoLeitura(texto) {
-  const palavras = texto.trim().split(/\s+/).length;
-  return Math.max(6e3, Math.ceil(palavras / 220 * 60 * 1e3));
+function calcularTempoLeitura(_texto) {
+  return 6e3;
 }
 function montar3(app, ctx) {
   return {
@@ -804,8 +783,12 @@ function montar3(app, ctx) {
       configurarIdle(ctx.config.idleTimeoutMs);
       ctx.sessao.historiaAtual = sortearHistoria(ctx.historias, ctx.sessao.numero);
       const t = ctx.textosUI.introConsensualism;
-      const linhas = t.texto.split("\n").filter((l) => l.trim() !== "");
-      const paragrafosHTML = `<p>${linhas.map((l) => `<span class="intro-linha">${l}</span>`).join("")}</p>`;
+      const blocos = t.texto.split("\n\n").filter((b) => b.trim() !== "");
+      const paragrafosHTML = blocos.map((b, i) => {
+        const destaque = i === blocos.length - 1;
+        const delay = (0.2 + i * 0.6).toFixed(1);
+        return `<p class="intro-paragrafo${destaque ? " intro-destaque" : ""}" style="animation-delay:${delay}s">${b.trim()}</p>`;
+      }).join("");
       app.innerHTML = `
         <section class="cena cena-intro" id="cena-intro">
           <div class="intro-conteudo">
@@ -819,7 +802,7 @@ function montar3(app, ctx) {
       root3 = app.querySelector("#cena-intro");
       root3.addEventListener("pointerdown", resetIdleTimer, { passive: true });
       const btn = root3.querySelector("#btn-intro");
-      const textoCompleto = linhas.join(" ");
+      const textoCompleto = blocos.join(" ");
       const tLeitura = calcularTempoLeitura(textoCompleto);
       const tid = setTimeout(() => {
         if (!btn) return;
@@ -1039,6 +1022,7 @@ function montar4(app, ctx) {
         mostrarFlash(it.adequado);
         const xPx = it.x / 100 * larguraPalco;
         const yPx = it.y / 100 * alturaPalco;
+        floatNome(it.nome, xPx, yPx, it.adequado);
         tocar(it.adequado ? "coletou" : "erro");
         clearTimeout(pontosVal._tt);
         pontosVal.classList.remove("score-tick");
@@ -1048,7 +1032,6 @@ function montar4(app, ctx) {
         if (it.adequado) {
           inventarioContagem[it.defId] = (inventarioContagem[it.defId] || 0) + 1;
           adicionarEstrela(it.defId);
-          mostrarNotifItem(it.icone, it.nome);
           spawnBurst(xPx, yPx);
         }
       }
@@ -1096,6 +1079,15 @@ function montar4(app, ctx) {
         flash.classList.add(ok ? "ok" : "erro");
         setTimeout(() => flash.classList.remove("ok", "erro"), 240);
       }
+      function floatNome(nome, xPx, yPx, adequado) {
+        const nota = document.createElement("div");
+        nota.className = "float-pts float-nome " + (adequado ? "pos" : "neg");
+        nota.style.left = xPx + "px";
+        nota.style.top = yPx + "px";
+        nota.textContent = nome;
+        root4.appendChild(nota);
+        setTimeout(() => nota.remove(), 1400);
+      }
       function spawnBurst(xPx, yPx) {
         for (let i = 0; i < 6; i++) {
           const p = document.createElement("div");
@@ -1109,7 +1101,7 @@ function montar4(app, ctx) {
       function loop(agora) {
         const dt = Math.min(0.05, (agora - lastT) / 1e3);
         lastT = agora;
-        if (agora - ultimoSpawn > 900 - Math.min(500, (duracao - segundos) * 8)) {
+        if (agora - ultimoSpawn > 950 - Math.min(600, (duracao - segundos) * 14)) {
           spawnarItem();
           ultimoSpawn = agora;
         }
@@ -1438,19 +1430,12 @@ function calcularTempoLeitura2(texto) {
   const palavras = texto.trim().split(/\s+/).length;
   return Math.max(2500, Math.ceil(palavras / 200 * 60 * 1e3));
 }
-function revelarEmBlocos(texto) {
-  const palavras = texto.trim().split(/\s+/);
-  return palavras.map((p, i) => {
-    const delay = (i * 0.24).toFixed(2);
-    return `<span class="typing-palavra" style="animation-delay:${delay}s">${p} </span>`;
-  }).join("");
-}
 var raf2 = null;
 var tTimer2 = null;
 var root6 = null;
 var cleanup4 = [];
 var fase = "transicao";
-var RAIO = 180;
+var RAIO = 360;
 var COLETAR_ALVO = 5;
 var CIRCUM_J3 = 2 * Math.PI * 42;
 function montar6(app, ctx) {
@@ -1469,7 +1454,7 @@ function montar6(app, ctx) {
         <section class="cena cena-jogo3-transicao" id="cena-jogo3-trans">
           <div class="intro-conteudo">
             <h1 class="intro-titulo">${t.tituloTransicao}</h1>
-            <p class="intro-texto">${revelarEmBlocos(t.textoTransicao)}</p>
+            ${t.textoTransicao.split("\n\n").map((b) => `<p class="intro-texto bloco-texto">${b.trim()}</p>`).join("")}
             <button class="btn btn-primary btn-bloqueado" id="btn-transicao">${t.botaoTransicao}</button>
           </div>
         </section>`;
@@ -1480,11 +1465,6 @@ function montar6(app, ctx) {
         if (root6) root6.style.backgroundImage = `url('assets/cenarios/transporte_lanterna.jpg')`;
       };
       bgTrans.src = "assets/cenarios/transporte_lanterna.jpg";
-      const palavras = t.textoTransicao.trim().split(/\s+/);
-      palavras.forEach((_, i) => {
-        const tid = setTimeout(tocarBeep, i * 240);
-        cleanup4.push(() => clearTimeout(tid));
-      });
       const btnTrans = root6.querySelector("#btn-transicao");
       const tLeitura = calcularTempoLeitura2(t.textoTransicao);
       const tidTrans = setTimeout(() => {
@@ -1586,7 +1566,6 @@ function montar6(app, ctx) {
     const hudNum = root6.querySelector("#hud-num");
     const hudSeg = root6.querySelector("#hud-seg");
     const timerProgJ3 = root6.querySelector("#timer-prog-j3");
-    const modal = root6.querySelector("#lanterna-modal");
     const onboarding = root6.querySelector("#lanterna-onboarding");
     const invEl = root6.querySelector("#j3-inv");
     const invContEl = root6.querySelector("#j3-inv-contador");
@@ -1606,22 +1585,13 @@ function montar6(app, ctx) {
       palco.style.backgroundImage = `url('${bgPath}')`;
     };
     probe.src = bgPath;
-    const itens = [
-      ...instrumentosNaCena.map((inst) => ({
-        tipo: "instrumento",
-        id: inst.id,
-        nome: inst.nomeCompleto || inst.nome,
-        icone: `assets/${inst.icone}`,
-        texto: inst.insight
-      })),
-      ...armadilhas.map((arm) => ({
-        tipo: "armadilha",
-        id: arm.id,
-        nome: arm.nome,
-        icone: `assets/${arm.icone}`,
-        texto: arm.explicacao
-      }))
-    ];
+    const itens = instrumentosNaCena.map((inst) => ({
+      tipo: "instrumento",
+      id: inst.id,
+      nome: inst.nomeCompleto || inst.nome,
+      icone: `assets/${inst.icone}`,
+      texto: inst.insight
+    }));
     const posicoes = gerarPosicoes(itens.length, palco);
     const itensEls = itens.map((item, i) => {
       const el = document.createElement("div");
@@ -1667,10 +1637,7 @@ function montar6(app, ctx) {
       const alvo = ev.target.closest(".lanterna-item");
       if (!alvo || !alvo.classList.contains("revelado")) return;
       const data = alvo._data;
-      if (alvo.classList.contains("coletado")) {
-        mostrarInsight(data);
-        return;
-      }
+      if (alvo.classList.contains("coletado")) return;
       if (data.tipo === "instrumento") {
         alvo.classList.add("coletado");
         coletados++;
@@ -1682,7 +1649,7 @@ function montar6(app, ctx) {
         }
         invContEl.textContent = `${coletados}/${COLETAR_ALVO} encontrados`;
         tocar("coletou");
-        mostrarModal(data, false);
+        mostrarInsight(data);
         if (coletados >= COLETAR_ALVO) {
           tocar("vitoria");
           clearInterval(tTimer2);
@@ -1699,27 +1666,12 @@ function montar6(app, ctx) {
         setTimeout(() => alvo.classList.remove("tocada"), 400);
         root6.classList.add("shake");
         setTimeout(() => root6.classList.remove("shake"), 350);
-        mostrarModal(data, true);
+        mostrarInsight(data);
       }
     }
-    let modalTimer = null;
     let timerPausado = false;
-    function mostrarModal(data, armadilha) {
-      clearTimeout(modalTimer);
-      modal.querySelector("#modal-icone").src = data.icone;
-      modal.querySelector("#modal-titulo").textContent = data.nome;
-      modal.querySelector("#modal-texto").textContent = data.texto;
-      modal.classList.toggle("armadilha", !!armadilha);
-      modal.classList.add("visivel");
-      timerPausado = true;
-      modalTimer = setTimeout(() => {
-        modal.classList.remove("visivel");
-        timerPausado = false;
-      }, 5e3);
-    }
     function mostrarInsight(data) {
-      clearTimeout(modalTimer);
-      modal.classList.remove("visivel");
+      timerPausado = true;
       timerPausado = true;
       insightModal.querySelector("#insight-icone").src = data.icone;
       insightModal.querySelector("#insight-titulo").textContent = data.nome;
