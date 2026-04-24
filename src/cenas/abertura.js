@@ -7,7 +7,7 @@ let cleanup = [];
 
 function calcularTempoLeitura(texto) {
   const palavras = texto.trim().split(/\s+/).length;
-  return Math.max(2500, Math.ceil((palavras / 200) * 60 * 1000));
+  return Math.max(1500, Math.ceil((palavras / 280) * 60 * 1000));
 }
 
 function revelarEmBlocos(texto) {

@@ -7,7 +7,7 @@ let tAuto = null;
 let tMsg = null;
 let onToque = null;
 
-const LABELS = ['Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Tente de novo', 'Jogar', 'Prêmio'];
+const LABELS = ['Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Prêmio'];
 
 function criarLuzes(anel, raio) {
   for (let i = 0; i < NUM_LUZES; i++) {
@@ -51,8 +51,8 @@ export function montar(app, ctx) {
         criarLuzes(anel, raio);
       });
 
-      tMsg  = setTimeout(() => msg.classList.add('visivel'), 4500);
-      tAuto = setTimeout(() => irPara('INTRO_CONSENSUALISMO'), 6000);
+      tMsg  = setTimeout(() => msg.classList.add("visivel"), 3500);
+      tAuto = setTimeout(() => irPara('INTRO_CONSENSUALISMO'), 9000);
 
       onToque = () => irPara('INTRO_CONSENSUALISMO');
       root.addEventListener('pointerdown', onToque, { passive: true });

@@ -47,40 +47,166 @@
   }
 }
 
-/* Portrait: inventory vai para rodapé, Jogo3 inventory fica compacto */
-@media (orientation: portrait) {
-  .coletor-inventory {
-    top: auto;
-    right: auto;
-    bottom: var(--space-4);
-    left: 50%;
-    transform: translateX(-50%);
-    flex-direction: row;
-    align-items: flex-start;
-    min-width: unset;
-    max-width: 95vw;
-    overflow-x: auto;
-  }
+/* ── Inventories: faixa horizontal no topo (padrão portrait/totem) ── */
 
-  .inv-slots {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+/* Jogo 1 (coletor) */
+.coletor-inventory {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  transform: none;
+  flex-direction: row;
+  align-items: center;
+  min-width: unset;
+  max-width: 100%;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-3);
+  border-radius: 0 0 12px 12px;
+  border-top: none;
+  z-index: 30;
+}
 
-  .j3-inv {
-    left: var(--space-2);
-    max-width: 180px;
-  }
+.inv-titulo {
+  font-size: 0.7rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
-  .j3-inv-slot {
-    padding: 5px var(--space-1);
-  }
+.inv-slots {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
 
-  .j3-inv-slot img {
-    width: 32px;
-    height: 32px;
-  }
+.inv-slot {
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 2px;
+  min-width: 60px;
+}
+
+.inv-slot img {
+  width: 34px;
+  height: 34px;
+}
+
+.inv-slot-nome {
+  font-size: 0.62rem;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+
+/* Jogo 3 (lanterna) */
+.j3-inv {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: auto;
+  transform: none;
+  min-width: unset;
+  max-width: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-3);
+  border-radius: 0 0 12px 12px;
+  border-top: none;
+  overflow-x: auto;
+}
+
+.j3-inv-titulo {
+  font-size: 0.7rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.j3-inv-contador {
+  white-space: nowrap;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.j3-inv-slots {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
+}
+
+.j3-inv-slot {
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 2px;
+  min-width: 60px;
+}
+
+.j3-inv-slot img {
+  width: 34px;
+  height: 34px;
+}
+
+.j3-inv-slot-nome {
+  font-size: 0.62rem;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.j3-inv-slot-status { display: none; }
+
+/* Dica do Jogo 3 abaixo do inventory */
+.lanterna-onboarding {
+  bottom: auto;
+  top: 72px;
+  font-size: var(--font-size-small);
+  padding: var(--space-2) var(--space-4);
+}
+
+/* Jogo 2 (ligar): 6 cards em 3 colunas iguais */
+.jogo1-casos {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pilar-box .pilar-nome {
+  font-size: var(--font-size-body);
+  letter-spacing: 0.03em;
+}
+
+.pilar-box .pilar-desc {
+  display: none;
+}
+
+.pilar-box img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Stage empilhado verticalmente */
+.jogo1-stage {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.jogo1-pilares {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.final-grid {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+  text-align: center;
 }
 
 /* Safe area mínima em qualquer orientação. */

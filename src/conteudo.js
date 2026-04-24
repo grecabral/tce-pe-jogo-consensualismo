@@ -1,28 +1,23 @@
-// Loader dos JSONs de conteúdo.
-// V1: lê direto de docs/20-conteudo/ (sem duplicar — decisão do briefing).
-// Se o dono editar um JSON, o próximo reload pega.
+// Loader dos dados de conteúdo.
+// Versão offline: importa direto como módulos JS (sem fetch).
 
 import config from '../docs/20-conteudo/config.js';
+import principios from '../docs/20-conteudo/principios.data.js';
+import instrumentos from '../docs/20-conteudo/instrumentos.data.js';
+import coletor from '../docs/20-conteudo/coletor.data.js';
+import textosUI from '../docs/20-conteudo/textos-ui.data.js';
+import historiaTransporte from '../docs/20-conteudo/historias/transporte-urbano.data.js';
+import historiaAterro from '../docs/20-conteudo/historias/aterro.data.js';
+import historiaEscolar from '../docs/20-conteudo/historias/escolar.data.js';
 
-const BASE = 'docs/20-conteudo';
-
-async function lerJson(caminho) {
-  const resp = await fetch(caminho);
-  if (!resp.ok) throw new Error(`Falha ao carregar ${caminho}: HTTP ${resp.status}`);
-  return resp.json();
-}
+const todasHistorias = {
+  'transporte-urbano': historiaTransporte,
+  'aterro': historiaAterro,
+  'escolar': historiaEscolar,
+};
 
 export async function carregarTudo() {
-  const [principios, instrumentos, coletor, textosUI] = await Promise.all([
-    lerJson(`${BASE}/principios.json`),
-    lerJson(`${BASE}/instrumentos.json`),
-    lerJson(`${BASE}/coletor.json`),
-    lerJson(`${BASE}/textos-ui.json`),
-  ]);
-
-  const historias = await Promise.all(
-    config.historiasAtivas.map((id) => lerJson(`${BASE}/historias/${id}.json`))
-  );
+  const historias = config.historiasAtivas.map((id) => todasHistorias[id]);
 
   return {
     config,

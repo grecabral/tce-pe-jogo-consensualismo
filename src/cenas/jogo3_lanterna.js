@@ -37,9 +37,18 @@ const CIRCUM_J3 = 2 * Math.PI * 42;
 export function montar(app, ctx) {
   return {
     onEnter() {
-      fase = 'transicao';
       const t = ctx.textosUI.jogo3;
       const historia = ctx.sessao.historiaAtual;
+
+      // Retry direto (vindo de derrota): pula a tela de transição
+      if (ctx.sessao.modoJ3Direto) {
+        ctx.sessao.modoJ3Direto = false;
+        fase = 'jogo';
+        renderJogo(t, historia);
+        return;
+      }
+
+      fase = 'transicao';
 
       app.innerHTML = `
         <section class="cena cena-jogo3-transicao" id="cena-jogo3-trans">
@@ -173,10 +182,14 @@ export function montar(app, ctx) {
     const insightModal  = root.querySelector('#insight-modal');
     const insightFechar = root.querySelector('#insight-fechar');
 
-    // Insight modal — fecha ao tocar fora ou no ✕.
-    insightFechar.addEventListener('pointerup', () => insightModal.classList.remove('visivel'));
+    // Insight modal — fecha ao tocar fora ou no ✕ e retoma o timer.
+    function fecharInsight() {
+      insightModal.classList.remove('visivel');
+      timerPausado = false;
+    }
+    insightFechar.addEventListener('pointerup', fecharInsight);
     insightModal.addEventListener('pointerup', (ev) => {
-      if (ev.target === insightModal) insightModal.classList.remove('visivel');
+      if (ev.target === insightModal) fecharInsight();
     });
 
     // Fundo (tenta imagem, fallback já via classe).
@@ -295,6 +308,8 @@ export function montar(app, ctx) {
     }
 
     let modalTimer = null;
+    let timerPausado = false;
+
     function mostrarModal(data, armadilha) {
       clearTimeout(modalTimer);
       modal.querySelector('#modal-icone').src = data.icone;
@@ -302,10 +317,18 @@ export function montar(app, ctx) {
       modal.querySelector('#modal-texto').textContent  = data.texto;
       modal.classList.toggle('armadilha', !!armadilha);
       modal.classList.add('visivel');
-      modalTimer = setTimeout(() => modal.classList.remove('visivel'), 1800);
+      timerPausado = true;
+      modalTimer = setTimeout(() => {
+        modal.classList.remove('visivel');
+        timerPausado = false;
+      }, 5000);
     }
 
     function mostrarInsight(data) {
+      // Fecha o toast e pausa o timer enquanto o insight estiver aberto
+      clearTimeout(modalTimer);
+      modal.classList.remove('visivel');
+      timerPausado = true;
       insightModal.querySelector('#insight-icone').src = data.icone;
       insightModal.querySelector('#insight-titulo').textContent = data.nome;
       insightModal.querySelector('#insight-texto').textContent  = data.texto;
@@ -351,6 +374,7 @@ export function montar(app, ctx) {
     raf = requestAnimationFrame(atualizarMascara);
 
     tTimer = setInterval(() => {
+      if (timerPausado) return;
       secundos--;
       hudSeg.textContent = secundos;
       if (timerProgJ3) {
@@ -364,9 +388,14 @@ export function montar(app, ctx) {
         mostrarDerrota({
           titulo: historia.derrota?.titulo,
           texto:  t.derrota,
-        }).then(() => {
-          ctx.sessao.numero++;
-          irPara('ATTRACT');
+        }).then((escolha) => {
+          if (escolha === 'repetir') {
+            ctx.sessao.modoJ3Direto = true;
+            irPara('JOGO3_LANTERNA');
+          } else {
+            ctx.sessao.modoFinal = 'neutro';
+            irPara('FINAL');
+          }
         });
       }
     }, 1000);
@@ -388,8 +417,9 @@ function gerarConfetti() {
 function gerarPosicoes(n, palco) {
   const cols = Math.ceil(Math.sqrt(n));
   const rows = Math.ceil(n / cols);
-  const margemX = 15;
-  const margemY = 22;
+  const isPortrait = window.innerHeight > window.innerWidth;
+  const margemX = 10;
+  const margemY = isPortrait ? 28 : 22; // portrait: deixa topo livre para inventory
   const passoX = (100 - margemX * 2) / Math.max(1, cols - 1);
   const passoY = (100 - margemY * 2) / Math.max(1, rows - 1);
   const ps = [];

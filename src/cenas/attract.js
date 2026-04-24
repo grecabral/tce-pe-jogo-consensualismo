@@ -1,7 +1,7 @@
 import { irPara, pararIdle } from '../estado.js';
 import { toggleMute, isMuted } from '../audio.js';
 
-const LABELS = ['Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Tente de novo', 'Jogar', 'Prêmio'];
+const LABELS = ['Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Desafio', 'Jogar', 'Prêmio'];
 const NUM_LUZES = 24;
 
 let root = null;
@@ -31,7 +31,6 @@ export function montar(app, ctx) {
 
       app.innerHTML = `
         <section class="cena cena-attract" id="cena-attract">
-          <p class="attract-supertitulo">TCE-PE apresenta</p>
           <img class="attract-logo" src="${logo}" alt="TCE-PE" onerror="this.style.display='none'">
           <div class="attract-roleta-outer">
             <div class="roleta-ponteiro"></div>

@@ -1,8 +1,9 @@
-// Jogo 2 — Ligar Pontos (drag-and-drop).
-// Arrastar 6 cartões-caso para as 3 caixas-pilar corretas.
-// Acerto gruda e mostra feedback. Erro balança e devolve ao pool.
+// Jogo 2 — Ligar Pontos (tap).
+// Primeiro toque seleciona um cartão. Segundo toque num pilar faz o match.
+// Acerto gruda e mostra feedback. Erro devolve ao estado inicial.
 
 import { irPara, resetIdleTimer } from '../estado.js';
+import { mostrarDerrota } from '../ui/derrota.js';
 import { tocar } from '../audio.js';
 
 let root = null;
@@ -25,15 +26,14 @@ export function montar(app, ctx) {
       app.innerHTML = `
         <section class="cena cena-jogo1" id="cena-jogo2-ligar">
           <div class="jogo1-topo">
-            <h2 class="jogo1-titulo">${t.titulo}</h2>
-            <p class="jogo1-instrucao">${t.instrucao}</p>
+            <h2 class="jogo1-titulo j2-titulo-escuro">${t.titulo}</h2>
+            <p class="jogo1-instrucao j2-instrucao-escura">${t.instrucao}</p>
           </div>
           <div class="jogo1-stage">
             <div class="jogo1-casos" id="j1-casos">
               ${casosEmbaralhados.map((c) => `
                 <div class="caso-card" data-caso-id="${c.id}" data-pilar-correto="${c.pilarCorreto}">
-                  <span class="tag-missao">CASO</span>
-                  <p style="margin: var(--space-2) 0 0;">${c.texto}</p>
+                  <p>${c.texto}</p>
                 </div>
               `).join('')}
             </div>
@@ -64,140 +64,128 @@ export function montar(app, ctx) {
 
       root = app.querySelector('#cena-jogo2-ligar');
 
-      // Tenta carregar bg fotográfico; fallback está no CSS.
       const bgProbe = new Image();
       bgProbe.onload = () => { root.style.backgroundImage = `url('assets/cenarios/jogo2_bg.jpg')`; };
       bgProbe.src = 'assets/cenarios/jogo2_bg.jpg';
 
       const pilaresEl = root.querySelector('#j1-pilares');
-      const casosEl = root.querySelector('#j1-casos');
-      const feedback = root.querySelector('#j1-feedback');
-      const btnAv = root.querySelector('#btn-avancar1');
+      const casosEl   = root.querySelector('#j1-casos');
+      const feedback  = root.querySelector('#j1-feedback');
+      const btnAv     = root.querySelector('#btn-avancar1');
 
       const caixas = Array.from(pilaresEl.querySelectorAll('.pilar-box'));
       let coletados = 0;
-      const total = casosEmbaralhados.length;
+      const total   = casosEmbaralhados.length;
+      let cartaoSelecionado = null; // elemento DOM do cartão selecionado
 
       function mostrarFeedback(texto, ok) {
         feedback.textContent = texto;
         feedback.classList.remove('ok', 'erro', 'visivel');
         feedback.classList.add(ok ? 'ok' : 'erro', 'visivel');
         clearTimeout(feedback._t);
-        feedback._t = setTimeout(() => feedback.classList.remove('visivel'), 1400);
+        feedback._t = setTimeout(() => feedback.classList.remove('visivel'), 2500);
       }
 
-      function anexarDrag(cartao) {
-        let arrastando = false;
-        let pointerId = null;
-        let offsetX = 0;
-        let offsetY = 0;
+      function desselecionarTodos() {
+        casosEl.querySelectorAll('.caso-card.selecionado').forEach((c) => c.classList.remove('selecionado'));
+        cartaoSelecionado = null;
+      }
 
-        function onDown(ev) {
-          ev.preventDefault();
-          resetIdleTimer();
-          tocar('toque');
-          pointerId = ev.pointerId;
-          arrastando = true;
-          const r = cartao.getBoundingClientRect();
-          offsetX = ev.clientX - r.left;
-          offsetY = ev.clientY - r.top;
-          cartao.style.width = r.width + 'px';
-          cartao.style.height = r.height + 'px';
-          cartao.style.left = r.left + 'px';
-          cartao.style.top = r.top + 'px';
-          cartao.classList.add('arrastando');
-          try { cartao.setPointerCapture(pointerId); } catch (_) {}
+      function onCartaoToque(ev) {
+        ev.stopPropagation();
+        resetIdleTimer();
+        const cartao = ev.currentTarget;
+        if (cartao.classList.contains('acerto')) return;
+
+        tocar('toque');
+
+        if (cartaoSelecionado === cartao) {
+          // Toque no mesmo → desselecionar
+          cartao.classList.remove('selecionado');
+          cartaoSelecionado = null;
+          return;
         }
 
-        function onMove(ev) {
-          if (!arrastando || ev.pointerId !== pointerId) return;
-          ev.preventDefault();
-          cartao.style.left = (ev.clientX - offsetX) + 'px';
-          cartao.style.top  = (ev.clientY - offsetY) + 'px';
-          marcarDropAtivo(ev.clientX, ev.clientY);
-        }
+        desselecionarTodos();
+        cartao.classList.add('selecionado');
+        cartaoSelecionado = cartao;
+      }
 
-        function onUp(ev) {
-          if (!arrastando || ev.pointerId !== pointerId) return;
-          arrastando = false;
-          try { cartao.releasePointerCapture(pointerId); } catch (_) {}
-          const alvo = pilarSobPonto(ev.clientX, ev.clientY);
-          limparDropAtivo();
+      function onPilarToque(ev) {
+        ev.stopPropagation();
+        resetIdleTimer();
+        if (!cartaoSelecionado) return;
 
-          if (alvo && alvo.dataset.pilarId === cartao.dataset.pilarCorreto) {
-            // Acerto.
-            tocar('acerto');
-            const caso = casosEmbaralhados.find((c) => c.id === cartao.dataset.casoId);
-            mostrarFeedback(caso?.insightAcerto || t.feedbackAcerto, true);
-            cartao.classList.remove('arrastando');
-            cartao.classList.add('acerto');
-            cartao.style.pointerEvents = 'none';
-            setTimeout(() => cartao.remove(), 400);
-            coletados++;
-            if (coletados === total) {
-              tocar('vitoria');
-              setTimeout(() => { btnAv.classList.remove('escondido'); }, 600);
-            }
-          } else {
-            // Erro ou soltou fora.
-            cartao.classList.remove('arrastando');
-            cartao.removeAttribute('style');
-            if (alvo) {
-              tocar('erro');
-              mostrarFeedback(t.feedbackErro, false);
-              cartao.classList.add('erro');
-              setTimeout(() => cartao.classList.remove('erro'), 450);
-            }
+        const pilar = ev.currentTarget;
+        const cartao = cartaoSelecionado;
+
+        if (pilar.dataset.pilarId === cartao.dataset.pilarCorreto) {
+          // Acerto
+          tocar('acerto');
+          const caso = casosEmbaralhados.find((c) => c.id === cartao.dataset.casoId);
+          mostrarFeedback(caso?.insightAcerto || t.feedbackAcerto, true);
+          cartao.classList.remove('selecionado');
+          cartao.classList.add('acerto');
+          cartao.style.pointerEvents = 'none';
+          setTimeout(() => cartao.remove(), 400);
+          cartaoSelecionado = null;
+          coletados++;
+          if (coletados === total) {
+            tocar('vitoria');
+            setTimeout(() => { btnAv.classList.remove('escondido'); }, 600);
           }
+        } else {
+          // Erro
+          tocar('erro');
+          mostrarFeedback(t.feedbackErro, false);
+          cartao.classList.add('erro');
+          setTimeout(() => cartao.classList.remove('erro'), 450);
+          desselecionarTodos();
         }
-
-        cartao.addEventListener('pointerdown', onDown);
-        cartao.addEventListener('pointermove', onMove);
-        cartao.addEventListener('pointerup',   onUp);
-        cartao.addEventListener('pointercancel', onUp);
-        cleanup.push(() => {
-          cartao.removeEventListener('pointerdown', onDown);
-          cartao.removeEventListener('pointermove', onMove);
-          cartao.removeEventListener('pointerup',   onUp);
-          cartao.removeEventListener('pointercancel', onUp);
-        });
       }
 
-      function pilarSobPonto(x, y) {
-        return caixas.find((c) => {
-          const r = c.getBoundingClientRect();
-          return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-        });
-      }
-
-      function marcarDropAtivo(x, y) {
-        const alvo = pilarSobPonto(x, y);
-        caixas.forEach((c) => c.classList.toggle('drop-ativo', c === alvo));
-      }
-
-      function limparDropAtivo() {
-        caixas.forEach((c) => c.classList.remove('drop-ativo'));
+      // Toque fora → desselecionar
+      function onFundoToque() {
+        desselecionarTodos();
       }
 
       const modalEntrada = root.querySelector('#modal-entrada');
       const btnJogar = root.querySelector('#btn-modal-jogar');
 
-      // Modal de entrada — drag desativado até fechar
+      // Desativar interação antes do modal fechar
       casosEl.querySelectorAll('.caso-card').forEach((c) => {
         c.style.pointerEvents = 'none';
       });
 
+      btnJogar.classList.add('btn-bloqueado');
+      const lockTimer = setTimeout(() => {
+        btnJogar.classList.remove('btn-bloqueado');
+        btnJogar.classList.add('btn-desbloqueado');
+      }, 5000);
+      cleanup.push(() => clearTimeout(lockTimer));
+
       btnJogar.addEventListener('pointerdown', () => { btnJogar.classList.add('tocando'); tocar('toque'); });
       btnJogar.addEventListener('pointercancel', () => btnJogar.classList.remove('tocando'));
       btnJogar.addEventListener('pointerup', () => {
+        if (btnJogar.classList.contains('btn-bloqueado')) return;
         btnJogar.classList.remove('tocando');
         modalEntrada.classList.remove('visivel');
+
+        // Habilitar cartões e pilares
         casosEl.querySelectorAll('.caso-card').forEach((c) => {
           c.style.pointerEvents = '';
+          c.addEventListener('pointerdown', onCartaoToque);
+          cleanup.push(() => c.removeEventListener('pointerdown', onCartaoToque));
         });
-      });
 
-      casosEl.querySelectorAll('.caso-card').forEach(anexarDrag);
+        caixas.forEach((pilar) => {
+          pilar.addEventListener('pointerdown', onPilarToque);
+          cleanup.push(() => pilar.removeEventListener('pointerdown', onPilarToque));
+        });
+
+        root.addEventListener('pointerdown', onFundoToque);
+        cleanup.push(() => root.removeEventListener('pointerdown', onFundoToque));
+      });
 
       anexarBotao(btnAv, () => irPara('JOGO3_LANTERNA'));
     },

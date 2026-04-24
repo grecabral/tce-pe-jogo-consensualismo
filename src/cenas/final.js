@@ -12,32 +12,57 @@ export function montar(app, ctx) {
       const vit = historia && historia.vitoria;
       const creditos = ctx.config.creditos;
       const logo = creditos.logoSrc;
+      const neutro = ctx.sessao.modoFinal === 'neutro';
 
-      app.innerHTML = `
-        <section class="cena cena-final" id="cena-final">
-          <img class="final-logo" src="${logo}" alt="TCE-PE" onerror="this.style.display='none'">
-          ${vit ? `<h2 class="final-titulo-fase">${vit.titulo}</h2>` : ''}
-          <div class="final-grid">
-            <div class="final-texto">
-              <p class="final-frase final-bloco" style="animation-delay:0.2s">${t.fraseSintese}</p>
-              <p class="final-sub final-bloco" style="animation-delay:0.8s">${t.subtexto}</p>
-              <p class="final-inspiracao">${t.inspiracao}</p>
+      if (neutro) {
+        // Tela final de derrota — sem vitória, sem confetti, tom neutro
+        app.innerHTML = `
+          <section class="cena cena-final cena-final-neutro" id="cena-final">
+            <img class="final-logo" src="${logo}" alt="TCE-PE" onerror="this.style.display='none'">
+            <div class="final-grid">
+              <div class="final-texto">
+                <p class="final-frase final-bloco" style="animation-delay:0.2s">${t.fraseSintese}</p>
+                <p class="final-sub final-bloco" style="animation-delay:0.8s">${t.subtexto}</p>
+                <p class="final-inspiracao">${t.inspiracao}</p>
+              </div>
+              <div class="final-qr final-bloco" style="animation-delay:1.2s">
+                <canvas id="final-qr-canvas" width="400" height="400"></canvas>
+                <span class="final-qr-legenda">${t.qrLegenda}</span>
+              </div>
             </div>
-            <div class="final-qr final-bloco" style="animation-delay:1.4s">
-              <canvas id="final-qr-canvas" width="400" height="400"></canvas>
-              <span class="final-qr-legenda">${t.qrLegenda}</span>
+            <div class="final-acoes final-bloco" style="animation-delay:1.8s">
+              <button class="btn btn-secondary" id="btn-novo">${t.botaoJogarNovo}</button>
             </div>
-          </div>
-          <div class="final-acoes final-bloco" style="animation-delay:2.0s">
-            <button class="btn btn-secondary" id="btn-novo">${t.botaoJogarNovo}</button>
-          </div>
-          <p class="final-creditos">${creditos.orgao} · ${creditos.ano}</p>
-          <div class="confetti-container" aria-hidden="true">${gerarConfetti()}</div>
-        </section>`;
+            <p class="final-creditos">${creditos.orgao} · ${creditos.ano}</p>
+          </section>`;
+      } else {
+        // Tela final de vitória — com título da vitória e confetti
+        app.innerHTML = `
+          <section class="cena cena-final" id="cena-final">
+            <img class="final-logo" src="${logo}" alt="TCE-PE" onerror="this.style.display='none'">
+            ${vit ? `<h2 class="final-titulo-fase">${vit.titulo}</h2>` : ''}
+            <div class="final-grid">
+              <div class="final-texto">
+                <p class="final-frase final-bloco" style="animation-delay:0.2s">${t.fraseSintese}</p>
+                <p class="final-sub final-bloco" style="animation-delay:0.8s">${t.subtexto}</p>
+                <p class="final-inspiracao">${t.inspiracao}</p>
+              </div>
+              <div class="final-qr final-bloco" style="animation-delay:1.4s">
+                <canvas id="final-qr-canvas" width="400" height="400"></canvas>
+                <span class="final-qr-legenda">${t.qrLegendaVitoria || t.qrLegenda}</span>
+              </div>
+            </div>
+            <div class="final-acoes final-bloco" style="animation-delay:2.0s">
+              <button class="btn btn-secondary" id="btn-novo">${t.botaoJogarNovo}</button>
+            </div>
+            <p class="final-creditos">${creditos.orgao} · ${creditos.ano}</p>
+            <div class="confetti-container" aria-hidden="true">${gerarConfetti()}</div>
+          </section>`;
+
+        tocar('vitoria');
+      }
 
       root = app.querySelector('#cena-final');
-      tocar('vitoria');
-
       renderQR(ctx.config.qrUrl);
 
       const btnNovo = root.querySelector('#btn-novo');
@@ -46,7 +71,6 @@ export function montar(app, ctx) {
         irPara('ATTRACT');
       });
 
-      // Auto-reset 10s para attract (override do idle padrão).
       pararIdle();
       tAuto = setTimeout(() => {
         ctx.sessao.numero++;
@@ -57,6 +81,7 @@ export function montar(app, ctx) {
       clearTimeout(tAuto);
       tAuto = null;
       root = null;
+      ctx.sessao.modoFinal = null;
       configurarIdle(ctx.config.idleTimeoutMs);
     },
   };
@@ -93,10 +118,7 @@ function gerarConfetti() {
 
 function anexarBotao(btn, acao) {
   btn.addEventListener('pointerdown', () => { btn.classList.add('tocando'); tocar('toque'); });
-  btn.addEventListener('pointerup', () => {
-    btn.classList.remove('tocando');
-    acao();
-  });
+  btn.addEventListener('pointerup', () => { btn.classList.remove('tocando'); acao(); });
   btn.addEventListener('pointercancel', () => btn.classList.remove('tocando'));
   btn.addEventListener('pointerleave',  () => btn.classList.remove('tocando'));
 }

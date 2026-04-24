@@ -1,0 +1,33 @@
+Comando para jogar offline:
+
+    1. Abra o terminal e vá para a pasta do projeto:                                                                                                                                          
+    cd ~/Documentos/Amupe/Abertura/Abertura                                                                                                                                                   
+    2. Suba o servidor:                                                                                                                                                                       
+    python3 -m http.server 5173                                                                                                                                                               
+    3. Abra o Chrome e acesse:                                                                                                                                                                
+    http://localhost:5173                                                                                                                                                                     
+    4. Para modo quiosque (sem barra do browser, tela cheia):                                                                                                                                 
+    google-chrome --kiosk http://localhost:5173                                                                                                                                               
+    4. ou                                                                                                                                                                                     
+    chromium-browser --kiosk http://localhost:5173
+                                                                                                                                                                                
+    Se precisar ir direto para uma cena específica para testar:                                                                                                                               
+                                                                                                                                                                         ┌──────────────────┬───────────────────────────────────────────┐                                                                                                                          
+    │       Cena       │                    URL                    │                                                                                                                          
+    ├──────────────────┼───────────────────────────────────────────┤
+    │ Início (Attract) │ http://localhost:5173                     │
+    ├──────────────────┼───────────────────────────────────────────┤
+    │ Jogo 1           │ http://localhost:5173?cena=JOGO1_COLETOR  │
+    ├──────────────────┼───────────────────────────────────────────┤
+    │ Jogo 2           │ http://localhost:5173?cena=JOGO2_LIGAR    │
+    ├──────────────────┼───────────────────────────────────────────┤
+    │ Jogo 3           │ http://localhost:5173?cena=JOGO3_LANTERNA │
+    └──────────────────┴───────────────────────────────────────────┘
+
+    ---
+    Para encerrar o servidor
+
+    Ctrl+C no terminal onde o servidor está rodando.
+
+    ---
+    Importante: o terminal com o python3 -m http.server precisa ficar aberto enquanto o jogo estiver rodando. Não feche.

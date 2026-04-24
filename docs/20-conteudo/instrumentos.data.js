@@ -1,4 +1,4 @@
-{
+export default {
   "_descricao": "Lista canônica de instrumentos do consensualismo.",
 
   "instrumentos": [
@@ -67,3 +67,4 @@
     }
   ]
 }
+;

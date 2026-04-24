@@ -1,4 +1,4 @@
-// Jogo 1 — Coletor: itens caem, jogador move cesta por touch horizontal.
+// Jogo 1 — Coletor: itens caem, jogador toca diretamente para coletar.
 // Adequado +10, inadequado -5. Timer zera → vitória se >= meta, derrota se <.
 // Velocidade cresce a cada coletorAceleracaoIntervaloSeg segundos.
 
@@ -55,9 +55,6 @@ export function montar(app, ctx) {
               <img id="notif-icone" src="" alt="">
               <span id="notif-nome"></span>
             </div>
-            <div class="coletor-cesta" id="coletor-cesta">
-              <img src="assets/ui/cesta.svg" alt="" onerror="this.style.display='none'">
-            </div>
           </div>
           <aside class="coletor-inventory" id="coletor-inventory">
             <h3 class="inv-titulo">COLETADOS</h3>
@@ -94,7 +91,6 @@ export function montar(app, ctx) {
       })('coletor-bokeh', 20);
 
       const palco      = root.querySelector('#coletor-palco');
-      const cesta      = root.querySelector('#coletor-cesta');
       const flash      = root.querySelector('#coletor-flash');
       const pontosVal  = root.querySelector('#pontos-val');
       const tempoVal   = root.querySelector('#tempo-val');
@@ -106,47 +102,17 @@ export function montar(app, ctx) {
 
       let pontos   = 0;
       let segundos = duracao;
-      let cestaX   = 0.5;
+      let jogoAtivo = false;
       let rect     = palco.getBoundingClientRect();
       function recalcRect() { rect = palco.getBoundingClientRect(); }
       window.addEventListener('resize', recalcRect);
       cleanup.push(() => window.removeEventListener('resize', recalcRect));
-
-      function posicionarCesta() {
-        const largura = cesta.offsetWidth;
-        const minX = largura / 2;
-        const maxX = rect.width - largura / 2;
-        const px = Math.max(minX, Math.min(maxX, cestaX * rect.width));
-        cesta.style.left = px + 'px';
-      }
-      setTimeout(() => { recalcRect(); posicionarCesta(); }, 0);
-
-      let arrastando = false;
-      function onDown(ev) { resetIdleTimer(); arrastando = true; moverPara(ev.clientX); }
-      function onMove(ev) { if (!arrastando) return; moverPara(ev.clientX); }
-      function onUp() { arrastando = false; }
-      function moverPara(clientX) {
-        const x = clientX - rect.left;
-        cestaX = Math.max(0, Math.min(1, x / rect.width));
-        posicionarCesta();
-      }
-      palco.addEventListener('pointerdown', onDown);
-      palco.addEventListener('pointermove', onMove);
-      palco.addEventListener('pointerup',   onUp);
-      palco.addEventListener('pointercancel', onUp);
-      cleanup.push(() => {
-        palco.removeEventListener('pointerdown', onDown);
-        palco.removeEventListener('pointermove', onMove);
-        palco.removeEventListener('pointerup',   onUp);
-        palco.removeEventListener('pointercancel', onUp);
-      });
 
       const ativos = [];
       let ultimoSpawn    = 0;
       let velocidadeBase = velInicial;
       let intervaloAnterior = 0;
 
-      // Stars: track contagem por defId (max 5 visual).
       const inventarioContagem = {};
       let notifTimer = null;
       cleanup.push(() => clearTimeout(notifTimer));
@@ -161,6 +127,61 @@ export function montar(app, ctx) {
         notifTimer = setTimeout(() => notif.classList.remove('visivel'), 1200);
       }
 
+      // Coleta pelo palco — proximity-based para funcionar em qualquer velocidade
+      function onPalcoToque(ev) {
+        resetIdleTimer();
+        if (!jogoAtivo) return;
+
+        const larguraPalco = rect.width  || palco.offsetWidth;
+        const alturaPalco  = rect.height || palco.offsetHeight;
+        const touchX = ev.clientX - rect.left;
+        const touchY = ev.clientY - rect.top;
+        const HIT_RAIO = 110; // px — raio de detecção
+
+        let closestIdx = -1;
+        let closestDist = HIT_RAIO;
+
+        for (let i = 0; i < ativos.length; i++) {
+          const it = ativos[i];
+          // CSS usa transform:translate(-50%,-50%), então left/top já é o centro do item
+          const itemCX = (it.x / 100) * larguraPalco;
+          const itemCY = (it.y / 100) * alturaPalco;
+          const dist = Math.hypot(touchX - itemCX, touchY - itemCY);
+          if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+        }
+
+        if (closestIdx < 0) return;
+
+        const it = ativos[closestIdx];
+        ativos.splice(closestIdx, 1);
+        it.el.remove();
+
+        const delta = it.adequado ? 10 : -5;
+        pontos = Math.max(0, pontos + delta);
+        pontosVal.textContent = pontos;
+        mostrarFlash(it.adequado);
+        const xPx = (it.x / 100) * larguraPalco;
+        const yPx = (it.y / 100) * alturaPalco;
+        floatNome(it.nome, xPx, yPx, it.adequado);
+        tocar(it.adequado ? 'coletou' : 'erro');
+
+        clearTimeout(pontosVal._tt);
+        pontosVal.classList.remove('score-tick');
+        void pontosVal.offsetWidth;
+        pontosVal.classList.add('score-tick');
+        pontosVal._tt = setTimeout(() => pontosVal.classList.remove('score-tick'), 280);
+
+        if (it.adequado) {
+          inventarioContagem[it.defId] = (inventarioContagem[it.defId] || 0) + 1;
+          adicionarEstrela(it.defId);
+          mostrarNotifItem(it.icone, it.nome);
+          spawnBurst(xPx, yPx);
+        }
+      }
+
+      palco.addEventListener('pointerdown', onPalcoToque);
+      cleanup.push(() => palco.removeEventListener('pointerdown', onPalcoToque));
+
       function spawnarItem() {
         const adequado = Math.random() < 0.6;
         const pool = adequado ? adequados : inadequados;
@@ -168,13 +189,11 @@ export function montar(app, ctx) {
         const el   = document.createElement('div');
         el.className = 'coletor-item ' + (adequado ? 'adequado' : 'inadequado') + ' spawn-in';
         el.innerHTML = `<img src="assets/${def.icone}" alt="" onerror="this.style.visibility='hidden'">`;
+        el.style.touchAction = 'none';
+        el.style.pointerEvents = 'none'; // tudo vai pelo palco
         palco.appendChild(el);
         setTimeout(() => el.classList.remove('spawn-in'), 220);
-        const larguraPalco = rect.width || palco.offsetWidth;
-        const invEl = root.querySelector('#coletor-inventory');
-        const invW = invEl ? invEl.offsetWidth + 16 : 280;
-        const maxXPct = larguraPalco > 0 ? Math.max(30, ((larguraPalco - invW - 40) / larguraPalco) * 100) : 55;
-        const x = 5 + Math.random() * (maxXPct - 5);
+        const x = 5 + Math.random() * 90;
         ativos.push({
           el, x, y: -5, adequado, defId: def.id,
           icone: def.icone, nome: def.nome,
@@ -203,14 +222,14 @@ export function montar(app, ctx) {
         setTimeout(() => flash.classList.remove('ok', 'erro'), 240);
       }
 
-      function floatPts(delta, xPx, yPx) {
+      function floatNome(nome, xPx, yPx, adequado) {
         const nota = document.createElement('div');
-        nota.className = 'float-pts ' + (delta > 0 ? 'pos' : 'neg');
+        nota.className = 'float-pts float-nome ' + (adequado ? 'pos' : 'neg');
         nota.style.left = xPx + 'px';
         nota.style.top  = yPx + 'px';
-        nota.textContent = (delta > 0 ? '+' : '') + delta;
+        nota.textContent = nome;
         root.appendChild(nota);
-        setTimeout(() => nota.remove(), 1100);
+        setTimeout(() => nota.remove(), 1400);
       }
 
       function spawnBurst(xPx, yPx) {
@@ -239,11 +258,7 @@ export function montar(app, ctx) {
           intervaloAnterior = intervaloAtual;
         }
 
-        const alturaPalco  = rect.height || palco.offsetHeight;
-        const larguraPalco = rect.width  || palco.offsetWidth;
-        const cestaTop     = cesta.offsetTop;
-        const cestaLeftPx  = parseFloat(cesta.style.left || (larguraPalco / 2));
-        const cestaMeiaLarg = cesta.offsetWidth / 2;
+        const alturaPalco = rect.height || palco.offsetHeight;
 
         for (let i = ativos.length - 1; i >= 0; i--) {
           const it = ativos[i];
@@ -251,35 +266,6 @@ export function montar(app, ctx) {
           const yPx = (it.y / 100) * alturaPalco;
           it.el.style.left = it.x + '%';
           it.el.style.top  = yPx + 'px';
-
-          if (yPx >= cestaTop - 10 && yPx <= cestaTop + 40) {
-            const xPx = (it.x / 100) * larguraPalco;
-            if (Math.abs(xPx - cestaLeftPx) < cestaMeiaLarg + 20) {
-              const delta = it.adequado ? 10 : -5;
-              pontos = Math.max(0, pontos + delta);
-              pontosVal.textContent = pontos;
-              mostrarFlash(it.adequado);
-              floatPts(delta, (it.x / 100) * larguraPalco, cestaTop - 20);
-              tocar(it.adequado ? 'coletou' : 'erro');
-
-              clearTimeout(pontosVal._tt);
-              pontosVal.classList.remove('score-tick');
-              void pontosVal.offsetWidth;
-              pontosVal.classList.add('score-tick');
-              pontosVal._tt = setTimeout(() => pontosVal.classList.remove('score-tick'), 280);
-
-              if (it.adequado) {
-                inventarioContagem[it.defId] = (inventarioContagem[it.defId] || 0) + 1;
-                adicionarEstrela(it.defId);
-                mostrarNotifItem(it.icone, it.nome);
-                spawnBurst(xPx, yPx);
-              }
-
-              it.el.remove();
-              ativos.splice(i, 1);
-              continue;
-            }
-          }
 
           if (yPx > alturaPalco + 40) {
             it.el.remove();
@@ -291,6 +277,8 @@ export function montar(app, ctx) {
       }
 
       function iniciarJogo() {
+        jogoAtivo = true;
+        recalcRect();
         lastT = performance.now();
         ultimoSpawn = lastT;
         if (timerProg) timerProg.style.strokeDashoffset = 0;
@@ -307,6 +295,7 @@ export function montar(app, ctx) {
       }
 
       function encerrar(vitoria) {
+        jogoAtivo = false;
         cancelAnimationFrame(raf);
         clearInterval(tTimer);
         raf = null; tTimer = null;
@@ -315,7 +304,14 @@ export function montar(app, ctx) {
         mostrarDerrota({
           titulo: ctx.sessao.historiaAtual?.derrota?.titulo,
           texto:  t.derrota,
-        }).then(() => { ctx.sessao.numero++; irPara('ATTRACT'); });
+        }).then((escolha) => {
+          if (escolha === 'repetir') {
+            irPara('JOGO1_COLETOR');
+          } else {
+            ctx.sessao.modoFinal = 'neutro';
+            irPara('FINAL');
+          }
+        });
       }
 
       function gerarConfetti() {

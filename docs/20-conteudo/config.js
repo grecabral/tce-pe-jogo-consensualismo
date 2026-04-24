@@ -8,13 +8,13 @@ export default {
 
   // URL para onde o QR code da tela final aponta.
   // Placeholder até o dono fornecer a URL oficial.
-  qrUrl: 'https://tce.pe.gov.br/consensualismo',
+  qrUrl: 'https://forms.gle/LAmH4jpn6XWdDy6q8',
 
   // Tempo de inatividade (ms) antes de voltar para attract em qualquer tela.
   idleTimeoutMs: 45_000,
 
   // Tempo (ms) na tela final antes de voltar para attract sozinho.
-  finalAutoResetMs: 10_000,
+  finalAutoResetMs: 60_000,
 
   // Meta de pontos para vencer o Jogo 1 (Coletor).
   coletorMetaPontos: 80,
@@ -29,7 +29,7 @@ export default {
   coletorAceleracaoIntervaloSeg: 10,
 
   // Quanto a velocidade aumenta a cada intervalo (multiplicador).
-  coletorAceleracaoIncremento: 1.5,
+  coletorAceleracaoIncremento: 1.25,
 
   // Duração do Jogo 2 (lanterna) em segundos.
   lanternaDuracaoSeg: 60,

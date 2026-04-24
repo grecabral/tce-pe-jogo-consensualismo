@@ -1,4 +1,4 @@
-{
+export default {
   "_descricao": "Textos curtos da interface. Qualquer string que aparece na tela e não é específica de uma história vem daqui. Estrutura agrupada por cena.",
 
   "attract": {
@@ -74,3 +74,4 @@
     "botaoUnmute": "Ativar som"
   }
 }
+;

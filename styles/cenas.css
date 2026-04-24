@@ -28,7 +28,7 @@
 /* Container externo da roleta (inclui luzes + seta) */
 .attract-roleta-outer {
   position: relative;
-  width: min(68vmin, 500px);
+  width: min(88vmin, 650px);
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -122,9 +122,9 @@
 
 .roleta-label span {
   font-family: var(--font-display);
-  font-size: clamp(7px, 1.2vmin, 11px);
+  font-size: clamp(11px, 2.2vmin, 22px);
   color: #fff;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.95);
   text-transform: uppercase;
   white-space: nowrap;
   padding-right: 12px;
@@ -133,7 +133,7 @@
 .roleta-label:nth-child(1) { transform: rotate(-67.5deg); }
 .roleta-label:nth-child(2) { transform: rotate(-22.5deg); }
 .roleta-label:nth-child(3) { transform: rotate(22.5deg); }
-.roleta-label:nth-child(3) span { color: #333; text-shadow: none; }
+.roleta-label:nth-child(3) span { color: #fff; text-shadow: 1px 1px 4px rgba(0,0,0,0.95); }
 .roleta-label:nth-child(4) { transform: rotate(67.5deg); }
 .roleta-label:nth-child(5) { transform: rotate(112.5deg); }
 .roleta-label:nth-child(6) { transform: rotate(157.5deg); }
@@ -157,7 +157,7 @@
   justify-content: center;
   box-shadow: 0 0 20px var(--color-accent-500);
   font-family: var(--font-display);
-  font-size: clamp(7px, 1.4vmin, 12px);
+  font-size: clamp(9px, 1.82vmin, 16px);
   color: #fff;
   text-align: center;
   line-height: 1.2;
@@ -204,14 +204,19 @@
   inset: 0;
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 12, 41, 0.75);
+  text-align: center;
+  padding: 15%;
+  background: rgba(15, 12, 41, 0.85);
   font-family: var(--font-display);
-  font-size: var(--font-size-h2);
+  font-size: clamp(1rem, 2.5vmin, 2rem);
   color: var(--color-accent-500);
-  letter-spacing: var(--letter-spacing-display);
+  letter-spacing: 0.03em;
+  line-height: 1.4;
   text-shadow: 0 0 20px rgba(255,204,0,0.8);
+  white-space: pre-line;
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -417,7 +422,15 @@
   justify-content: center;
   padding: var(--space-3);
   width: 100%;
+  position: fixed;
+  bottom: auto;
+  top: 28%;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  pointer-events: none;
 }
+.jogo1-avanco button { pointer-events: auto; }
 
 .jogo1-feedback {
   position: absolute;
@@ -511,6 +524,10 @@
 }
 
 .lanterna-hud {
+  display: none; /* contador integrado ao j3-inv */
+}
+
+.lanterna-hud-hidden {
   position: absolute;
   top: var(--space-5);
   left: 0;
@@ -529,7 +546,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: var(--space-7);
+  top: 10px;
+  bottom: auto;
   text-align: center;
   color: var(--color-neutral-0);
   font-size: var(--font-size-body);
@@ -641,7 +659,7 @@
 
 .coletor-cesta {
   position: absolute;
-  bottom: var(--space-7);
+  bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
   width: 180px;
@@ -723,7 +741,32 @@
   font-size: var(--font-size-body);
   color: var(--color-primary-100);
   line-height: var(--line-height-normal);
-  margin: 0;
+  margin: 0 0 var(--space-6);
+}
+
+.derrota-botoes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.btn-derrota-final {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.75);
+  border-radius: 999px;
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-derrota-final.tocando {
+  border-color: var(--color-accent-500);
+  color: var(--color-accent-500);
 }
 
 /* ---------- FINAL ---------- */
@@ -833,7 +876,7 @@
   color: var(--text-on-dark);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .intro-conteudo {
@@ -842,7 +885,8 @@
   align-items: center;
   gap: var(--space-5);
   max-width: min(700px, 90vw);
-  padding: var(--space-7) var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  padding-top: 6vh;
   text-align: center;
 }
 
@@ -1259,12 +1303,31 @@
 }
 
 .coletor-item {
-  width: 84px;
-  height: 84px;
-  border-radius: 22px;
-  padding: 18px;
+  width: 100px;
+  height: 100px;
+  border-radius: 26px;
+  padding: 16px;
   background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
 }
+.coletor-instrucao-tap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,204,0,0.9);
+  color: #003366;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  padding: 12px 28px;
+  border-radius: 40px;
+  pointer-events: none;
+  z-index: 30;
+  transition: opacity 0.5s;
+}
+.coletor-instrucao-tap.sumindo { opacity: 0; }
 
 .coletor-item img {
   filter: brightness(0) invert(1) drop-shadow(0 2px 3px rgba(0,0,0,0.35));
@@ -1302,9 +1365,27 @@
   text-shadow: 0 0 16px rgba(255,204,0,0.25);
 }
 
+/* Título e instrução com fonte escura no jogo 2 */
+.j2-titulo-escuro {
+  color: var(--color-neutral-0) !important;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6) !important;
+}
+.j2-instrucao-escura {
+  color: rgba(255,255,255,0.85) !important;
+}
+
+/* Cartão selecionado no jogo 2 */
+.caso-card.selecionado {
+  background: #ffcc00 !important;
+  color: #003366 !important;
+  border-color: #e6b800 !important;
+  box-shadow: 0 0 0 4px rgba(255,204,0,0.6), 0 8px 32px rgba(255,204,0,0.35) !important;
+  transform: scale(1.05);
+}
+
 .caso-card {
-  background: #0d1a2e;
-  color: var(--color-neutral-0);
+  background: rgba(255,255,255,0.93);
+  color: #0d1a2e;
   border: var(--panel-border);
   box-shadow: var(--panel-glow);
   border-radius: var(--radius-card);
@@ -1404,6 +1485,16 @@
 .cena-final {
   background: radial-gradient(ellipse at 50% 0%, #001a33 0%, #0a0f1e 60%);
 }
+
+/* Tela final neutra (derrota → finalizar) — sem tons de vitória */
+.cena-final-neutro {
+  background: radial-gradient(ellipse at 50% 30%, #0d1a2e 0%, #060e1a 100%);
+}
+.cena-final-neutro .final-frase {
+  color: var(--color-neutral-0);
+  text-shadow: none;
+}
+.cena-final-neutro .final-titulo-fase { display: none; }
 
 .final-titulo-fase {
   font-family: var(--font-display);
@@ -1566,22 +1657,24 @@
 
 .coletor-inventory {
   position: absolute;
-  right: var(--space-4);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 10, 26, 0.8);
+  top: 10%;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  transform: none;
+  background: rgba(0, 10, 26, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: var(--panel-border);
-  border-radius: var(--radius-card);
-  padding: var(--space-3);
+  border: none;
+  border-bottom: var(--panel-border);
+  border-radius: 0 0 12px 12px;
+  padding: var(--space-2) var(--space-5);
   z-index: var(--z-hud);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 260px;
-  max-width: 300px;
-  padding: var(--space-4);
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
 }
 
 .inv-titulo {
@@ -1595,26 +1688,28 @@
 
 .inv-slots {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
 }
 
-/* Cada slot: linha horizontal ícone + nome + estrelas */
+/* Cada slot: coluna ícone + nome (compact horizontal strip) */
 .inv-slot {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: 3px;
   background: rgba(0, 0, 0, 0.4);
   border: 1px dashed rgba(255, 204, 0, 0.3);
   border-radius: var(--radius-card);
-  padding: 8px var(--space-3);
+  padding: 6px 10px;
+  min-width: 64px;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .inv-slot img {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   object-fit: contain;
   filter: grayscale(1);
@@ -1631,12 +1726,24 @@
 
 .inv-slot-nome {
   font-family: var(--font-ui);
-  font-size: 0.85rem;
+  font-size: 0.6rem;
   color: rgba(255, 255, 255, 0.4);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.2;
   transition: color 0.3s;
+}
+
+.inv-stars {
+  display: flex;
+  gap: 1px;
+  justify-content: center;
+  min-height: 12px;
+}
+
+.inv-star {
+  color: var(--color-accent-500);
+  font-size: 0.75rem;
+  line-height: 1;
 }
 
 .inv-stars {
@@ -1793,12 +1900,12 @@
   list-style: none;
   padding: 0;
   margin: 0 0 24px;
+  max-height: none;
+  overflow-y: visible;
   display: flex;
   flex-direction: column;
   gap: 10px;
   text-align: left;
-  max-height: 300px;
-  overflow-y: auto;
   position: relative;
   z-index: 1;
 }
@@ -1854,21 +1961,24 @@
 
 .j3-inv {
   position: absolute;
-  left: var(--space-4);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 10, 26, 0.82);
+  top: 260px;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  transform: none;
+  background: rgba(0, 10, 26, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: var(--panel-border);
-  border-radius: var(--radius-card);
-  padding: var(--space-3) var(--space-2);
+  border: none;
+  border-bottom: var(--panel-border);
+  border-radius: 0 0 12px 12px;
+  padding: var(--space-2) var(--space-5);
   z-index: var(--z-hud);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: var(--space-2);
-  min-width: 80px;
+  justify-content: center;
+  gap: var(--space-4);
 }
 
 .j3-inv-titulo {
@@ -1882,27 +1992,29 @@
 
 .j3-inv-slots {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: nowrap;
   gap: var(--space-2);
 }
 
-/* Card elaborado horizontal: ícone + nome + status */
+/* Card compacto vertical: ícone + nome */
 .j3-inv-slot {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: 3px;
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 204, 0, 0.2);
   border-radius: var(--radius-card);
-  padding: 10px var(--space-3);
+  padding: 6px 10px;
+  min-width: 64px;
   backdrop-filter: blur(4px);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .j3-inv-slot img {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   object-fit: contain;
   filter: grayscale(1);
@@ -1919,14 +2031,15 @@
 
 .j3-inv-slot-nome {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.6rem;
   color: rgba(255, 255, 255, 0.4);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.2;
   letter-spacing: 0.02em;
   transition: color 0.3s;
 }
+
+.j3-inv-slot-status { display: none; }
 
 .j3-inv-slot-status {
   font-family: var(--font-ui);
@@ -2043,17 +2156,12 @@
   z-index: 1;
 }
 
-/* Inventory Jogo3: largura maior para caber ícone + info */
-.j3-inv {
-  min-width: 260px;
-  max-width: 300px;
-  padding: var(--space-4) var(--space-3);
-}
+/* Inventory Jogo3: já definido acima como faixa horizontal */
 
 /* ── Timer grande Jogo 3 ── */
 .j3-timer-grande {
   position: absolute;
-  top: var(--space-4);
+  top: 90px;
   left: 50%;
   transform: translateX(-50%);
   width: clamp(80px, 15vmin, 140px);
@@ -2208,7 +2316,7 @@
   100% { opacity: 0;   transform: translateY(-110%) scale(1.5); }
 }
 
-/* ── Texto flutuante AAA ── */
+/* ── Texto flutuante ── */
 .float-pts {
   position: absolute;
   font-family: var(--f-score);
@@ -2217,6 +2325,22 @@
   z-index: calc(var(--z-hud) + 10);
   animation: floatUp 1.05s cubic-bezier(0.2,0.8,0.2,1) forwards;
   white-space: nowrap;
+  transform: translateX(-50%);
+}
+.float-nome {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+}
+.float-nome.pos {
+  color: #00c87a !important;
+  text-shadow: 0 0 10px rgba(0,200,122,0.9), 0 0 26px rgba(0,200,122,0.5), 0 2px 4px rgba(0,0,0,0.9) !important;
+  animation: floatNomePos 1.4s cubic-bezier(0.2,0.8,0.2,1) forwards !important;
+}
+@keyframes floatNomePos {
+  0%   { opacity: 1; transform: translateX(-50%) scale(1);    }
+  40%  { opacity: 1; transform: translateX(-50%) scale(1.5);  }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.9) translateY(-60px); }
 }
 .float-pts.pos {
   color: var(--color-accent-500);

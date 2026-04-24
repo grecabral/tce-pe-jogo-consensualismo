@@ -1,17 +1,21 @@
-// Overlay de derrota compartilhado entre Jogo 2 e Jogo 3.
-// Mostra título + texto curto, fade-in 300ms, hold 2500ms, fade-out 300ms.
-// Promise resolve quando o overlay já foi removido do DOM — a cena que
-// chamou pode então transitar (normalmente para ATTRACT).
+// Overlay de derrota com escolha: jogar de novo ou ver resultado final.
+// Resolve com 'repetir' ou 'final' conforme botão tocado.
+
+import { tocar } from '../audio.js';
 
 export function mostrarDerrota({ titulo, texto }) {
   return new Promise((resolve) => {
     const el = document.createElement('div');
     el.className = 'overlay-derrota';
-    el.setAttribute('role', 'alert');
+    el.setAttribute('role', 'alertdialog');
     el.innerHTML = `
       <div class="overlay-derrota-card">
         ${titulo ? `<h2>${titulo}</h2>` : ''}
-        ${texto  ? `<p>${texto}</p>`     : ''}
+        ${texto  ? `<p>${texto}</p>`    : ''}
+        <div class="derrota-botoes">
+          <button class="btn btn-primary" id="btn-derrota-repetir">JOGAR DE NOVO</button>
+          <button class="btn btn-derrota-final" id="btn-derrota-final">FINALIZAR</button>
+        </div>
       </div>`;
     document.body.appendChild(el);
 
@@ -19,7 +23,18 @@ export function mostrarDerrota({ titulo, texto }) {
       requestAnimationFrame(() => el.classList.add('visivel'));
     });
 
-    setTimeout(() => el.classList.remove('visivel'), 300 + 2500);
-    setTimeout(() => { el.remove(); resolve(); }, 300 + 2500 + 300);
+    function fechar(escolha) {
+      el.classList.remove('visivel');
+      setTimeout(() => { el.remove(); resolve(escolha); }, 300);
+    }
+
+    const btnRepetir = el.querySelector('#btn-derrota-repetir');
+    const btnFinal   = el.querySelector('#btn-derrota-final');
+
+    btnRepetir.addEventListener('pointerdown', () => { btnRepetir.classList.add('tocando'); tocar('toque'); });
+    btnRepetir.addEventListener('pointerup',   () => { btnRepetir.classList.remove('tocando'); fechar('repetir'); });
+
+    btnFinal.addEventListener('pointerdown', () => { btnFinal.classList.add('tocando'); });
+    btnFinal.addEventListener('pointerup',   () => { btnFinal.classList.remove('tocando'); fechar('final'); });
   });
 }

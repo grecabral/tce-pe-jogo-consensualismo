@@ -1,4 +1,4 @@
-{
+export default {
   "_descricao": "História 3 (neutra): Contrato de transporte urbano em município único fictício. Análoga ao caso real MG×BA de trens urbanos. Esta é a história mais próxima do caso real — e é a que a tela final vai citar como referência.",
 
   "id": "transporte-urbano",
@@ -54,3 +54,4 @@
     "texto": "Sem acordo, o impasse continua. A população de Vilanova do Rio segue enfrentando ônibus lotados e horários imprevisíveis enquanto prefeitura e empresa travam na justiça."
   }
 }
+;
